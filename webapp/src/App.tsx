@@ -1,23 +1,32 @@
 import React from 'react';
+import { useState, useCallback } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import { MenuBar } from './components/MenuBar';
+import { LeftNav }  from './components/LeftNav';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Base from './components/Base';
 
-function App() {
+const App = () => {
+// 	const [isOpen, setIsOpen] = useState<boolean>(false);
+//
+// 	const setOpenState = useCallback((openState: boolean) => {
+// 		setIsOpen(openState);
+// 	}, [isOpen, setIsOpen]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div>
+      <header>
+{/*         <Box sx={{ display: 'flex' }}> */}
+{/* 	        <CssBaseline /> */}
+
+{/* 	        <MenuBar isOpen={isOpen} setIsOpen={setOpenState} /> */}
+{/* 	        <LeftNav */}
+{/* 	          isOpen={isOpen} */}
+{/* 	          setIsOpen={setOpenState} */}
+{/* 	        /> */}
+{/*         </Box> */}
+				<Base />
       </header>
     </div>
   );
