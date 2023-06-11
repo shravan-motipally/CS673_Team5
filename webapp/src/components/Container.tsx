@@ -16,18 +16,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+
 import Button from '@mui/material/Button';
 
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
-import DialogTitle from '@mui/material/DialogTitle';
-import CloseIcon from '@mui/icons-material/Close';
-import HomeScreen from '../screens/HomeScreen';
+import { Link, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -100,9 +95,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function Base() {
+interface ContainerProps {
+	children: any;
+}
+
+const Container: React.FC<ContainerProps> = ( { children } ) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+	const navigate = useNavigate();
+
   const isAuthenticated = true // TODO: use context to set up auth state
 
   const handleDrawerOpen = () => {
@@ -112,6 +113,11 @@ export default function Base() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const onLogin = () => {
+    let path = `/CS673_Team5/login`;
+    navigate(path);
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -133,7 +139,7 @@ export default function Base() {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             QBot
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={onLogin}>Login</Button>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -160,7 +166,7 @@ export default function Base() {
                     justifyContent: 'center',
                   }}
                 >
-                  <HomeIcon/>
+                  <Link to="/CS673_Team5"><HomeIcon/></Link>
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -185,7 +191,7 @@ export default function Base() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
+                  {index % 2 === 0 ? <Link to="/CS673_Team5/help"><HelpOutlineIcon /></Link> : <Link to="/CS673_Team5/about"><InfoIcon /></Link>}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -193,39 +199,12 @@ export default function Base() {
           ))}
         </List>
       </Drawer>
-      { isAuthenticated ?
-        <>
-          <Divider />
-            <List>
-              {['Home'].map((text, index) => (
-                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <HomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-            </> : <div/> }
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-
-				<HomeScreen />
+				{children}
       </Box>
     </Box>
   );
 }
+
+export default Container;

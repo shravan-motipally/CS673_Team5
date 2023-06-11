@@ -6,29 +6,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import Divider from '@mui/material/Divider';
-
+import Container from '../components/Container';
 
 const Home = () => {
 	return (
-		<DialogTitle
-      id="id"
-      style={{
-        outlineStyle: "solid",
-        borderRadius: "12px"
-      }}
-      >
-      <Box display="flex" alignItems="center">
-        <Box flexGrow={1} >
-          Welcome
-        </Box>
-        <Box>
-          <IconButton onClick={() => { console.log('closing')}} >
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Divider />
-      </Box>
-    </DialogTitle>
+		<Container>
+			Home
+    </Container>
 	);
 }
 
