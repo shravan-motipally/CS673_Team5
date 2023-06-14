@@ -11,11 +11,8 @@ import Login from './screens/Login';
 import About from './screens/About';
 import Container from './components/Container';
 import { createContext } from 'react';
+import { ScreenContextType } from './types/global.types';
 
-interface ScreenContextType {
-	screenState: string,
-	setScreenState: React.Dispatch<React.SetStateAction<string>>;
-}
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: 'home',
