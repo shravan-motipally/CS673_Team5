@@ -25,6 +25,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
 import { useContext } from 'react';
 import { ScreenContext } from '../App';
+import smotipally from '../screens/images/smotipally.png';
+
+import Avatar from '@mui/material/Avatar';
 
 const drawerWidth = 240;
 
@@ -141,7 +144,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             QBot
           </Typography>
-          <Button color="inherit" onClick={onLogin}>Login</Button>
+          {!screenState.isAuthed ? <Button color="inherit" onClick={onLogin}>Login</Button> : <Avatar alt="Remy Sharp" src={smotipally} />}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
