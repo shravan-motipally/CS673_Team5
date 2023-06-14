@@ -18,6 +18,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
 import IconButton from '@mui/material/IconButton';
+import smotipally from './images/smotipally.png';
+import jkustra from './images/jkustra.png';
+import rwu from './images/rwu.png';
+import ieltume from './images/IEltume.png';
+import xzhou from './images/xzhou.png';
+import kkomanduru from './images/kkomanduru.png';
 
 
 function Copyright() {
@@ -37,7 +43,7 @@ const cards = [{
 		id: 1,
 		name: "Shravan Motipally",
 		description: "Add information about yourself here",
-		image: "../images/smotipally.png",
+		image: smotipally,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
@@ -45,7 +51,7 @@ const cards = [{
 		id: 2,
 		name: "Jacob Kustra",
 		description: "Add information about yourself here",
-		image: "../jskustra.png",
+		image: jkustra,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
@@ -53,7 +59,7 @@ const cards = [{
 		id: 3,
 		name: "Richard Wu",
 		description: "Add information about yourself here",
-		image: "../rwu.png",
+		image: rwu,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
@@ -61,7 +67,7 @@ const cards = [{
 		id: 4,
 		name: "Idenson Eltume",
 		description: "Add information about yourself here",
-		image: "../IEltume.png",
+		image: ieltume,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
@@ -69,7 +75,7 @@ const cards = [{
 		id: 5,
 		name: "Xiang Zhou",
 		description: "Add information about yourself here",
-		image: "../xzhou.png",
+		image: xzhou,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
@@ -77,7 +83,7 @@ const cards = [{
 		id: 6,
 		name: "Kamal Komanduru",
 		description: "Add information about yourself here",
-		image: "../kkomanduru.png",
+		image: kkomanduru,
 		email: "shrvanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	}
