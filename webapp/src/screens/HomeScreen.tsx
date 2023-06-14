@@ -112,12 +112,11 @@ const Home = () => {
 	            />
             </FormControl>
           </Grid>
-          {isEmptyNullOrUndefined(question) ? <div/> :
-            <Grid item alignItems="center">
-	            {loading ?
-	              <Box sx={{ width: '100%' }}>
-                  <LinearProgress />
-                </Box> :
+          <Grid item alignItems="center">
+            {loading ?
+              <Box sx={{ width: '100%' }}>
+                <LinearProgress />
+              </Box> : isEmptyNullOrUndefined(answer) ? <div/> :
 	              <Paper elevation={3} style={{
 	                marginLeft: "12px",
 	                marginRight: "12px",
@@ -129,9 +128,8 @@ const Home = () => {
 			              {answer}
 			            </Typography>
 	              </Paper>
-	            }
-            </Grid>
-           }
+            }
+          </Grid>
         </Box>
       </main>
     </ThemeProvider>

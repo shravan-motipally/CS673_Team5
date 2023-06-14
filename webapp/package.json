@@ -19,6 +19,7 @@
     "ag-grid-community": "^30.0.0",
     "ag-grid-react": "^30.0.0",
     "axios": "^1.4.0",
+    "dotenv": "^16.1.4",
     "mdb-react-ui-kit": "^6.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
