@@ -1,5 +1,10 @@
 
 export interface ScreenContextType {
-	screenState: string,
-	setScreenState: React.Dispatch<React.SetStateAction<string>>;
+	screenState: ScreenState,
+	setScreenState: React.Dispatch<React.SetStateAction<ScreenState>>;
+}
+
+export interface ScreenState {
+	screen: string,
+	isAuthed: boolean
 }

@@ -12,6 +12,8 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ScreenContext } from '../App';
+import { useContext } from 'react';
 
 function Copyright(props: any) {
   return (
@@ -30,6 +32,8 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function Login() {
+	const { screenState, setScreenState } = useContext(ScreenContext);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,6 +43,10 @@ export default function Login() {
     console.log({
       username: data.get('username'),
       password: data.get('password'),
+    });
+    setScreenState({
+      screen: 'home',
+      isAuthed: true
     });
   };
 

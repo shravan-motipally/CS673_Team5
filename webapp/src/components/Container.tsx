@@ -16,6 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 import Button from '@mui/material/Button';
 
@@ -105,8 +106,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const [open, setOpen] = React.useState(false);
   const { screenState, setScreenState } = useContext(ScreenContext);
 
-  const isAuthenticated = true // TODO: use context to set up auth state
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -116,7 +115,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   };
 
   const onLogin = () => {
-    setScreenState('login');
+    setScreenState({
+      screen: 'login',
+      isAuthed: screenState.isAuthed
+    });
   }
 
   return (
@@ -166,7 +168,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <HomeIcon onClick={() => { setScreenState('home'); }}/>
+                  <HomeIcon onClick={() => { setScreenState( { ...screenState, screen: 'home' }); }}/>
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -191,13 +193,44 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <HelpOutlineIcon onClick={ () => { setScreenState('help'); } } /> : <InfoIcon onClick={ () => { setScreenState('about'); } }/>}
+                  {index % 2 === 0 ? <HelpOutlineIcon onClick={ () => { setScreenState( { ...screenState, screen: 'help' }); } } /> :
+                  <InfoIcon onClick={ () => { setScreenState( { ...screenState, screen: 'about' }); } }/>}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
+        { screenState.isAuthed ?
+          <>
+            <Divider />
+            <List>
+              {['Home'].map((text, index) => (
+                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <AdminPanelSettingsIcon onClick={ () => { setScreenState( { ...screenState, screen: 'admin' }); } } />
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </> :
+          <div/>
+        }
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
