@@ -22,7 +22,8 @@ import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
-import { Link, useNavigate } from "react-router-dom";
+import { useContext } from 'react';
+import { ScreenContext } from '../App';
 
 const drawerWidth = 240;
 
@@ -102,7 +103,7 @@ interface ContainerProps {
 const Container: React.FC<ContainerProps> = ( { children } ) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-	const navigate = useNavigate();
+  const { screenState, setScreenState } = useContext(ScreenContext);
 
   const isAuthenticated = true // TODO: use context to set up auth state
 
@@ -115,8 +116,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   };
 
   const onLogin = () => {
-    let path = `/CS673_Team5/login`;
-    navigate(path);
+    setScreenState('login');
   }
 
   return (
@@ -166,7 +166,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Link to="/CS673_Team5"><HomeIcon/></Link>
+                  <HomeIcon onClick={() => { setScreenState('home'); }}/>
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -191,7 +191,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <Link to="/CS673_Team5/help"><HelpOutlineIcon /></Link> : <Link to="/CS673_Team5/about"><InfoIcon /></Link>}
+                  {index % 2 === 0 ? <HelpOutlineIcon onClick={ () => { setScreenState('help'); } } /> : <InfoIcon onClick={ () => { setScreenState('about'); } }/>}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>

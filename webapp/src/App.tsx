@@ -9,22 +9,54 @@ import HomeScreen from './screens/HomeScreen';
 import Help from './screens/Help';
 import Login from './screens/Login';
 import About from './screens/About';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Container from './components/Container';
+import { createContext } from 'react';
 
-const App = () => {
+interface ScreenContextType {
+	screenState: string,
+	setScreenState: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const ScreenContext = createContext<ScreenContextType>({
+	screenState: 'home',
+	setScreenState: () => {}
+});
+
+const showScreen = (screen: string) => {
+	switch(screen) {
+		case 'home':
+			return <HomeScreen/>;
+			break;
+		case 'about':
+			return <About />;
+			break;
+		case 'help':
+			return <Help />;
+			break;
+		case 'login':
+			return <Login />;
+			break;
+		default:
+			return <HomeScreen/>;
+	}
+}
+
+export const App = () => {
+
+	const [screenState, setScreenState] = useState<string>('home');
+
+	const contextValue = {
+		screenState,
+		setScreenState
+	}
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/CS673_Team5" element={<HomeScreen />}>
-          <Route path="about" element={<About />} />
-          <Route path="help" element={<Help />} />
-          <Route path="login" element={<Login />} />
-          <Route path='*' element={<Navigate to='/CS673_Team5' />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ScreenContext.Provider value={contextValue}>
+		  <Container>
+		    {showScreen(screenState)}
+		  </Container>
+	  </ScreenContext.Provider>
   );
 }
 
-export default App;
+

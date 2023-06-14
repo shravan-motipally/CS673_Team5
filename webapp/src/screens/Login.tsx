@@ -5,11 +5,9 @@ import Container from '../components/Container';
 
 const Login = () => {
 	return (
-		<Container>
-			<div>
-				Login
-			</div>
-    </Container>
+		<div>
+			Login
+		</div>
 	);
 }
 

@@ -5,11 +5,9 @@ import Container from '../components/Container';
 
 const Help = () => {
 	return (
-		<Container>
-			<div>
-				Help
-			</div>
-    </Container>
+		<div>
+			Help
+		</div>
 	);
 }
 

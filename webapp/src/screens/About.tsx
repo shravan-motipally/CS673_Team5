@@ -5,11 +5,9 @@ import Container from '../components/Container';
 
 const About = () => {
 	return (
-		<Container>
-			<div>
-				About
-			</div>
-    </Container>
+		<div>
+			About
+		</div>
 	);
 }
 

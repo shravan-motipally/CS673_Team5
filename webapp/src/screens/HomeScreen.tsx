@@ -8,11 +8,14 @@ import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Container from '../components/Container';
 
+
+
+
 const Home = () => {
 	return (
-		<Container>
+		<div>
 			Home
-    </Container>
+		</div>
 	);
 }
 
