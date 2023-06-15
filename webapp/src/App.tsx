@@ -8,7 +8,6 @@ import Help from './screens/Help';
 import Login from './screens/Login';
 import About from './screens/About';
 import Edit from './screens/Edit';
-
 import Container from './components/Container';
 import { createContext } from 'react';
 import { ScreenContextType, ScreenState } from './types/global.types';

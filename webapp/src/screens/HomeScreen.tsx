@@ -25,6 +25,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';
 import { askAScienceQuestion } from '../api/ExampleSearchApi';
+import ChatContainer from '../components/ChatContainer';
 
 const defaultTheme = createTheme();
 
@@ -58,8 +59,8 @@ const Home = () => {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 6,
-            pb: 6,
+            pt: 2,
+            pb: 2,
           }}
         >
           <Grid container direction="column" alignItems="center">
@@ -72,64 +73,7 @@ const Home = () => {
 		          </Typography>
             </Grid>
           </Grid>
-          <Grid item>
-            <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
-	            <InputLabel htmlFor="outlined-adornment-password">Question</InputLabel>
-	            <OutlinedInput
-	              id="question-input"
-	              type={'text'}
-	              endAdornment={
-	                <InputAdornment position="end">
-	                  <IconButton
-	                    aria-label="Ask question"
-	                    onClick={() => {
-	                      if (!isEmptyNullOrUndefined(question)) {
-	                        setLoading(true);
-	                        setAnswer("");
-	                        askQuestion();
-                        }
-                      }}
-	                    onMouseDown={() => {}}
-	                    edge="end"
-	                  >
-	                    {<SendIcon />}
-	                  </IconButton>
-	                </InputAdornment>
-	              }
-	              label="Ask your question here"
-	              onChange={(e) => {
-	                if (!isEmptyNullOrUndefined(e.target.value)) {
-	                  setQuestion(e.target.value);
-	                }
-	              }}
-	              onKeyDown={(e) => {
-	                if (!isEmptyNullOrUndefined(question) && e.keyCode == 13) {
-	                  setLoading(true);
-                    setAnswer("");
-                    askQuestion();
-	                }
-	              }}
-	            />
-            </FormControl>
-          </Grid>
-          <Grid item alignItems="center">
-            {loading ?
-              <Box sx={{ width: '100%' }}>
-                <LinearProgress />
-              </Box> : isEmptyNullOrUndefined(answer) ? <div/> :
-	              <Paper elevation={3} style={{
-	                marginLeft: "12px",
-	                marginRight: "12px",
-	                marginTop: "50px",
-	                width: "98%",
-	                height: "200px"
-	              }}>
-			            <Typography variant="h5" align="center" color="text.secondary" paragraph style={{ paddingTop: '15px' }}>
-			              {answer}
-			            </Typography>
-	              </Paper>
-            }
-          </Grid>
+          <ChatContainer />
         </Box>
       </main>
     </ThemeProvider>
