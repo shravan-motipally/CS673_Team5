@@ -56,6 +56,10 @@ const ChatContainer = () => {
       let res;
       try {
         res = await askAScienceQuestion(question);
+        const searchTerm = 'I should reply with an answer:';
+        const indexOfFirst = res.indexOf(searchTerm);
+        const answerProvided = res.substring(indexOfFirst + searchTerm.length + 1);
+        res = answerProvided;
       } catch (e) {
         res = "I don't know but I will find out.";
       }
