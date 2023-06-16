@@ -1,26 +1,67 @@
 import React from 'react';
+import { useState, useCallback } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import HomeScreen from './screens/HomeScreen';
+import Help from './screens/Help';
+import Login from './screens/Login';
+import About from './screens/About';
+import Edit from './screens/Edit';
+import Container from './components/Container';
+import { createContext } from 'react';
+import { ScreenContextType, ScreenState } from './types/global.types';
 
-function App() {
+
+export const ScreenContext = createContext<ScreenContextType>({
+	screenState: {
+		screen: 'home',
+		isAuthed: false
+	},
+	setScreenState: () => {}
+});
+
+const showScreen = (screen: string) => {
+	switch(screen) {
+		case 'home':
+			return <HomeScreen/>;
+			break;
+		case 'about':
+			return <About />;
+			break;
+		case 'help':
+			return <Help />;
+			break;
+		case 'login':
+			return <Login />;
+			break;
+		case 'admin':
+			return <Edit />
+			break;
+		default:
+			return <HomeScreen/>;
+	}
+}
+
+export const App = () => {
+
+	const [screenState, setScreenState] = useState<ScreenState>({
+		screen: 'home',
+		isAuthed: false
+	});
+
+	const contextValue = {
+		screenState,
+		setScreenState
+	}
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ScreenContext.Provider value={contextValue}>
+		  <Container>
+		    {showScreen(screenState.screen)}
+		  </Container>
+	  </ScreenContext.Provider>
   );
 }
 
-export default App;
+
