@@ -5,10 +5,10 @@
 Install docker desktop [here](https://docs.docker.com/desktop/) 
 After installation, run the following to get pgadmin running on local.
 
-Change <email> and <password> below with whatever you wish.
+Change PGADMIN_USER and PGADMIN_PASSWORD below with whatever you wish (on local - for prod ask me).
 ```bash
 $ DOCKER_BUILDKIT=1 docker build -t pgadmin .
-$ docker run -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=<email> -e PGADMIN_DEFAULT_PASSWORD=<password>  pgadmin
+$ docker run -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=$PGADMIN_USER -e PGADMIN_DEFAULT_PASSWORD=$PGADMIN_PASSWORD  pgadmin
 ```
 
 ## Connecting to your postgres instance
@@ -35,6 +35,6 @@ If you're trying to connect your our postgres on render, use the following prope
 | --- | -------- | ----- |
 | General | Name | <whatever you wish> |
 | Connection | Host name/address | ask |
-| Connection | user | ask |
-| Connection | password | ask |
+| Connection | user | $PGADMIN_USER |
+| Connection | password | $PGADMIN_PASSWORD |
 
