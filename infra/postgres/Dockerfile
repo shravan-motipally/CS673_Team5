@@ -1,1 +1,3 @@
 FROM postgres:14.8
+
+EXPOSE 5432
