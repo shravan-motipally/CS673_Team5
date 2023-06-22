@@ -25,4 +25,3 @@ that the professor might not have the time to answer.
 | Idenson Eltume | | |✔ |✔ |
 | Xiang Zhou | |✔ | | | |✔ |
 | Shravan Motipally | |✔ | |✔ |✔ | 
-| “Santosh” Kamal Komanduru | | |✔ |  |  |  | |
