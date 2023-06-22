@@ -34,22 +34,6 @@ const isEmptyNullOrUndefined = (str: string) => {
 }
 
 const Home = () => {
-	const [question, setQuestion] = useState<string>("");
-	const [answer, setAnswer] = useState<string>("");
-	const [loading, setLoading] = useState<boolean>(false);
-
-	const askQuestion = useCallback(() => {
-		(async () => {
-			let res;
-			try {
-        res = await askAScienceQuestion(question);
-      } catch (e) {
-        res = "I don't know but I will find out.";
-      }
-      setLoading(false);
-      setAnswer(res);
-    })();
-	}, [question, answer]);
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
