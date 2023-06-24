@@ -12,12 +12,22 @@ public class Login {
     private final UUID loginId;
     private final String userName;
     private final String saltedHash;
-    private final String salt;
 
-    public Login(UUID loginId, String userName, String saltedHash, String salt) {
+    public Login(UUID loginId, String userName, String saltedHash) {
         this.loginId = loginId;
         this.userName = userName;
         this.saltedHash = saltedHash;
-        this.salt = salt;
+    }
+
+    public UUID getLoginId() {
+        return loginId;
+    }
+
+    public String getSaltedHash() {
+        return saltedHash;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

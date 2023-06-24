@@ -12,10 +12,30 @@ public class User {
     private final UUID id;
     private final String photoUrl;
     private final UUID loginId;
+    private final String firstName;
+    private final String lastName;
 
-    public User(UUID id, String photoUrl, UUID loginId) {
+    public User(UUID id, String photoUrl, UUID loginId, String firstName, String lastName) {
         this.id = id;
         this.photoUrl = photoUrl;
         this.loginId = loginId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public UUID getLoginId() {
+        return loginId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 }
