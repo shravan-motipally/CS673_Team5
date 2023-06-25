@@ -16,7 +16,8 @@ public class WebSecurityConfig {
                 .antMatchers("/login", "/all", "/questions", "/actuator/**")
                 .permitAll()
                 .and()
-                .httpBasic();
+                .httpBasic().and()
+                .csrf().disable();
         return http.build();
     }
 }

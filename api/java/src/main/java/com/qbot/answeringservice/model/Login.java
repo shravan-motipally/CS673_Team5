@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
-@Document
+@Document(collection = "login")
 public class Login {
 
     @Id
