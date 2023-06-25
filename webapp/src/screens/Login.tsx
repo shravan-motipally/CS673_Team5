@@ -15,7 +15,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ScreenContext } from '../App';
 import {useCallback, useContext, useState} from 'react';
 import {login} from "../api/LoginApi";
-import {isNullOrUndefined} from "util";
 
 function Copyright(props: any) {
   return (
@@ -32,6 +31,10 @@ function Copyright(props: any) {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
+
+const isNotNullOrUndefined = (test: any) => {
+  return test !== null && test !== undefined;
+}
 
 export default function Login() {
   const { screenState, setScreenState } = useContext(ScreenContext);
@@ -52,7 +55,7 @@ export default function Login() {
     (async () => {
       const details = await login(loginDetails.username, loginDetails.password);
 
-      if (!isNullOrUndefined(details)) {
+      if (isNotNullOrUndefined(details)) {
         setScreenState({
           screen: 'home',
           isAuthed: true
