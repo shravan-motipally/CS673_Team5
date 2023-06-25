@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class PwService {
 
     public String generateSalt() {
-        return BCrypt.gensalt(37);
+        return BCrypt.gensalt(7);
     }
 
     public String generatePasswordFromHash(String password, String salt) {
