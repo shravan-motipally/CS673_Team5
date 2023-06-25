@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+
 import static java.lang.String.format;
 
 @Service
@@ -31,7 +33,7 @@ public class LoginService {
     public boolean checkLogin(LoginDetail detail) {
         if (detail != null) {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
-            return pwService.validatePassword(detail.getPassword(), login.getSaltedHash());
+            return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())), login.getSaltedHash());
         }
         return false;
     }

@@ -13,7 +13,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ScreenContext } from '../App';
-import { useContext } from 'react';
+import {useCallback, useContext, useState} from 'react';
+import {login} from "../api/LoginApi";
+import {isNullOrUndefined} from "util";
 
 function Copyright(props: any) {
   return (
@@ -32,23 +34,36 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function Login() {
-	const { screenState, setScreenState } = useContext(ScreenContext);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const { screenState, setScreenState } = useContext(ScreenContext);
+  const [showBadLogin, setShowBadLogin] = useState<boolean>(false);
+  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     // TODO: backend folks, here's where you do the api call to login
     // Ensure that you don't call a single /login api with clear text creds.
-    console.log({
-      username: data.get('username'),
-      password: data.get('password'),
-    });
-    setScreenState({
-      screen: 'home',
-      isAuthed: true
-    });
-  };
+
+      const loginDetails = {
+      // @ts-ignore
+      username: (data.get('username') !== null ? data.get('username') : "").toString(),
+      // @ts-ignore
+      password: (data.get('password') !== null ? data.get('password') : "").toString(),
+    };
+    (async () => {
+      const details = await login(loginDetails.username, loginDetails.password);
+
+      if (!isNullOrUndefined(details)) {
+        setScreenState({
+          screen: 'home',
+          isAuthed: true
+        });
+        setShowBadLogin(false);
+      } else {
+        setShowBadLogin(true);
+      }
+    })();
+
+  }, [setScreenState, showBadLogin, setShowBadLogin]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -117,18 +132,11 @@ export default function Login() {
               >
                 Sign In
               </Button>
-              <Grid container>
+              {showBadLogin ? <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
+                  Incorrect Password given
                 </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
+              </Grid> : <div/>}
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
