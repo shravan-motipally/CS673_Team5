@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -37,6 +38,7 @@ public class LoginController {
                 .build();
     }
 
+    @CrossOrigin(origins = {"http://localhost:3000", "https://qbot-slak.onrender.com"})
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginDetail detail) {
         if (detail != null && !isEmpty(detail.getUsername()) && !isEmpty(detail.getPassword()) && bucket.tryConsume(1)) {

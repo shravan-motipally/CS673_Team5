@@ -104,6 +104,7 @@ export default function Login() {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
+                error={showBadLogin}
                 margin="normal"
                 required
                 fullWidth
@@ -114,6 +115,7 @@ export default function Login() {
                 autoFocus
               />
               <TextField
+                error={showBadLogin}
                 margin="normal"
                 required
                 fullWidth
@@ -122,10 +124,7 @@ export default function Login() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                onChange={() => setShowBadLogin(false)}
               />
               <Button
                 type="submit"
@@ -135,11 +134,6 @@ export default function Login() {
               >
                 Sign In
               </Button>
-              {showBadLogin ? <Grid container>
-                <Grid item xs>
-                  Incorrect Password given
-                </Grid>
-              </Grid> : <div/>}
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
