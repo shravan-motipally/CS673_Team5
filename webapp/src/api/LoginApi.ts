@@ -8,12 +8,13 @@ export const login = async (username: string, password: string) => {
     }
     try {
         const response = await axios({
-            url: "https://qbot-slak.onrender.com/login",
-            method: "POST",
-            data: jsonPayload,
-            headers: {
-                'Content-Type': 'application/json',
-            }
+          timeout: 300000,
+          url: "https://answering-svc.onrender.com/login",
+          method: "POST",
+          data: jsonPayload,
+          headers: {
+              'Content-Type': 'application/json',
+          }
         });
         console.log(`login: ${JSON.stringify(response.data)}`);
         return response.data;
