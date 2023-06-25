@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -39,6 +39,7 @@ const isNotNullOrUndefined = (test: any) => {
 export default function Login() {
   const { screenState, setScreenState } = useContext(ScreenContext);
   const [showBadLogin, setShowBadLogin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -52,6 +53,7 @@ export default function Login() {
       // @ts-ignore
       password: (data.get('password') !== null ? data.get('password') : "").toString(),
     };
+
     (async () => {
       const details = await login(loginDetails.username, loginDetails.password);
 
@@ -126,14 +128,16 @@ export default function Login() {
                 autoComplete="current-password"
                 onChange={() => setShowBadLogin(false)}
               />
-              <Button
+              <LoadingButton
+                loading={loading}
+                loadingPosition="start"
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
                 Sign In
-              </Button>
+              </LoadingButton>
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
