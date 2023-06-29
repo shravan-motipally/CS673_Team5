@@ -19,6 +19,7 @@ public class AnsweringController {
         this.answeringService = answeringService;
     }
 
+    @CrossOrigin(origins = {"http://localhost:3000", "https://qbot-slak.onrender.com"})
     @GetMapping("/all")
     public ResponseEntity<AllExchanges> getAllExchanges() {
         // TODO: introduce auth
