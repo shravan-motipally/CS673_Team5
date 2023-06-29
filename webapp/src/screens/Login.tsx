@@ -15,12 +15,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ScreenContext } from '../App';
 import {useCallback, useContext, useState} from 'react';
 import {login} from "../api/LoginApi";
+import LoginIcon from '@mui/icons-material/Login';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://shravan-motipally.github.io/CS673_Team5/">
+      <Link color="inherit" href="https://qbot-slak.onrender.com/">
         QBot
       </Link>{' '}
       {new Date().getFullYear()}
@@ -130,7 +131,8 @@ export default function Login() {
               />
               <LoadingButton
                 loading={loading}
-                loadingPosition="start"
+                loadingPosition="end"
+                endIcon={<LoginIcon />}
                 type="submit"
                 fullWidth
                 variant="contained"
