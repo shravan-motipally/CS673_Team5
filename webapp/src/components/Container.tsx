@@ -101,7 +101,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 interface ContainerProps {
-	children: any;
+	children: any
 }
 
 const Container: React.FC<ContainerProps> = ( { children } ) => {
@@ -119,8 +119,9 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   const onLogin = () => {
     setScreenState({
+      ...screenState,
       screen: 'login',
-      isAuthed: screenState.isAuthed
+      isAuthed: screenState.isAuthed,
     });
   }
 
@@ -144,7 +145,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             QBot
           </Typography>
-          {!screenState.isAuthed ? <Button color="inherit" onClick={onLogin}>Login</Button> : <Avatar alt="Remy Sharp" src={smotipally} />}
+          {!screenState.isAuthed ? <Button color="inherit" disabled={screenState.isError} onClick={onLogin}>Login</Button> : <Avatar alt="Remy Sharp" src={smotipally} />}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -171,7 +172,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <HomeIcon onClick={() => { setScreenState( { ...screenState, screen: 'home' }); }}/>
+                  <HomeIcon onClick={() => { setScreenState( { ...screenState, screen: 'loading' }); }}/>
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>

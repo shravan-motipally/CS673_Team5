@@ -10,12 +10,10 @@ import smotipally from '../screens/images/smotipally.png';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
-import LinearProgress from '@mui/material/LinearProgress';
-import Box from '@mui/material/Box';
+// import {askPromptToModel} from "../api/QuestionAnswerApi";
 
 const isEmptyNullOrUndefined = (str: string) => {
 	return str === undefined || str === null || str === "";
@@ -31,6 +29,16 @@ const Typing = () => (
 	  </div>
   </div>
 )
+
+const processAnswerForBloom = (initialAnswer: string) => {
+  const searchTerm = 'I should reply with an answer:';
+  const indexOfFirst = initialAnswer.indexOf(searchTerm);
+  return initialAnswer.substring(indexOfFirst + searchTerm.length + 1);
+}
+
+const processAnswer = (initialAnswer: string) => {
+  return initialAnswer;
+}
 
 const ChatContainer = () => {
 	const dummyRef = useRef<HTMLSpanElement>(null);
@@ -56,9 +64,7 @@ const ChatContainer = () => {
       let res;
       try {
         res = await askAScienceQuestion(question);
-        const searchTerm = 'I should reply with an answer:';
-        const indexOfFirst = res.indexOf(searchTerm);
-        const answerProvided = res.substring(indexOfFirst + searchTerm.length + 1);
+        const answerProvided = processAnswerForBloom(res);
         res = answerProvided;
       } catch (e) {
         res = "I don't know but I will find out.";
