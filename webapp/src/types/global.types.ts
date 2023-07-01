@@ -6,5 +6,6 @@ export interface ScreenContextType {
 
 export interface ScreenState {
 	screen: string,
-	isAuthed: boolean
+	isAuthed: boolean,
+	isError: boolean,
 }

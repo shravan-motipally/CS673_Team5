@@ -18,7 +18,7 @@ import {excelToJsonOptions} from "./Edit.api";
 
 const defaultTheme = createTheme();
 
-interface Exchange {
+export interface Exchange {
     exchangeId: string,
     question: string,
     answer: string
