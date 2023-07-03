@@ -13,8 +13,9 @@ import axios from "axios";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
-import { spreadSheetData, settings } from "./Edit.api";
+import {spreadSheetData, settings, transformToJson} from "./Edit.api";
 import {excelToJsonOptions} from "./Edit.api";
+import * as excel from "xlsx";
 
 const defaultTheme = createTheme();
 
@@ -69,21 +70,58 @@ const Edit = () => {
       if (file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
         setError(true);
         setErrorMsg("Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now.");
+        return;
       }
-      // const result = excelToJson(excelToJsonOptions(file.name), (error: any, result: any) => {
-      //   if (error) {
-      //     console.error("Error converting excel to json" + error);
-      //     setError(true);
-      //     setErrorMsg("Error converting the excel given. Corrupted file?");
-      //   } else {
-      //     console.log(`result: ${result}`);
-      //   }
-      // });
-      // console.log(`result: ${JSON.stringify(result)}`)
+
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target === null) {
+            throw Error("file reading error");
+          } else {
+            const data = e.target.result;
+            const readData = excel.read(data, { type: 'binary'});
+            const wsname = readData.SheetNames[0];
+            const ws = readData.Sheets[wsname];
+
+            const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
+            // @ts-ignore
+            const jsonData = transformToJson(dataParse);
+            (async () => {
+              const res = await axios({
+                timeout: 300000,
+                url: "https://answering-svc.onrender.com/questions",
+                method: "POST",
+                data: jsonData,
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              });
+              setRowData(jsonData.exchanges);
+              if (res.status !== 200) {
+                setError(true);
+                setErrorMsg("Unable to save questions/answers at the moment, please try again")
+              }
+            })();
+          }
+        }
+        reader.onerror = (e) => {
+          console.error("Error reading excel file");
+          setErrorMsg("Error reading excel file");
+          setError(true);
+        }
+        reader.readAsBinaryString(file);
+      } catch (e) {
+        console.error("Error reading excel file");
+        setErrorMsg("Error reading excel file");
+        setError(true);
+      }
     }
   }, [file]);
 
   const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
     setError(false);
     setErrorMsg("");
     if (event !== null && event.target.files !== null && event.target.files[0] !== undefined) {
@@ -137,7 +175,7 @@ const Edit = () => {
               </Stack>
             </Grid>
             <Grid item>
-              <Typography variant="h6" align="center" color="text.secondary" paragraph>
+              <Typography variant="h6" align="center" color="red" paragraph>
                 {errorMsg}
               </Typography>
             </Grid>

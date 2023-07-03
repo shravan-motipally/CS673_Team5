@@ -18,7 +18,7 @@ public class PwServiceTest {
     @Test
     void generatePasswordFromHash() {
         String salt = pwService.generateSalt();
-        String hashed = pwService.generatePasswordFromHash("sPu+UTh9THO2rO@h!mop", salt);
+        String hashed = pwService.generatePasswordFromHash("", salt);
         System.out.println(format("pw is: %s", hashed));
     }
 }
