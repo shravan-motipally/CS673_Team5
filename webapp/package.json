@@ -9,6 +9,10 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.4",
+    "@tensorflow-models/qna": "1.0.1",
+    "@tensorflow/tfjs-converter": "3.15.0",
+    "@tensorflow/tfjs-core": "3.15.0",
+    "@tensorflow/tfjs-layers": "3.15.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -60,6 +64,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@tensorflow/tfjs": "3.15.0",
     "fs": "^0.0.1-security",
     "gh-pages": "^5.0.0"
   }

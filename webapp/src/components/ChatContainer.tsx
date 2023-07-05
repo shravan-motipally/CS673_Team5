@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useRef, useState, useCallback, useEffect } from 'react';
 
-import { askAScienceQuestion } from '../api/ExampleSearchApi';
 import './styles/ChatContainer.css';
 import { Message } from './types/Chat.types';
 import ChatMessage from './ChatMessage';
@@ -13,32 +12,8 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
-// import {askPromptToModel} from "../api/QuestionAnswerApi";
-
-const isEmptyNullOrUndefined = (str: string) => {
-	return str === undefined || str === null || str === "";
-}
-
-const Typing = () => (
-	<div className={`message received`}>
-		<img className="msgIcon" src={qbot} />
-	  <div className="typing">
-	    <div className="typing__dot"></div>
-	    <div className="typing__dot"></div>
-	    <div className="typing__dot"></div>
-	  </div>
-  </div>
-)
-
-const processAnswerForBloom = (initialAnswer: string) => {
-  const searchTerm = 'I should reply with an answer:';
-  const indexOfFirst = initialAnswer.indexOf(searchTerm);
-  return initialAnswer.substring(indexOfFirst + searchTerm.length + 1);
-}
-
-const processAnswer = (initialAnswer: string) => {
-  return initialAnswer;
-}
+import Typing from './Typing';
+import { answerQuestion, isEmptyNullOrUndefined } from "../utils/Chat";
 
 const ChatContainer = () => {
 	const dummyRef = useRef<HTMLSpanElement>(null);
@@ -61,14 +36,7 @@ const ChatContainer = () => {
     setMessages([...messages, currentMessage]);
     setQuestion('');
     (async () => {
-      let res;
-      try {
-        res = await askAScienceQuestion(question);
-        const answerProvided = processAnswerForBloom(res);
-        res = answerProvided;
-      } catch (e) {
-        res = "I don't know but I will find out.";
-      }
+      const res = await answerQuestion(question);
       setLoading(false);
       setAnswer(res);
       const receiverId = Math.floor(Math.random() * 1000);

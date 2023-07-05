@@ -1,54 +1,42 @@
 import axios from 'axios';
-// import { NlpManager } from "node-nlp";
 import {Exchange} from "../screens/Edit";
-
-// const manager = new NlpManager({ languages: ['en']});
+import * as qna from "@tensorflow-models/qna"
 
 export const getAllQnA = async () => {
   const res = await axios({
     timeout: 300000,
-    url: "http://localhost:8080/all",
+    url: "https://answering-svc.onrender.com/all",
     method: "GET"
   });
 
   return res.data;
 }
 
-// export const trainGreetings = async () => {
-//
-//   manager.addDocument('en', 'hello', 'greeting');
-//   manager.addDocument('en', 'hi', 'greeting');
-//   manager.addDocument('en', 'hi there', 'greeting');
-//   manager.addDocument('en', 'hey there', 'greeting');
-//   manager.addDocument('en', 'hey', 'greeting');
-//   manager.addDocument('en', 'yo', 'greeting');
-//   manager.addDocument('en', 'good morning', 'greeting');
-//   manager.addDocument('en', 'good afternoon', 'greeting');
-//   manager.addDocument('en', 'good evening', 'greeting');
-//
-//   manager.addAnswer('en', 'greeting', 'Hi there! Welcome to QBot! How may I help you today?')
-//   manager.addAnswer('en', 'greeting', 'Hello! Welcome to QBot!  Hope you\'re well! What can I do for you today?')
-//   manager.addAnswer('en', 'greeting', 'What\'s up!  Welcome to QBot!  What can I do for you today?');
-//
-//   await manager.train();
-// }
-//
-// export const trainModel = async () => {
-//   const answers = await getAllQnA();
-//   const { exchanges }: { exchanges: Array<Exchange> } = answers;
-//
-//   exchanges.forEach(exchange => {
-//     manager.addDocument('en', exchange.question, `question-${exchange.exchangeId}`);
-//     manager.addAnswer('en', `question-${exchange.exchangeId}`, exchange.answer);
-//   });
-//
-//   await manager.train();
-// }
-//
-// export const askPromptToModel = async (prompt: string) => {
-//   await trainGreetings();
-//   await trainModel();
-//   manager.save();
-//   const response = await manager.process('en', prompt);
-//   return response.answer;
-// }
+export async function askQuestionToTensorFlowModel(question: string, passage: string) {
+  const model = await qna.load();
+
+  return await model.findAnswers(question, passage);
+}
+
+export const findExactAnswerToQuestion = (question: string, exchanges: Array<Exchange>) => {
+  const res: { found: boolean, answer: string | null } = {
+    found: false,
+    answer: null
+  }
+  exchanges.forEach((exchange: Exchange) => {
+    if (question.trim().toLowerCase() === exchange.question.trim().toLowerCase()) {
+      res.found = true;
+      res.answer = exchange.answer;
+    }
+  });
+  return res
+}
+
+export const createContextForQuestion = async (exchanges: Array<Exchange>) => {
+  let context = "CS673 is a software engineering course at Boston University (BU).  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class. "
+  exchanges.forEach(exchange => {
+    // context += "If student asks '" + exchange.question + "' then Alex would reply: '" + exchange.answer + "'.  ";
+    context += exchange.answer + " ";
+  });
+  return context;
+}

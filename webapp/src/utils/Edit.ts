@@ -1,4 +1,4 @@
-import {Exchange} from "./Edit";
+import {Exchange} from "../screens/Edit";
 
 export const spreadSheetData = [
   {
