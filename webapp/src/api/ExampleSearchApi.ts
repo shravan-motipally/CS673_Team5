@@ -18,7 +18,7 @@ async function askBloom(jsonPayload: any) {
 }
 
 export async function askAScienceQuestion(question: string) {
-	const paddedQuestion = "CS673 is a software engineering course.  It is taught by Alex Elkuntah.  Students have a lot of questions for Alex within the class " +
+	const paddedQuestion = "CS673 is a software engineering course.  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class " +
 	"especially since he assigns a group project wherein students complete an entire project using agile frameworks.  " +
 	"If I were Alex and a student asks me \"Why should I take this course?\" I should respond as \"Because its a fun course of course!\"" +
 	"  Now suppose that I were Alex and a question from a student comes in" +
@@ -28,7 +28,7 @@ export async function askAScienceQuestion(question: string) {
       "parameters": {
           "temperature": 1,
           "min_length": 25,
-          "max_new_tokens": 100,
+          "max_new_tokens": 50,
           "return_full_text": true,
           "do_sample": false,
           "seed": 10,
