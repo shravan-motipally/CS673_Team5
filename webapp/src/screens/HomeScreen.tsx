@@ -1,37 +1,14 @@
 import * as React from 'react';
-import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
-import DialogTitle from '@mui/material/DialogTitle';
-import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
-
-import Divider from '@mui/material/Divider';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import qbot from './images/qbot-temp.png';
-import TextField from '@mui/material/TextField';
-import SendIcon from '@mui/icons-material/Send';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import LinearProgress from '@mui/material/LinearProgress';
-import Paper from '@mui/material/Paper';
-import { askAScienceQuestion } from '../api/ExampleSearchApi';
 import ChatContainer from '../components/ChatContainer';
 
 const defaultTheme = createTheme();
-
-const isEmptyNullOrUndefined = (str: string) => {
-	return str === undefined || str === null || str === "";
-}
 
 const Home = () => {
 

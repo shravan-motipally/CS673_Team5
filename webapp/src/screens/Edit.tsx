@@ -12,7 +12,7 @@ import axios from "axios";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
-import {spreadSheetData, settings, transformToJson} from "../utils/Edit";
+import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
 import * as excel from "xlsx";
 
 const defaultTheme = createTheme();

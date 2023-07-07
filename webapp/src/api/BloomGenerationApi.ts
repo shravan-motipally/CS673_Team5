@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // DO NOT EVER PUSH THE API KEY TO GIT.
-const apiToken = process.env.REACT_APP_BLOOM_API_TOKEN;
+export const apiToken = process.env.REACT_APP_BLOOM_API_TOKEN;
 
 async function askBloom(jsonPayload: any) {
     const response = await axios({
