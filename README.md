@@ -10,7 +10,7 @@ that the professor might not have the time to answer.
 
 | Name | LinkedIn |
 |---|---|
-| Jacob Kustra | |
+| Jacob Kustra | https://www.linkedin.com/in/jacob-kustra/ |
 | Richard Wu | |
 | Idenson Eltume | |
 | Xiang Zhou | |
