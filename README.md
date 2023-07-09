@@ -11,7 +11,7 @@ that the professor might not have the time to answer.
 | Name | LinkedIn |
 |---|---|
 | Jacob Kustra | https://www.linkedin.com/in/jacob-kustra/ |
-| Richard Wu | |
+| Richard Wu | https://www.linkedin.com/in/richardjwu/ |
 | Idenson Eltume | |
 | Xiang Zhou | |
 | Shravan Motipally | https://www.linkedin.com/in/shravan-motipally | 
