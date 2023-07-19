@@ -12,7 +12,6 @@ async function askBloom(jsonPayload: any) {
 			   'Authorization': `Bearer ${apiToken}`
 			}
     });
-    console.log(`response: ${JSON.stringify(response.data)}`);
     return response.data
 }
 

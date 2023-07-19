@@ -29,7 +29,6 @@
 //     query: question,
 //   });
 //
-//   console.log(res);
 //   return res;
 // }
 //

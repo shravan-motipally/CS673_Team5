@@ -11,7 +11,7 @@ export const login = async (username: string, password: string) => {
         return response.data;
     } catch (e) {
         // @ts-ignore
-        console.log('Error on login.  Message: ' + e.message);
+        console.error('Error on login.  Message: ' + e.message);
         return null;
     }
 }

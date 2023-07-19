@@ -1,6 +1,5 @@
 import {environment} from "./StringConstants";
 export const getAnsweringSvcUrl = () => {
-  console.log("Environment is: "+ environment);
   return environment === "prod" ? "https://answering-svc.onrender.com" : "http://localhost:8080";
 }
 export const ANSWERING_SVC_URL = getAnsweringSvcUrl();
