@@ -1,5 +1,5 @@
-import axios from "axios";
 import { Buffer } from 'buffer';
+import {attemptLogin} from "./QuestionAnswerApi";
 
 export const login = async (username: string, password: string) => {
     const jsonPayload = {
@@ -7,20 +7,11 @@ export const login = async (username: string, password: string) => {
         password: Buffer.from(password, 'ascii').toString('base64')
     }
     try {
-        const response = await axios({
-          timeout: 300000,
-          url: "https://answering-svc.onrender.com/login",
-          method: "POST",
-          data: jsonPayload,
-          headers: {
-              'Content-Type': 'application/json',
-          }
-        });
-        console.log(`login: ${JSON.stringify(response.data)}`);
+        const response = await attemptLogin(jsonPayload);
         return response.data;
     } catch (e) {
         // @ts-ignore
-        console.log('Error on login.  Message: ' + e.message);
+        console.error('Error on login.  Message: ' + e.message);
         return null;
     }
 }

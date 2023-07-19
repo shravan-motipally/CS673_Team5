@@ -24,16 +24,6 @@ const Home = () => {
             pb: 2,
           }}
         >
-          <Grid container direction="column" alignItems="center">
-            <Grid item>
-              <img src={qbot} alt="QBot" />
-            </Grid>
-						<Grid item>
-		          <Typography variant="h5" align="center" color="text.secondary" paragraph>
-		            Welcome to QBot
-		          </Typography>
-            </Grid>
-          </Grid>
           <ChatContainer />
         </Box>
       </main>
