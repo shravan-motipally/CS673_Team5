@@ -61,7 +61,6 @@ const Edit = () => {
 
   useEffect(() => {
     if (file !== null && file !== undefined) {
-      console.log('file set state action');
       if (file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
         setError(true);
         setErrorMsg("Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now.");

@@ -61,7 +61,6 @@ export const answerQuestion = async (question: string, allowGenerativeAnswers: b
         res = I_DONT_KNOW;
       }
       // const extendedContext = await createLargeContextForQuestion(exchanges);
-      // console.log(extendedContext);
       // const answer = await respondWithLangchain(question, extendedContext);
       // res = answer.text;
     } else {

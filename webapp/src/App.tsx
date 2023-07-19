@@ -100,7 +100,6 @@ export const App = () => {
 
 	useEffect(() => {
 		(async () => {
-			console.log("Loading state changed.")
 			if (loading) {
 				const loaded = await getBackendHealth();
 				setLoading(false);
@@ -114,7 +113,6 @@ export const App = () => {
 	}, [loading])
 
 	useEffect(() => {
-		console.log("screen state changed to " + screenState.screen);
 		if (screenState.screen === "loading") {
 			setLoading(true);
 		}

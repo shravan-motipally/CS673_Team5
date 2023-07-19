@@ -60,19 +60,19 @@ export const prepBot = async (exchanges: Array<Exchange>, question: string) => {
   //   returnSourceDocuments: true,
   // });
   const similarDocs = await vectorStore.similaritySearch(question);
-  console.log(similarDocs);
+
   const res = await chain.call({ input_documents: similarDocs, question: question, returnFullText: false });
-  console.log(res);
+
   return res.text;
   //
-  // console.log(res);
+
   // return I_DONT_KNOW;
 }
 
 // export const chatWithBot = async (message: string) => {
 //   try {
 //     const { response } = await chain.call({ input: message });
-//     console.log(response);
+
 //     return response;
 //   } catch (e) {
 //     console.error(e);
