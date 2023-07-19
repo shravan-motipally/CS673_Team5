@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
 import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
 import * as excel from "xlsx";
+import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
 
 const defaultTheme = createTheme();
 
@@ -53,12 +54,8 @@ const Edit = () => {
 
 	useEffect(() => {
     (async () => {
-      const res = await axios({
-        timeout: 300000,
-        url: "https://answering-svc.onrender.com/all",
-        method: "GET"
-      });
-      setRowData(res.data.exchanges);
+      const { exchanges } = await getAllQnA();
+      setRowData(exchanges);
     })();
   }, []);
 
@@ -86,20 +83,12 @@ const Edit = () => {
             // @ts-ignore
             const jsonData = transformToJson(dataParse);
             (async () => {
-              const res = await axios({
-                timeout: 300000,
-                url: "https://answering-svc.onrender.com/questions",
-                method: "POST",
-                data: jsonData,
-                headers: {
-                  'Content-Type': 'application/json',
-                }
-              });
-              setRowData(jsonData.exchanges);
+              const res = await updateQuestions(jsonData);
               if (res.status !== 200) {
                 setError(true);
                 setErrorMsg("Unable to save questions/answers at the moment, please try again")
               }
+              setRowData(jsonData.exchanges);
             })();
           }
         }

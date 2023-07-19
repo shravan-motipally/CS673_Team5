@@ -42,10 +42,6 @@ export default function Login() {
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-
-    // TODO: backend folks, here's where you do the api call to login
-    // Ensure that you don't call a single /login api with clear text creds.
-
       const loginDetails = {
       // @ts-ignore
       username: (data.get('username') !== null ? data.get('username') : "").toString(),
@@ -60,7 +56,8 @@ export default function Login() {
         setScreenState({
           ...screenState,
           screen: 'home',
-          isAuthed: true
+          isAuthed: true,
+          photoUrl: details.photoUrl
         });
         setShowBadLogin(false);
       } else {

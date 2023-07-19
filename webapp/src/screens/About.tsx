@@ -18,28 +18,14 @@ import jkustra from './images/jkustra.png';
 import rwu from './images/rwu.png';
 import ieltume from './images/IEltume.png';
 import xzhou from './images/xzhou.png';
-import kkomanduru from './images/kkomanduru.png';
-
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import Divider from "@mui/material/Divider";
 
 const cards = [{
 		id: 1,
 		name: "Shravan Motipally",
-		description: "Add information about yourself here",
+		description: "Engineering Lead | Mckinsey & Company",
 		image: smotipally,
-		email: "shrvanm@bu.edu",
+		email: "shravanm@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
 	{
@@ -47,7 +33,7 @@ const cards = [{
 		name: "Jacob Kustra",
 		description: "Add information about yourself here",
 		image: jkustra,
-		email: "shrvanm@bu.edu",
+		email: "jkustra@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
 	{
@@ -55,7 +41,7 @@ const cards = [{
 		name: "Richard Wu",
 		description: "Add information about yourself here",
 		image: rwu,
-		email: "shrvanm@bu.edu",
+		email: "rwu@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
 	{
@@ -63,7 +49,7 @@ const cards = [{
 		name: "Idenson Eltume",
 		description: "Add information about yourself here",
 		image: ieltume,
-		email: "shrvanm@bu.edu",
+		email: "ieltume@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	},
 	{
@@ -71,15 +57,7 @@ const cards = [{
 		name: "Xiang Zhou",
 		description: "Add information about yourself here",
 		image: xzhou,
-		email: "shrvanm@bu.edu",
-		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
-	},
-	{
-		id: 6,
-		name: "Kamal Komanduru",
-		description: "Add information about yourself here",
-		image: kkomanduru,
-		email: "shrvanm@bu.edu",
+		email: "xzhou@bu.edu",
 		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
 	}
 ];
@@ -96,26 +74,53 @@ export default function About() {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 8,
-            pb: 6,
+            pt: 2,
+            pb: 2,
           }}
         >
-          <Container maxWidth="sm">
+          <Container maxWidth="sm" sx={{
+						marginLeft: 0
+					}}>
             <Typography
-              component="h1"
-              variant="h2"
-              align="center"
+              variant="h3"
+              align="left"
               color="text.primary"
               gutterBottom
             >
-              About QBot
+              About
             </Typography>
-            <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              TODO: Write about QBot About page and give detailed about us.
-            </Typography>
+						<Divider />
+						<Box
+							sx={{
+								pt: 1,
+								pb: 1
+							}}
+							>
+							<Typography
+								variant="body1"
+								align="left"
+								color="text.secondary"
+								paragraph
+							>
+								QBot or Question Bot is designed to be a tool used to answer any questions students
+								may have regarding the class that they are taking.  It uses Artificial Intelligence
+								to answer the students's question.  If it finds an answer, it will reply with a prerecorded
+								answer from the Professor or the TA.  If it cannot find an answer, it advises the student
+								to reach out to the Professor.
+							</Typography>
+						</Box>
+						<Typography
+							variant="h3"
+							align="left"
+							color="text.primary"
+							gutterBottom
+						>
+							Our team
+						</Typography>
+						<Divider />
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 8, marginLeft: 0 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {cards.map((card) => (
@@ -126,8 +131,8 @@ export default function About() {
                   <CardMedia
                     component="div"
                     sx={{
-                      // 16:9
-                      pt: '56.25%',
+
+											height: "200px"
                     }}
                     // TODO: make images work.
                     image={card.image}
@@ -136,15 +141,15 @@ export default function About() {
                     <Typography gutterBottom variant="h5" component="h2">
                       {card.name}
                     </Typography>
-                    <Typography>
+                    <Typography sx={{ color: "black" }}>
                       {card.description}
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <IconButton aria-label="LinkedIn" onClick={() => { window.location.href = card.linkedIn }} >
+                    <IconButton aria-label="LinkedIn" href={card.linkedIn} >
                       <LinkedInIcon />
                     </IconButton>
-                    <IconButton aria-label="Email" onClick={() => { window.location.href = card.email }}>
+                    <IconButton aria-label="Email" href={`mailto:${card.email}`}>
                       <EmailIcon />
                     </IconButton>
                   </CardActions>

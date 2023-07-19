@@ -7,37 +7,53 @@ import About from './screens/About';
 import Edit from './screens/Edit';
 import Error from "./screens/Error";
 import Container from './components/Container';
+import {Box, Container as MuiContainer, LinearProgress} from '@mui/material';
 import { createContext } from 'react';
 import { ScreenContextType, ScreenState } from './types/global.types';
 import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import {getBackendHealth} from "./api/HealthCheckApi";
 import Typography from "@mui/material/Typography";
-
+import smotipally from './screens/images/smotipally.png';
+import Settings from './screens/Settings';
+import CssBaseline from "@mui/material/CssBaseline";
+import {Skeleton} from "@mui/lab";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
 		screen: 'home',
 		isAuthed: false,
 		isError: false,
+		photoUrl: smotipally,
+		generativeMode: false,
 	},
 	setScreenState: () => {}
 });
 
 function Loading() {
+	const [progress, setProgress] = React.useState(0);
+
+	React.useEffect(() => {
+		const timer = setInterval(() => {
+			setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 1));
+		}, 1200);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
 	return (
-		<div>
+
 			<Backdrop
-				sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+				sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
 				open={true}
 			>
-				<Typography variant="body2" color="text.secondary" align="center">
-					{'Loading app... It may take up to 2-3 minutes.  Sorry about that! '}
-				</Typography>
-				<CircularProgress color="inherit" />
-
+				<Box sx={{ width: '50%' }}>
+					<LinearProgress variant="determinate" value={progress} />
+				</Box>
 			</Backdrop>
-		</div>
 	);
 }
 
@@ -58,6 +74,9 @@ const showScreen = (screen: string) => {
 		case 'admin':
 			return <Edit />
 			break;
+		case 'config':
+			return <Settings />
+			break;
 		case 'loading':
 			return <Loading />
 			break;
@@ -75,10 +94,13 @@ export const App = () => {
 		screen: 'loading',
 		isAuthed: false,
 		isError: false,
+		photoUrl: smotipally,
+		generativeMode: false,
 	});
 
 	useEffect(() => {
 		(async () => {
+			console.log("Loading state changed.")
 			if (loading) {
 				const loaded = await getBackendHealth();
 				setLoading(false);
@@ -92,6 +114,7 @@ export const App = () => {
 	}, [loading])
 
 	useEffect(() => {
+		console.log("screen state changed to " + screenState.screen);
 		if (screenState.screen === "loading") {
 			setLoading(true);
 		}

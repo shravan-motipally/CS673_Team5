@@ -12,7 +12,12 @@ export const spreadSheetData = [
   },
 ];
 
-export const transformToJson = (stringArr: string[][]) => {
+export interface ExcelJson {
+  numOfQuestions: number,
+  exchanges: Array<Exchange>
+}
+
+export const transformToJson: (stringArr: string[][]) => ExcelJson = (stringArr: string[][]) => {
   if (stringArr.length === 0 || stringArr.length === 1) {
     console.error("Invalid array given");
     throw Error("Invalid array given");

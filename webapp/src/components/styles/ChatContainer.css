@@ -2,8 +2,7 @@
 
 main.chat-container {
   padding: 10px;
-  height: 30vh;
-  margin: 10vh 0 10vh;
+  height: 80%;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
@@ -165,4 +164,10 @@ img.msgIcon {
   100% {
     opacity: 0;
   }
+}
+
+.at_the_top {
+  z-index: 99;
+  position: fixed;
+  margin-bottom: 100px;
 }

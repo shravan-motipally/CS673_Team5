@@ -2,7 +2,7 @@
 // import { VectorDBQAChain } from "langchain/chains";
 // import { HNSWLib } from "langchain/vectorstores/hnswlib";
 // import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-// import { apiToken } from "../api/BloomGenerationApi";
+// import {apiToken} from "../utils/StringConstants";
 // import {HuggingFaceInferenceEmbeddings} from "langchain/dist/embeddings/hf";
 // import {HuggingFaceInference} from "langchain/llms/hf";
 //

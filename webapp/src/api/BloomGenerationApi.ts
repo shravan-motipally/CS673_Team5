@@ -1,15 +1,14 @@
 import axios from 'axios';
-
-// DO NOT EVER PUSH THE API KEY TO GIT.
-export const apiToken = process.env.REACT_APP_BLOOM_API_TOKEN;
+import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
+import { TEXT_GENERATION_URL_BLOOM } from "../utils/Urls";
 
 async function askBloom(jsonPayload: any) {
     const response = await axios({
-      url: "https://api-inference.huggingface.co/models/bigscience/bloom",
+      url: TEXT_GENERATION_URL_BLOOM,
       method: "POST",
       data: jsonPayload,
       headers: {
-			   'Content-Type': 'application/json',
+			   'Content-Type': APPLICATION_JSON,
 			   'Authorization': `Bearer ${apiToken}`
 			}
     });
