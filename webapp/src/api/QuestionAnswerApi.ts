@@ -1,16 +1,46 @@
 import axios from 'axios';
 import {Exchange} from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna"
-import {apiToken} from "./BloomGenerationApi";
+import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
+import {getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} from "../utils/Urls";
+import {ExcelJson} from "../utils/ExcelUtils";
 
 export const getAllQnA = async () => {
   const res = await axios({
     timeout: 300000,
-    url: "https://answering-svc.onrender.com/all",
+    url: getAllQnAUrl(),
     method: "GET"
   });
 
   return res.data;
+}
+
+export const updateQuestions = async (jsonData: ExcelJson) => {
+  const res = await axios({
+    timeout: 300000,
+    url: updateQuestionsUrl(),
+    method: "POST",
+    data: jsonData,
+    headers: {
+      'Content-Type': APPLICATION_JSON,
+    }
+  });
+
+  return res;
+}
+
+export const attemptLogin = async (jsonData: { username: string, password: string } ) => {
+  const res = await axios({
+    timeout: 300000,
+    url: loginUrl(),
+    method: "POST",
+    data: jsonData,
+    headers: {
+      'Content-Type': APPLICATION_JSON,
+    }
+  });
+
+  return res;
 }
 
 export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchange>, question: string) => {
@@ -23,11 +53,11 @@ export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchang
   let response = { data: [] };
   try {
     response = await axios({
-      url: "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
+      url: SEMANTIC_SIMILARITY_URL,
       method: "POST",
       data: jsonPayload,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': APPLICATION_JSON,
         'Authorization': `Bearer ${apiToken}`
       }
     });
@@ -77,9 +107,9 @@ export const createContextForQuestion = async (exchanges: Array<Exchange>) => {
 }
 
 export const createLargeContextForQuestion = async (exchanges: Array<Exchange>) => {
-  let context = "CS673 is a software engineering course at Boston University (BU).  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class. "
+  let context = "CS673 is a software engineering course at Boston University (BU).  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class. \n"
   exchanges.forEach(exchange => {
-    context += "If student asks '" + exchange.question + "' then Alex would reply: '" + exchange.answer + "'.  ";
+    context += "If student asks '" + exchange.question + "' then Alex would reply: '" + exchange.answer + "'.  \n\n";
     // context += exchange.answer + " ";
   });
   return context;
