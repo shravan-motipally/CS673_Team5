@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState, useEffect, useMemo, useCallback, ChangeEvent} from 'react';
+import {useState, useEffect, useMemo, useCallback, ChangeEvent, useContext} from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -15,8 +15,8 @@ import xlsx from "json-as-xlsx"
 import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
 import * as excel from "xlsx";
 import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
-
-const defaultTheme = createTheme();
+import {darkTheme, lightTheme} from "../utils/Themes";
+import {ScreenContext} from "../App";
 
 export interface Exchange {
     exchangeId: string,
@@ -25,7 +25,8 @@ export interface Exchange {
 }
 
 const Edit = () => {
-	const [rowData, setRowData] = useState<Array<Exchange>>([]);
+  const { screenState } = useContext(ScreenContext);
+  const [rowData, setRowData] = useState<Array<Exchange>>([]);
   const [file, setFile] = useState<File>();
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -120,7 +121,7 @@ const Edit = () => {
 
 
     return (
-		<ThemeProvider theme={defaultTheme}>
+      <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
       <main>
         {/* Hero unit */}
