@@ -10,5 +10,4 @@ export interface ScreenState {
 	isError: boolean,
 	photoUrl: string,
 	generativeMode: boolean,
-	darkMode: boolean
 }

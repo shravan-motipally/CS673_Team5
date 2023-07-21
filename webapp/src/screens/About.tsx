@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import {createTheme, ThemeProvider, useTheme} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
 import IconButton from '@mui/material/IconButton';
@@ -19,9 +19,6 @@ import rwu from './images/rwu.png';
 import ieltume from './images/IEltume.png';
 import xzhou from './images/xzhou.png';
 import Divider from "@mui/material/Divider";
-import {useContext} from "react";
-import {ScreenContext} from "../App";
-import {darkTheme, lightTheme} from "../utils/Themes";
 
 const cards = [{
 		id: 1,
@@ -65,13 +62,12 @@ const cards = [{
 	}
 ];
 
+// TODO remove, this demo shouldn't need to reset the theme.
+const defaultTheme = createTheme();
+
 export default function About() {
-	const { screenState } = useContext(ScreenContext);
-	const theme = useTheme();
-
-
-	return (
-		<ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
+  return (
+    <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <main>
         {/* Hero unit */}
@@ -145,7 +141,7 @@ export default function About() {
                     <Typography gutterBottom variant="h5" component="h2">
                       {card.name}
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography sx={{ color: "black" }}>
                       {card.description}
                     </Typography>
                   </CardContent>

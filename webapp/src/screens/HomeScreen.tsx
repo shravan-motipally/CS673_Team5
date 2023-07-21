@@ -7,15 +7,13 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import qbot from './images/qbot-temp.png';
 import ChatContainer from '../components/ChatContainer';
-import {useContext} from "react";
-import {ScreenContext} from "../App";
-import {darkTheme, lightTheme} from "../utils/Themes";
+
+const defaultTheme = createTheme();
 
 const Home = () => {
-  const { screenState } = useContext(ScreenContext);
 
-  return (
-		<ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
+	return (
+		<ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <main>
         {/* Hero unit */}

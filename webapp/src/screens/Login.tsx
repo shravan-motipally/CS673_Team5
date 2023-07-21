@@ -14,7 +14,6 @@ import { ScreenContext } from '../App';
 import {useCallback, useContext, useState} from 'react';
 import {login} from "../api/LoginApi";
 import LoginIcon from '@mui/icons-material/Login';
-import {darkTheme, lightTheme} from "../utils/Themes";
 
 function Copyright(props: any) {
   return (
@@ -28,6 +27,9 @@ function Copyright(props: any) {
     </Typography>
   );
 }
+
+// TODO remove, this demo shouldn't need to reset the theme.
+const defaultTheme = createTheme();
 
 const isNotNullOrUndefined = (test: any) => {
   return test !== null && test !== undefined;
@@ -66,7 +68,7 @@ export default function Login() {
   }, [setScreenState, showBadLogin, setShowBadLogin]);
 
   return (
-    <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '80vh' }}>
         <CssBaseline />
         <Grid

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import CssBaseline from "@mui/material/CssBaseline";
-import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from '@mui/material/Container';
 import Typography from "@mui/material/Typography";
@@ -12,13 +12,11 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import {useContext} from "react";
-import {ScreenContext} from "../App";
-import {darkTheme, lightTheme} from "../utils/Themes";
+
+const defaultTheme = createTheme();
 
 const Help = () => {
 	const [expanded, setExpanded] = React.useState<string | false>(false);
-	const { screenState } = useContext(ScreenContext);
 
 	const handleChange =
 		(panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -26,8 +24,7 @@ const Help = () => {
 		};
 
 	return (
-		<ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
-			<CssBaseline />
+		<ThemeProvider theme={defaultTheme}>
 			<Grid container component="main" sx={{ height: '80vh' }}>
 				<CssBaseline />
 				<Grid
@@ -70,13 +67,13 @@ const Help = () => {
 									aria-controls="panel1bh-content"
 									id="panel1bh-header"
 								>
-									<Typography sx={{ width: '33%', flexShrink: 0, color: "text.secondary" }}>
+									<Typography sx={{ width: '33%', flexShrink: 0, color: 'black' }}>
 										General
 									</Typography>
 									<Typography sx={{ color: 'text.secondary' }}>How do I ask a question?</Typography>
 								</AccordionSummary>
 								<AccordionDetails>
-									<Typography sx={{ color: "text.secondary" }}>
+									<Typography sx={{ color: 'black' }}>
 										Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
 										Aliquam eget maximus est, id dignissim quam.
 									</Typography>
@@ -88,13 +85,13 @@ const Help = () => {
 									aria-controls="panel2bh-content"
 									id="panel2bh-header"
 								>
-									<Typography sx={{ width: '33%', flexShrink: 0, color: "text.secondary" }}>Approach</Typography>
+									<Typography sx={{ width: '33%', flexShrink: 0, color: 'black' }}>Approach</Typography>
 									<Typography sx={{ color: 'text.secondary' }}>
 										How was the chat bot created?
 									</Typography>
 								</AccordionSummary>
 								<AccordionDetails>
-									<Typography sx={{ color: "text.secondary" }}>
+									<Typography sx={{ color: 'black' }}>
 										Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus,
 										varius pulvinar diam eros in elit. Pellentesque convallis laoreet
 										laoreet.
@@ -107,7 +104,7 @@ const Help = () => {
 									aria-controls="panel3bh-content"
 									id="panel3bh-header"
 								>
-									<Typography sx={{ width: '33%', flexShrink: 0, color: "text.secondary" }}>
+									<Typography sx={{ width: '33%', flexShrink: 0, color: 'black' }}>
 										Issues
 									</Typography>
 									<Typography sx={{ color: 'text.secondary' }}>
@@ -115,7 +112,7 @@ const Help = () => {
 									</Typography>
 								</AccordionSummary>
 								<AccordionDetails>
-									<Typography sx={{ color: "text.secondary" }}>
+									<Typography sx={{ color: 'black' }}>
 										Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit
 										amet egestas eros, vitae egestas augue. Duis vel est augue.
 									</Typography>
