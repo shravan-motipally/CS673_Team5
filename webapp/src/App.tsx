@@ -27,7 +27,6 @@ export const ScreenContext = createContext<ScreenContextType>({
 		isError: false,
 		photoUrl: smotipally,
 		generativeMode: false,
-		darkMode: false
 	},
 	setScreenState: () => {}
 });
@@ -97,7 +96,6 @@ export const App = () => {
 		isError: false,
 		photoUrl: smotipally,
 		generativeMode: false,
-		darkMode: false
 	});
 
 	useEffect(() => {
