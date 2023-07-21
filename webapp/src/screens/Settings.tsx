@@ -8,6 +8,7 @@ import {FormControlLabel, FormGroup, FormHelperText, FormLabel, Switch} from "@m
 import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import {darkTheme, lightTheme} from "../utils/Themes";
 
 const defaultTheme = createTheme();
 
@@ -22,7 +23,7 @@ const Settings = () => {
   }, [screenState]);
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
       <main>
         <Box
