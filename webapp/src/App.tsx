@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import HomeScreen from './screens/HomeScreen';
 import Help from './screens/Help';
 import Login from './screens/Login';
@@ -7,18 +7,15 @@ import About from './screens/About';
 import Edit from './screens/Edit';
 import Error from "./screens/Error";
 import Container from './components/Container';
-import {Box, Container as MuiContainer, LinearProgress} from '@mui/material';
+import {Box, LinearProgress} from '@mui/material';
 import { createContext } from 'react';
 import { ScreenContextType, ScreenState } from './types/global.types';
 import Backdrop from '@mui/material/Backdrop';
 
 import {getBackendHealth} from "./api/HealthCheckApi";
-import Typography from "@mui/material/Typography";
 import smotipally from './screens/images/smotipally.png';
 import Settings from './screens/Settings';
-import CssBaseline from "@mui/material/CssBaseline";
-import {Skeleton} from "@mui/lab";
-import CircularProgress from "@mui/material/CircularProgress";
+import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
@@ -27,7 +24,10 @@ export const ScreenContext = createContext<ScreenContextType>({
 		isError: false,
 		photoUrl: smotipally,
 		generativeMode: false,
-		darkMode: false
+		darkMode: false,
+		generativeModel: GPT2,
+		semanticSimilarityModel: PARAPHRASE_MINILM,
+		semanticSimilarityThreshold: 0.7
 	},
 	setScreenState: () => {}
 });
@@ -97,7 +97,10 @@ export const App = () => {
 		isError: false,
 		photoUrl: smotipally,
 		generativeMode: false,
-		darkMode: false
+		darkMode: false,
+		generativeModel: GPT2,
+		semanticSimilarityModel: PARAPHRASE_MINILM,
+		semanticSimilarityThreshold: 0.7
 	});
 
 	useEffect(() => {

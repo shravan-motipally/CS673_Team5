@@ -7,12 +7,22 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import qbot from './images/qbot-temp.png';
 import ChatContainer from '../components/ChatContainer';
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ScreenContext} from "../App";
 import {darkTheme, lightTheme} from "../utils/Themes";
+import {Exchange} from "./Edit";
+import {getAllQnA} from "../api/QuestionAnswerApi";
 
 const Home = () => {
   const { screenState } = useContext(ScreenContext);
+  const [fiveQuestions, setFiveQuestions] = useState<Array<Exchange>>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { exchanges } = await getAllQnA();
+      setFiveQuestions(exchanges.slice(0, 5));
+    })();
+  }, []);
 
   return (
 		<ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
@@ -26,7 +36,7 @@ const Home = () => {
             pb: 2,
           }}
         >
-          <ChatContainer />
+          <ChatContainer questions={fiveQuestions} />
         </Box>
       </main>
     </ThemeProvider>
