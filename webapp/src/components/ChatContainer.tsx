@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useRef, useState, useCallback, useEffect, useContext} from 'react';
+import {useRef, useState, useCallback, useEffect, useContext, useMemo} from 'react';
 
 import './styles/ChatContainer.css';
 import { Message } from './types/Chat.types';
@@ -20,8 +20,20 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Paper from "@mui/material/Paper";
 import CircularProgress from '@mui/material/CircularProgress';
 import {ScreenContext} from "../App";
-
-const ChatContainer = () => {
+import {styled, useTheme} from '@mui/material/styles';
+import Grid from '@mui/material/Unstable_Grid2';
+import {Exchange} from "../screens/Edit";
+import Button from "@mui/material/Button";
+import {ButtonGroup, Tooltip} from "@mui/material";
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 	const dummyRef = useRef<HTMLSpanElement>(null);
 	const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
@@ -32,7 +44,8 @@ const ChatContainer = () => {
   const [value, setValue] = React.useState(0);
   const ref = React.useRef<HTMLDivElement>(null);
   const { screenState, setScreenState } = useContext(ScreenContext);
-
+  const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
+  const theme = useTheme();
 
   React.useEffect(() => {
     (ref.current as HTMLDivElement).ownerDocument.body.scrollTop = 0;
@@ -72,8 +85,11 @@ const ChatContainer = () => {
           setMessages([...messages, ...initialMessages]);
           setLoading(false);
           setStarting(false);
-        }, 2000);
-      }, 2000);
+          setTimeout(() => {
+            setDisplayQuestions(true);
+          }, 500);
+        }, 500);
+      }, 500);
     }
 
   }, [messages])
@@ -91,7 +107,7 @@ const ChatContainer = () => {
     setMessages([...messages, currentMessage]);
     setQuestion('');
     (async () => {
-      const res = await answerQuestion(question, screenState.generativeMode);
+      const res = await answerQuestion(question, screenState);
       setLoading(false);
       setAnswer(res);
       const receiverId = Math.floor(Math.random() * 1000);
@@ -104,7 +120,7 @@ const ChatContainer = () => {
         type: "received"
       }]);
     })();
-  }, [question, answer, messages]);
+  }, [question, answer, messages, screenState]);
 
   useEffect(() => {
 		if (dummyRef !== null && dummyRef.current !== null) {
@@ -112,37 +128,101 @@ const ChatContainer = () => {
 		}
   }, [dummyRef, question, answer, messages]);
 
+  // TODO: clean up doubly written code (look for subtle differences)
+  const onButtonClick = useCallback((questionClicked: string) => {
+    setLoading(true);
+    const currentMessage: Message = {
+      id: Math.floor(Math.random() * 1000),
+      text: questionClicked,
+      createdAt: Date.now(),
+      uid: "1",
+      photoURL: student,
+      type: "sent"
+    };
+    
+    setMessages([...messages, currentMessage]);
+    (async () => {
+      const res = await answerQuestion(questionClicked, screenState);
+      setLoading(false);
+      setAnswer(res);
+      const receiverId = Math.floor(Math.random() * 1000);
+      setMessages([...messages, currentMessage, {
+        id: receiverId,
+        text: res,
+        createdAt: Date.now(),
+        uid: "2",
+        photoURL: ai,
+        type: "received"
+      }]);
+    })();
+    setDisplayQuestions(false);
+  }, [messages, screenState]);
+
+  const questionButtons = useMemo(() => {
+    return questions.map(question => (
+      <Button key={"qb-" + question.exchangeId} onClick={() => { onButtonClick(question.question); }}>{question.question}</Button>
+    ));
+  }, [questions]);
+
   return (
     <Box sx={{ pb: 7 }} ref={ref}>
       <CssBaseline />
 			<main className="chat-container">
-			  {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
+			  {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg} />)}
 			  <span ref={dummyRef}></span>
 			</main>
-      <Paper sx={{ m: 1, position: 'fixed', bottom: 0, right: 0, backgroundColor: "#FFFFFF", width: "60%" }} elevation={3}>
-        <FormControl fullWidth className="question-form" variant="outlined">
+      <Grid sx={{ ml: 6, display: displayQuestions ? 'flex' : 'none' }} container spacing={2}>
+        <Grid xs={4}>
+
+        </Grid>
+        <Grid xs={4}>
+
+        </Grid>
+        <Grid xs={4}>
+          <ButtonGroup
+            orientation="vertical"
+            aria-label="vertical outlined button group"
+          >
+            {questionButtons}
+          </ButtonGroup>
+        </Grid>
+        <Grid xs={4}>
+
+        </Grid>
+
+      </Grid>
+      <Paper sx={{ m: 1, position: 'fixed', bottom: 0, right: 0, backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff', width: "60%" }} elevation={3}>
+        <FormControl fullWidth  variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
           <OutlinedInput
-            className="input-question"
             id="question-input"
             type={'text'}
             endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="Ask question"
-                  onClick={(e) => {
-                    if (!isEmptyNullOrUndefined(question)) {
-                      setLoading(true);
-                      setAnswer("");
-                      askQuestion(e);
-                    }
-                  }}
-                  onMouseDown={() => {}}
-                  edge="end"
-                >
-                  {!loading ? <SendIcon /> : <CircularProgress />}
-                </IconButton>
-              </InputAdornment>
+              <>
+                {screenState.generativeMode ?
+                  <Tooltip title={"Although we make every effort to assure accuracy of responses to your questions. Still, we assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an \"as is\" basis with no guarantees of completeness, accuracy, usefulness or timeliness."} >
+                    <InputAdornment position="end" sx={{ mr: 1 }}>
+                      <PriorityHighIcon />
+                    </InputAdornment>
+                  </Tooltip>
+                 : <div/>}
+                <InputAdornment position="end" sx={{ mr: 1 }}>
+                  <IconButton
+                    aria-label="Ask question"
+                    onClick={(e) => {
+                      if (!isEmptyNullOrUndefined(question)) {
+                        setLoading(true);
+                        setAnswer("");
+                        askQuestion(e);
+                      }
+                    }}
+                    onMouseDown={() => {}}
+                    edge="end"
+                  >
+                    {!loading ? <SendIcon /> : <CircularProgress />}
+                  </IconButton>
+                </InputAdornment>
+              </>
             }
             value={question}
             label="Ask your question here"
@@ -158,7 +238,11 @@ const ChatContainer = () => {
                 setLoading(true);
                 setAnswer("");
                 askQuestion(e);
+                setDisplayQuestions(false);
               }
+            }}
+            inputProps={{
+              maxLength: 250
             }}
           />
         </FormControl>

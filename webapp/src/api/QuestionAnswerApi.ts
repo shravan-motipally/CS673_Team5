@@ -43,7 +43,7 @@ export const attemptLogin = async (jsonData: { username: string, password: strin
   return res;
 }
 
-export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchange>, question: string) => {
+export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchange>, question: string, model: string) => {
   const jsonPayload = {
     "inputs": {
       "source_sentence": question,
@@ -53,7 +53,7 @@ export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchang
   let response = { data: [] };
   try {
     response = await axios({
-      url: SEMANTIC_SIMILARITY_URL,
+      url: SEMANTIC_SIMILARITY_URL(model),
       method: "POST",
       data: jsonPayload,
       headers: {
@@ -69,7 +69,8 @@ export const getTheSemanticallySimilarExchange = async (exchanges: Array<Exchang
       exchange: exchanges[res.indexOf(Math.max(...res))]
     };
   } catch (e) {
-    console.error("Error retrieving semantically similar sentence")
+    // @ts-ignore
+    console.error("Error retrieving semantically similar sentence", e.message)
     return {
       score: 0,
       exchange: null

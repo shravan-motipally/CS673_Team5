@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {styled, useTheme, Theme, CSSObject, ThemeProvider, createTheme} from '@mui/material/styles';
+import {styled, useTheme, ThemeProvider} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -22,15 +22,21 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
-import { useContext } from 'react';
+import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import { ScreenContext } from '../App';
 import ai from '../screens/images/ai.png';
 
 import Avatar from '@mui/material/Avatar';
 import AppBar from "@mui/material/AppBar";
 import Drawer from "@mui/material/Drawer";
-import {Menu, MenuItem} from "@mui/material";
+import {Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
+import {Logout} from "@mui/icons-material";
+import {Exchange} from "../screens/Edit";
+import {getAllQnA} from "../api/QuestionAnswerApi";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import {StyledMenu} from "./StyledMenu";
 
 const drawerWidth = 240;
 
@@ -51,16 +57,26 @@ interface ContainerProps {
 const Container: React.FC<ContainerProps> = ( { children } ) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
   const [canOpen, setCanOpen] = React.useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(null);
+  const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
+  const [questionsDropDownAnchor, setQuestionsDropDownAnchor] = React.useState<null | HTMLElement>(null)
+  const logoutIsOpen = Boolean(logoutAnchor);
+  const questionIsOpen = Boolean(questionsDropDownAnchor);
+
   const theme = useTheme();
   const handleClose = () => {
-    setAnchorEl(null);
+    setLogoutAnchor(null);
   };
 
   const onMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    setLogoutAnchor(event.currentTarget);
   }
+  const handleQuestionsClick = (event: React.MouseEvent<HTMLElement>) => {
+    setQuestionsDropDownAnchor(event.currentTarget);
+  };
+  const handleQuestionsClose = () => {
+    setQuestionsDropDownAnchor(null);
+  };
 
   const onLogin = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setScreenState({
@@ -69,14 +85,22 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       isAuthed: screenState.isAuthed,
     });
     setCanOpen(true);
-    setAnchorEl(null);
+    setLogoutAnchor(null);
   }, [screenState]);
 
   const onLogout = React.useCallback(() => {
-    setScreenState({
-      ...screenState,
-      isAuthed: !screenState.isAuthed,
-    });
+    if (screenState.screen === 'admin' || screenState.screen === 'config') {
+      setScreenState({
+        ...screenState,
+        isAuthed: !screenState.isAuthed,
+        screen: 'home'
+      });
+    } else {
+      setScreenState({
+        ...screenState,
+        isAuthed: !screenState.isAuthed,
+      });
+    }
     setCanOpen(false);
   }, [screenState]);
 
@@ -86,6 +110,45 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       darkMode: !screenState.darkMode,
     });
   }, [screenState]);
+
+  const toggleGenerativeMode = useCallback(() => {
+    setScreenState({
+      ...screenState,
+      generativeMode: !screenState.generativeMode
+    });
+  }, [screenState]);
+
+
+  useEffect(() => {
+    (async () => {
+      const { exchanges } = await getAllQnA();
+      setAllQuestions(exchanges);
+    })();
+  }, []);
+
+  const questionMenuItems = useMemo(() => {
+    if (allQuestions.length !== 0) {
+      return allQuestions.map((question, index) => (
+        <Tooltip key={"tt-q-" + index} title={
+          <>
+            <Typography key={"tt-qu-" + index} paragraph color={"text.primary"}>
+              {question.question}
+            </Typography>
+            <Typography key={"tt-a-" + index} paragraph color={"text.primary"}>
+              {question.answer}
+            </Typography>
+          </>
+        }>
+          <MenuItem key={"tt-mi-" + index} sx={{ textOverflow: "ellipsis" }} onClick={() => {setQuestionsDropDownAnchor(null)}} disableRipple disableTouchRipple  >
+            {question.question}
+            <QuestionMarkIcon key={"tt-qmi-" + index} sx={{ marginLeft: "auto" }} />
+          </MenuItem>
+        </Tooltip>
+      ))
+    } else {
+      return []
+    }
+  }, [allQuestions])
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
@@ -102,18 +165,46 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             <Typography variant="h6" noWrap component="div" sx={{ marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
-            <IconButton sx={{ mr: 1 }} onClick={toggleDarkMode}>
-              {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-            </IconButton>
+            <Button
+              id="show-more-quetions-button"
+              aria-controls={questionIsOpen ? 'questions-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={questionIsOpen ? 'true' : undefined}
+              variant="contained"
+              disableElevation
+              onClick={handleQuestionsClick}
+              endIcon={<KeyboardArrowDownIcon />}
+            >
+              FAQ
+            </Button>
+            <StyledMenu
+              id="questions-menu"
+              MenuListProps={{
+                'aria-labelledby': 'show-more-quetions-button',
+              }}
+              anchorEl={questionsDropDownAnchor}
+              open={questionIsOpen}
+              onClose={handleQuestionsClose}
+            >
+              {questionMenuItems}
+            </StyledMenu>
+            <Tooltip title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
+              <Switch color="default" checked={screenState.generativeMode} onChange={toggleGenerativeMode} name="generativeMode" />
+            </Tooltip>
+            <Tooltip title={screenState.darkMode ? "Light Mode" : "Dark Mode"}>
+              <IconButton sx={{ mr: 1 }} onClick={toggleDarkMode}>
+                {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+            </Tooltip>
             {!screenState.isAuthed ?
               <Button
                 color="inherit"
                 variant="outlined"
                 disabled={screenState.isError}
                 onClick={onLogin}
-                aria-controls={open ? 'basic-menu' : undefined}
+                aria-controls={logoutIsOpen ? 'basic-menu' : undefined}
                 aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
+                aria-expanded={logoutIsOpen ? 'true' : undefined}
               >
                 Login
               </Button>
@@ -123,15 +214,62 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   <Avatar src={screenState.photoUrl} />
                 </IconButton>
                 <Menu
-                  id="basic-menu"
-                  anchorEl={anchorEl}
-                  open={open}
+                  anchorEl={logoutAnchor}
+                  id="account-menu"
+                  open={logoutIsOpen}
                   onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+                  onClick={handleClose}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
                   }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                  <MenuItem onClick={onLogout}>Logout</MenuItem>
+                  <MenuItem onClick={() => {
+                    setScreenState( { ...screenState, screen: 'admin' })
+                  }}>
+                    <ListItemIcon>
+                      <StorageIcon fontSize="small" />
+                    </ListItemIcon>
+                    Manage
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    setScreenState( { ...screenState, screen: 'config' })
+                  }}>
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    Settings
+                  </MenuItem>
+                  <MenuItem onClick={onLogout}>
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
                 </Menu>
               </div>}
           </Toolbar>
@@ -144,7 +282,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           <Toolbar />
           <List sx={{ paddingBottom:0 }}>
             {['Home'].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={() => { setScreenState( { ...screenState, screen: 'loading' }); }}>
+              <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={() => { setScreenState( { ...screenState, screen: 'loading' }); }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -168,7 +306,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           </List>
           <List sx={{ paddingTop: 0}}>
             {['Help', 'About'].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ?  'help' : 'about' }); } }>
+              <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ?  'help' : 'about' }); } }>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -195,7 +333,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               <Divider />
               <List>
                 {['Manage', 'Settings'].map((text, index) => (
-                  <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ? 'admin' : 'config' }); } }>
+                  <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ? 'admin' : 'config' }); } }>
                     <ListItemButton
                       sx={{
                         minHeight: 48,

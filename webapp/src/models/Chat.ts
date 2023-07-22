@@ -1,13 +1,12 @@
-import {Answer} from "@tensorflow-models/qna/dist/question_and_answer";
 import {
   findExactAnswerToQuestion,
-  askQuestionToTensorFlowModel,
-  createContextForQuestion, createLargeContextForQuestion,
   getAllQnA, getTheSemanticallySimilarExchange
 } from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 import {askAScienceQuestion} from "../api/BloomGenerationApi";
 import {prepBot} from "./Generative";
+import {BLOOM} from "../utils/Urls";
+import {ScreenState} from "../types/global.types";
 
 export const I_DONT_KNOW = "I’m sorry, I am not able to answer your question. Please try to rephrase your question and ask me again. If I am still unable to answer it, please ask your question directly to the Professor or TA."
 
@@ -21,48 +20,27 @@ export const processAnswerForBloom = (initialAnswer: string) => {
   return initialAnswer.substring(indexOfFirst + searchTerm.length + 1);
 }
 
-export const processAnswer = (initialAnswers: Array<Answer>) => {
-  const ans = initialAnswers.sort((a,b) => b.score - a.score)[0];
-  return {
-    answer: initialAnswers.length >= 1 ?
-      ans.text :
-      I_DONT_KNOW,
-    score: ans.score
-  };
-}
-
-export const answerQuestion = async (question: string, allowGenerativeAnswers: boolean) => {
+export const answerQuestion = async (question: string, screenState: ScreenState) => {
   let res;
   try {
     const answers = await getAllQnA();
     const { exchanges }: { exchanges: Array<Exchange> } = answers;
     const { found, answer } = findExactAnswerToQuestion(question, exchanges);
     if (!found) {
-      const semanticallySimilarExchange = await getTheSemanticallySimilarExchange(exchanges, question);
-      if (semanticallySimilarExchange.score > 0.7) {
+      const semanticallySimilarExchange = await getTheSemanticallySimilarExchange(exchanges, question, screenState.semanticSimilarityModel);
+      if (semanticallySimilarExchange.score > screenState.semanticSimilarityThreshold) {
         res = semanticallySimilarExchange.exchange?.answer || I_DONT_KNOW;
-      } else if (allowGenerativeAnswers) {
-        // const context = await createContextForQuestion(exchanges);
-        // const answers: Array<Answer> = await askQuestionToTensorFlowModel(question, context)
-        // if (answers.length === 0) {
-        //   const genBloomAnswer = await askAScienceQuestion(question);
-        //   res = processAnswerForBloom(genBloomAnswer);
-        // } else {
-        //   const {answer, score} = processAnswer(answers);
-        //   if (score > 0.50) {
-        //     res = answer
-        //   } else {
-        //     res = "I don't know at the moment but I will find out"
-        //   }
-        // }
-        res = await prepBot(exchanges, question);
-        // res += await chatWithBot(question);
+      } else if (screenState.generativeMode) {
+        if (screenState.generativeModel === BLOOM) {
+          const genBloomAnswer = await askAScienceQuestion(question);
+          res = processAnswerForBloom(genBloomAnswer);
+        } else {
+          res = await prepBot(exchanges, question, screenState.generativeModel);
+        }
       } else {
         res = I_DONT_KNOW;
       }
-      // const extendedContext = await createLargeContextForQuestion(exchanges);
-      // const answer = await respondWithLangchain(question, extendedContext);
-      // res = answer.text;
+
     } else {
       res = answer || I_DONT_KNOW;
     }
