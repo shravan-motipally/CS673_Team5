@@ -129,16 +129,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
       return allQuestions.map((question, index) => (
-        <Tooltip key={"tt-q-" + index} title={
-          <>
-            <Typography key={"tt-qu-" + index} paragraph color={"text.primary"}>
-              {question.question}
-            </Typography>
-            <Typography key={"tt-a-" + index} paragraph color={"text.primary"}>
-              {question.answer}
-            </Typography>
-          </>
-        }>
+        <Tooltip key={"tt-q-" + index} title={question.answer} >
           <MenuItem key={"tt-mi-" + index} sx={{ textOverflow: "ellipsis" }} onClick={() => {setQuestionsDropDownAnchor(null)}} disableRipple disableTouchRipple  >
             {question.question}
             <QuestionMarkIcon key={"tt-qmi-" + index} sx={{ marginLeft: "auto" }} />
