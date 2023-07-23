@@ -24,8 +24,10 @@ import {styled, useTheme} from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import {Exchange} from "../screens/Edit";
 import Button from "@mui/material/Button";
-import {ButtonGroup, Tooltip} from "@mui/material";
+import {ButtonGroup, Fab, FormLabel, Tooltip} from "@mui/material";
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -46,6 +48,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
   const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
   const theme = useTheme();
+  const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     (ref.current as HTMLDivElement).ownerDocument.body.scrollTop = 0;
@@ -128,6 +131,12 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 		}
   }, [dummyRef, question, answer, messages]);
 
+  useEffect(() => {
+    if (commonlyAskedQuestionsRef !== null && commonlyAskedQuestionsRef.current !== null) {
+      commonlyAskedQuestionsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [commonlyAskedQuestionsRef, displayQuestions]);
+
   // TODO: clean up doubly written code (look for subtle differences)
   const onButtonClick = useCallback((questionClicked: string) => {
     setLoading(true);
@@ -164,6 +173,10 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     ));
   }, [questions]);
 
+  const onFabClick = useCallback(() => {
+    setDisplayQuestions(!displayQuestions);
+  }, [displayQuestions]);
+
   return (
     <Box sx={{ pb: 7 }} ref={ref}>
       <CssBaseline />
@@ -179,18 +192,36 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 
         </Grid>
         <Grid xs={4}>
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="vertical outlined button group"
-          >
-            {questionButtons}
-          </ButtonGroup>
+          <FormControl fullWidth>
+            <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
+            <ButtonGroup
+              orientation="vertical"
+              aria-label="vertical outlined button group"
+              sx={{ pt: 1 }}
+            >
+              {questionButtons}
+            </ButtonGroup>
+          </FormControl>
+          <span ref={commonlyAskedQuestionsRef} />
         </Grid>
         <Grid xs={4}>
 
         </Grid>
-
       </Grid>
+      <Tooltip title={displayQuestions ? "Hide questions" : "Show commonly asked questions"}>
+        <Fab
+          size="small"
+          color="primary"
+          aria-label="add"
+          onClick={onFabClick}
+          sx={{
+          position: 'fixed',
+          bottom: 72,
+          right: 16
+        }}>
+          {displayQuestions ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon />}
+        </Fab>
+      </Tooltip>
       <Paper sx={{ m: 1, position: 'fixed', bottom: 0, right: 0, backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff', width: "60%" }} elevation={3}>
         <FormControl fullWidth  variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
