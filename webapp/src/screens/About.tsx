@@ -34,10 +34,10 @@ const cards = [{
 	{
 		id: 2,
 		name: "Jacob Kustra",
-		description: "Add information about yourself here",
+		description: "Team Lead | Boston University",
 		image: jkustra,
 		email: "jkustra@bu.edu",
-		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
+		linkedIn: "https://www.linkedin.com/in/jacob-kustra"
 	},
 	{
 		id: 3,
@@ -78,53 +78,130 @@ export default function About() {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 2,
+            pt: 0,
             pb: 2,
           }}
         >
-          <Container maxWidth="sm" sx={{
+          <Container maxWidth="md" sx={{
 						marginLeft: 0
 					}}>
             <Typography
               variant="h3"
               align="left"
               color="text.primary"
-              gutterBottom
+			  gutterBottom
             >
               About
             </Typography>
-						<Divider />
+			  <Divider />
 						<Box
 							sx={{
-								pt: 1,
-								pb: 1
+
+								pt: 0,
+								pb: 0
 							}}
 							>
 							<Typography
 								variant="body1"
 								align="left"
 								color="text.secondary"
-								paragraph
+								maxWidth = "md"
 							>
-								QBot or Question Bot is designed to be a tool used to answer any questions students
+								QBot, short for Question Bot, is designed to be a tool used to answer any questions students
 								may have regarding the class that they are taking.  It uses Artificial Intelligence
-								to answer the students's question.  If it finds an answer, it will reply with a prerecorded
+								to answer the students' question.  If it finds an answer, it will reply with a prerecorded
 								answer from the Professor or the TA.  If it cannot find an answer, it advises the student
 								to reach out to the Professor.
 							</Typography>
 						</Box>
-						<Typography
-							variant="h3"
-							align="left"
-							color="text.primary"
-							gutterBottom
-						>
-							Our team
-						</Typography>
-						<Divider />
           </Container>
         </Box>
-        <Container sx={{ py: 8, marginLeft: 0 }} maxWidth="md">
+		  <Box
+			  sx={{
+				  bgcolor: 'background.paper',
+				  pt: 0,
+				  pb: 0,
+			  }}
+		  >
+			  <Container maxWidth="md" sx={{
+				  marginLeft: 0
+			  }}>
+				  <Typography
+					  variant="h3"
+					  align="left"
+					  color="text.primary"
+					  gutterBottom
+				  >
+					  Motivation
+				  </Typography>
+				  <Divider />
+				  <Box
+					  sx={{
+						  pt: 0,
+						  pb: 2
+					  }}
+				  >
+					  <Typography
+						  variant="body1"
+						  align="left"
+						  color="text.secondary"
+						  maxWidth = "md"
+					  >
+						  Our team’s motivation for creating QBot was to be a student’s fastest way of getting
+						  accurate answers to the most commonly asked questions about the class they are taking with
+						  Professor Elentukh.
+					  </Typography>
+				  </Box>
+			  </Container>
+		  </Box>
+
+		  <Box
+			  sx={{
+				  bgcolor: 'background.paper',
+				  pt: 0,
+				  pb: 0,
+			  }}
+		  >
+			  <Container maxWidth="md" sx={{
+				  marginLeft: 0
+			  }}>
+				  <Typography
+					  variant="h3"
+					  align="left"
+					  color="text.primary"
+					  gutterBottom
+				  >
+					  Published Paper
+				  </Typography>
+				  <Divider />
+				  <Box
+					  sx={{
+						  pt: 0,
+						  pb: 2
+					  }}
+				  >
+					  <Typography
+						  variant="body1"
+						  align="left"
+						  color="text.secondary"
+						  maxWidth = "md"
+					  >
+						  The link to the paper we wrote about our project will be posted here once published.
+					  </Typography>
+				  </Box>
+				  <Typography
+					  variant="h3"
+					  align="left"
+					  color="text.primary"
+					  gutterBottom
+				  >
+					  Project Team
+				  </Typography>
+				  <Divider />
+			  </Container>
+		  </Box>
+
+        <Container sx={{ py: 3, marginLeft: 0 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {cards.map((card) => (
