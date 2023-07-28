@@ -17,6 +17,8 @@ import * as excel from "xlsx";
 import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {ScreenContext} from "../App";
+import Divider from "@mui/material/Divider";
+import Container from "@mui/material/Container";
 
 export interface Exchange {
     exchangeId: string,
@@ -32,9 +34,9 @@ const Edit = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
 	const [columnDefs, setColumnDefs] = useState([
-    {field: 'exchangeId', filter: true, type: 'numberColumn'},
-    {field: 'question', filter: true},
-    {field: 'answer', filter: false }
+    {field: 'exchangeId', filter: true, type: 'numberColumn', maxWidth: 140, cellStyle: {wordBreak: "normal"}},
+    {field: 'question', filter: true, cellStyle: {wordBreak: "normal"}},
+    {field: 'answer', filter: false, cellStyle: {wordBreak: "normal"}}
   ]);
 
   const defaultColDef = useMemo(()=> ({
@@ -43,7 +45,8 @@ const Edit = () => {
     wrapText: true,
     autoWidth: true,
     autoHeight: true,
-    resizable: true
+    resizable: true,
+    wrapHeaderText: true,
   }), [rowData]);
 
   const downloadExcel = useCallback(() => {
@@ -128,18 +131,44 @@ const Edit = () => {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 6,
-            pb: 6,
+            pt: 0,
+            pb: 2,
           }}
         >
           <Grid container direction="column" alignItems="center" >
             <Grid item>
-              <Typography variant="h5" align="center" color="text.secondary" paragraph>
-                Welcome Professor
-              </Typography>
+              <Container maxWidth="md" sx={{
+                marginLeft: 0
+              }}>
+                <Typography
+                    variant="h4"
+                    align="center"
+                    color="text.primary"
+                >
+                  QnA Database Management
+                </Typography>
+                <Box
+                    sx={{
+                      pt: 0,
+                      pb: 2
+                    }}
+                >
+                  <Divider></Divider>
+                  <Typography
+                      variant="body1"
+                      align="left"
+                      color="text.secondary"
+                      maxWidth = "md"
+                  >
+                    Thank you for choosing to use QBot to handle your frequently asked questions!
+                    Here you will find the latest questions and answers uploaded into the database, which you can scroll through.
+                    Scroll down further on the page itself to find instructions on how to manage the database.
+                  </Typography>
+                </Box>
+              </Container>
             </Grid>
             <Grid item>
-              <div className="ag-theme-alpine" style={{width: 1000, height: 500}}>
+              <div className="ag-theme-alpine" style={{width: 1000, height: 500, wordBreak:"keep-all"}}>
                 <AgGridReact
                   rowData={rowData} // Row Data for Rows
                   // @ts-ignore
@@ -167,6 +196,84 @@ const Edit = () => {
               </Typography>
             </Grid>
           </Grid>
+
+
+
+        <Box
+            sx={{
+              bgcolor: 'background.paper',
+              pt: 0,
+              pb: 2,
+            }}
+        >
+          <Grid container direction="column" alignItems="center" >
+            <Grid item>
+              <Container maxWidth="md" sx={{
+                marginLeft: 0
+              }}>
+                <Typography
+                    variant="h5"
+                    align="center"
+                    color="text.secondary"
+                >
+                  Database Management Instructions:
+                </Typography>
+                <Divider></Divider>
+
+                <Box
+                    sx={{
+                      pt: 0,
+                      pb: 0
+                    }}
+                >
+                  <Typography
+                      variant="body1"
+                      align="left"
+                      color="text.secondary"
+                      maxWidth = "md"
+                  >
+                    In order to change the database of questions and answers please follow the steps below:
+                    <div></div>
+
+                    1.) Download the current database, by clicking on the download button below the current displayed database. This will ensure you are working off of the latest questions and answers.
+                    <div></div>
+
+                    2.) On your desktop, open the .xslx file within excel and edit the database to how you see fit.
+                    <div></div>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><u>Important Reminders:</u></strong>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                      a.) Ensure the .xslx file has three columns labeled: “Id”, “Question”, and “Answer”.
+                    </div>
+
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      b.) Ensure that the top 6 Questions and Answers are your most frequently asked, as these are the ones that will be displayed directly to students.
+                    </div>
+
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      c.) Ensure that the file is saved as a .xslx file. CSV or other file types will not work!
+                    </div>
+
+                    3.) Once you are happy with your .xslx file and have ensured compliance with the important reminders above, navigate to the application once again and click the upload button below the current database, select the new/updated database you want to replace it with and click “Enter” or “Open”.
+                    <div></div>
+
+                    4.) Check for any errors by scrolling down below the download and upload buttons.
+                    <div></div>
+
+                    5.) If no errors are present, please scroll through the database that is displayed above to ensure you are satisfied with your changes.
+                    <div></div>
+
+                    <strong><u>Sidenote/Disclaimer:</u></strong> If these changes were made during the semester, rather than before it started; instruct the students to either clear their browser cookies or access QBot via incognito mode on their browser to load the latest changes to the database.
+                  </Typography>
+                </Box>
+              </Container>
+            </Grid>
+
+
+          </Grid>
+        </Box>
+
       </main>
     </ThemeProvider>
   );
