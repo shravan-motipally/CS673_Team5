@@ -42,10 +42,10 @@ const cards = [{
 	{
 		id: 3,
 		name: "Richard Wu",
-		description: "Add information about yourself here",
+		description: "Data Engineer | VMware | Boston University",
 		image: rwu,
-		email: "rwu@bu.edu",
-		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
+		email: "rjwu@bu.edu",
+		linkedIn: "https://www.linkedin.com/in/richardjwu/"
 	},
 	{
 		id: 4,
