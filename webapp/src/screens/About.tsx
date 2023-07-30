@@ -50,10 +50,10 @@ const cards = [{
 	{
 		id: 4,
 		name: "Idenson Eltume",
-		description: "Add information about yourself here",
+		description: "Systems Admin | Boston University",
 		image: ieltume,
 		email: "ieltume@bu.edu",
-		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
+		linkedIn: "https://github.com/eden-eltume"
 	},
 	{
 		id: 5,
