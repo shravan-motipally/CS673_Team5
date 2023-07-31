@@ -149,7 +149,7 @@ export default function About() {
 					  >
 						  Our team’s motivation for creating QBot was to be a student’s fastest way of getting
 						  accurate answers to the most commonly asked questions about the class they are taking with
-						  Professor Elentukh.
+						  their Professor.
 					  </Typography>
 				  </Box>
 			  </Container>

@@ -258,7 +258,7 @@ const Edit = () => {
                     3.) Once you are happy with your .xslx file and have ensured compliance with the important reminders above, navigate to the application once again and click the upload button below the current database, select the new/updated database you want to replace it with and click “Enter” or “Open”.
                     <div></div>
 
-                    4.) Check for any errors by scrolling down below the download and upload buttons.
+                    4.) Please refresh the page and log back in to check for any errors by scrolling down below the download and upload buttons.
                     <div></div>
 
                     5.) If no errors are present, please scroll through the database that is displayed above to ensure you are satisfied with your changes.
