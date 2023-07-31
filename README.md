@@ -12,7 +12,7 @@ that the professor might not have the time to answer.
 |---|---|
 | Jacob Kustra | https://www.linkedin.com/in/jacob-kustra/ |
 | Richard Wu | https://www.linkedin.com/in/richardjwu/ |
-| Idenson Eltume | |
+| Idenson Eltume | https://github.com/eden-eltume |
 | Xiang Zhou | |
 | Shravan Motipally | https://www.linkedin.com/in/shravan-motipally | 
 
