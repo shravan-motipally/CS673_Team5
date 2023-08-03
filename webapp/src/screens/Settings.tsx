@@ -5,13 +5,9 @@ import {useCallback, useContext, useEffect, useMemo} from "react";
 import {ScreenContext} from "../App";
 import FormControl from "@mui/material/FormControl";
 import {
-  FormControlLabel,
-  FormGroup,
   FormHelperText,
-  FormLabel,
   MenuItem,
-  Select,
-  Switch
+  Select
 } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import {ThemeProvider} from "@mui/material/styles";

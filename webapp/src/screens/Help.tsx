@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import CssBaseline from "@mui/material/CssBaseline";
-import {createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
+import {ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Container from '@mui/material/Container';
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Accordion from '@mui/material/Accordion';

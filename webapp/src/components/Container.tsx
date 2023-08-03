@@ -143,7 +143,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
-    <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
