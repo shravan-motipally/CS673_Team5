@@ -2,10 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import qbot from './images/qbot-temp.png';
+import { ThemeProvider } from '@mui/material/styles';
 import ChatContainer from '../components/ChatContainer';
 import {useContext, useEffect, useState} from "react";
 import {ScreenContext} from "../App";

@@ -8,9 +8,8 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
-import {createTheme, ThemeProvider, useTheme} from '@mui/material/styles';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import {ThemeProvider, useTheme} from '@mui/material/styles';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import EmailIcon from '@mui/icons-material/Email';
 import IconButton from '@mui/material/IconButton';
 import smotipally from './images/smotipally.png';
@@ -22,6 +21,7 @@ import Divider from "@mui/material/Divider";
 import {useContext} from "react";
 import {ScreenContext} from "../App";
 import {darkTheme, lightTheme} from "../utils/Themes";
+import {Tooltip} from "@mui/material";
 
 const cards = [{
 		id: 1,
@@ -228,7 +228,9 @@ export default function About() {
                   </CardContent>
                   <CardActions>
                     <IconButton aria-label="LinkedIn" href={card.linkedIn} >
-                      <LinkedInIcon />
+											<Tooltip title={`Connect with ${card.name}`} >
+                      	<AccountBoxIcon />
+											</Tooltip>
                     </IconButton>
                     <IconButton aria-label="Email" href={`mailto:${card.email}`}>
                       <EmailIcon />
