@@ -13,8 +13,9 @@ that the professor might not have the time to answer.
 | Jacob Kustra | https://www.linkedin.com/in/jacob-kustra/ |
 | Richard Wu | https://www.linkedin.com/in/richardjwu/ |
 | Idenson Eltume | https://github.com/Eden-Eltume |
-| Xiang Zhou | |
+| Xiang Zhou | https://www.linkedin.com/in/xiang-zhou-1ba0419b/ |
 | Shravan Motipally | https://www.linkedin.com/in/shravan-motipally | 
+*
 
 ## Composition
 
