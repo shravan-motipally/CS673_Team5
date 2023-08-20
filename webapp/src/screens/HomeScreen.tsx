@@ -12,12 +12,12 @@ import {getAllQnA} from "../api/QuestionAnswerApi";
 
 const Home = () => {
   const { screenState } = useContext(ScreenContext);
-  const [fiveQuestions, setFiveQuestions] = useState<Array<Exchange>>([]);
+  const [commonlyAskedQuestions, setCommonlyAskedQuestions] = useState<Array<Exchange>>([]);
 
   useEffect(() => {
     (async () => {
       const { exchanges } = await getAllQnA();
-      setFiveQuestions(exchanges.slice(0, 5));
+      setCommonlyAskedQuestions(exchanges.slice(0, 6));
     })();
   }, []);
 
@@ -33,7 +33,7 @@ const Home = () => {
             pb: 2,
           }}
         >
-          <ChatContainer questions={fiveQuestions} />
+          <ChatContainer questions={commonlyAskedQuestions} />
         </Box>
       </main>
     </ThemeProvider>

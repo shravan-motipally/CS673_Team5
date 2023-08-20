@@ -12,7 +12,7 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
-import Typing from './Typing';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 import { answerQuestion, isEmptyNullOrUndefined } from "../models/Chat";
 import {HELLO_MSG, SAMPLE_ADVICE, SAMPLE_USER_INPUT} from "../utils/StringConstants";
 import Box from "@mui/material/Box";
@@ -24,7 +24,7 @@ import {styled, useTheme} from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import {Exchange} from "../screens/Edit";
 import Button from "@mui/material/Button";
-import {ButtonGroup, Fab, FormLabel, Tooltip} from "@mui/material";
+import {ButtonGroup, Fab, FormHelperText, FormLabel, Tooltip} from "@mui/material";
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -169,7 +169,20 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 
   const questionButtons = useMemo(() => {
     return questions.map(question => (
-      <Button key={"qb-" + question.exchangeId} onClick={() => { onButtonClick(question.question); }}>{question.question}</Button>
+      <Grid xs={3} sx={{ ml: 1, mr: 1 }} alignContent={"center"} justifyContent={"center"} >
+        <Button
+          fullWidth
+          sx={{ fontSize: "0.75rem", height: "4rem" }}
+          variant="outlined"
+          size="large"
+          key={"qb-" + question.exchangeId}
+          onClick={() => {
+            onButtonClick(question.question);
+          }}
+        >
+          {question.question}
+        </Button>
+      </Grid>
     ));
   }, [questions]);
 
@@ -185,28 +198,11 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 			  <span ref={dummyRef}></span>
 			</main>
       <Grid sx={{ ml: 6, display: displayQuestions ? 'flex' : 'none' }} container spacing={2}>
-        <Grid xs={4}>
-
-        </Grid>
-        <Grid xs={4}>
-
-        </Grid>
-        <Grid xs={4}>
-          <FormControl fullWidth>
-            <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
-            <ButtonGroup
-              orientation="vertical"
-              aria-label="vertical outlined button group"
-              sx={{ pt: 1 }}
-            >
-              {questionButtons}
-            </ButtonGroup>
-          </FormControl>
-          <span ref={commonlyAskedQuestionsRef} />
-        </Grid>
-        <Grid xs={4}>
-
-        </Grid>
+        <FormControl fullWidth>
+          <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
+        </FormControl>
+        <span ref={commonlyAskedQuestionsRef} />
+        {questionButtons}
       </Grid>
       <Tooltip title={displayQuestions ? "Hide questions" : "Show commonly asked questions"}>
         <Fab
@@ -222,6 +218,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           {displayQuestions ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon />}
         </Fab>
       </Tooltip>
+      <ReportGmailerrorredIcon sx={{ position: 'fixed', bottom: 0, left: 0 }} />
       <Paper sx={{ m: 1, position: 'fixed', bottom: 0, right: 0, backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff', width: "60%" }} elevation={3}>
         <FormControl fullWidth  variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
