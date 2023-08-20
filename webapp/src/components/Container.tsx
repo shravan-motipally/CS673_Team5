@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {styled, useTheme, ThemeProvider} from '@mui/material/styles';
+import { styled, useTheme, Theme, CSSObject, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -14,10 +14,14 @@ import ListItemText from '@mui/material/ListItemText';
 import StorageIcon from '@mui/icons-material/Storage';
 import Button from '@mui/material/Button';
 
+import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
 import SettingsIcon from '@mui/icons-material/Settings';
+
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -27,8 +31,8 @@ import { ScreenContext } from '../App';
 import ai from '../screens/images/ai.png';
 
 import Avatar from '@mui/material/Avatar';
-import AppBar from "@mui/material/AppBar";
-import Drawer from "@mui/material/Drawer";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiDrawer from '@mui/material/Drawer';
 import {Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
@@ -40,6 +44,27 @@ import {StyledMenu} from "./StyledMenu";
 
 const drawerWidth = 240;
 
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -48,6 +73,45 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
+    }),
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
 
 
 interface ContainerProps {
@@ -64,6 +128,16 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const questionIsOpen = Boolean(questionsDropDownAnchor);
 
   const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   const handleClose = () => {
     setLogoutAnchor(null);
   };
@@ -145,8 +219,21 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <AppBar position="fixed" open={open} /*sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} */>
           <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <>
             <img style={{
               width: "40px",
               height: "40px",
@@ -263,88 +350,114 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   </MenuItem>
                 </Menu>
               </div>}
+              </>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" sx={{
+        <Drawer variant="permanent" open={open} /*sx={{
           width: drawerWidth,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}>
+        }}*/>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
           <Toolbar />
-          <List sx={{ paddingBottom:0 }}>
+          <List sx={{ paddingBottom:0, paddingTop: 0 }}>
             {['Home'].map((text, index) => (
               <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={() => { setScreenState( { ...screenState, screen: 'loading' }); }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: 'initial',
+                    justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: 3,
+                      mr: open ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
                     <HomeIcon />
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: 1 }} />
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
-          <List sx={{ paddingTop: 0}}>
+          <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {['Help', 'About'].map((text, index) => (
               <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ?  'help' : 'about' }); } }>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: 'initial',
+                    justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr:  3,
+                      mr:  open ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
                     {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: 1 }} />
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             ))}
+          </List>
+          <List sx={{ paddingTop: 0}}>
+            <ListItem key={"ContainerKey-Settings"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'config'  }); } }>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Settings"} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
           { screenState.isAuthed ?
             <>
               <Divider />
               <List>
-                {['Manage', 'Settings'].map((text, index) => (
-                  <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ? 'admin' : 'config' }); } }>
-                    <ListItemButton
+                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
                       sx={{
-                        minHeight: 48,
-                        justifyContent: 'initial',
-                        px: 2.5,
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
                       }}
                     >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: 3,
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {index % 2 === 0 ? <StorageIcon /> : <SettingsIcon />}
-                      </ListItemIcon>
-                      <ListItemText primary={text} sx={{ opacity: 1 }} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
+                      <StorageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Manage"} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
               </List>
             </> :
             <div/>

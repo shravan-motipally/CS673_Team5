@@ -4,12 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-djangorestframework = "*"
-django-cors-headers = "*"
-markdown = "*"
-django-filter = "*"
-psycopg2 = "*"
+langchain = "*"
+gpt-index = "*"
+llama-index = "*"
+transformers = "*"
+sentence-transformers = "*"
 
 [dev-packages]
 
