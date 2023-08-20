@@ -58,10 +58,10 @@ const cards = [{
 	{
 		id: 5,
 		name: "Xiang Zhou",
-		description: "Add information about yourself here",
+		description: "CS Master Student | Boston University",
 		image: xzhou,
-		email: "xzhou@bu.edu",
-		linkedIn: "https://www.linkedin.com/in/shravan-motipally"
+		email: "xzbu1202@bu.edu",
+		linkedIn: "https://www.linkedin.com/in/xiang-zhou-1ba0419b/"
 	}
 ];
 
