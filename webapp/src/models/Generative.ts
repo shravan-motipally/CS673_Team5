@@ -3,7 +3,7 @@ import {apiToken} from "../utils/StringConstants";
 import {createLargeContextForQuestion} from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 
-import { loadQAStuffChain } from "langchain/chains";
+import {loadQAStuffChain, RetrievalQAChain} from "langchain/chains";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "langchain/document";
@@ -34,6 +34,22 @@ export const prepBot = async (exchanges: Array<Exchange>, question: string, gene
   }));
   const chain = loadQAStuffChain(model);
   const similarDocs = await vectorStore.similaritySearch(question);
-  const res = await chain.call({ input_documents: similarDocs, question: question, returnFullText: false });
+  let res;
+  try {
+     res = await chain.call({input_documents: similarDocs, question: question, returnFullText: false});
+  } catch (e) {
+
+  }
+  try {
+    const chain2 = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+    const response = await chain2.call({
+      query: "What is generative AI?"
+    });
+
+    console.log('response: ' + JSON.stringify(response));
+  } catch (e) {
+
+  }
+  // @ts-ignore
   return res.text;
 }

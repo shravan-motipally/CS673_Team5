@@ -33,6 +33,7 @@ import ai from '../screens/images/ai.png';
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
+import { default as FullScreenDrawer } from '@mui/material/Drawer';
 import {Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
@@ -41,6 +42,7 @@ import {getAllQnA} from "../api/QuestionAnswerApi";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {StyledMenu} from "./StyledMenu";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const drawerWidth = 240;
 
@@ -96,7 +98,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+const SmallScreenDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     width: drawerWidth,
     flexShrink: 0,
@@ -128,7 +130,11 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const questionIsOpen = Boolean(questionsDropDownAnchor);
 
   const theme = useTheme();
+  const matches = useMediaQuery('(min-width:600px)');
   const [open, setOpen] = React.useState(false);
+  const Drawer = useMemo(() =>
+    matches ? FullScreenDrawer : SmallScreenDrawer, [matches]);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -221,7 +227,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         <CssBaseline />
         <AppBar position="fixed" open={open} /*sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} */>
           <Toolbar>
-            <IconButton
+            {!matches ? <IconButton
               color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerOpen}
@@ -232,7 +238,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               }}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> : <div/> }
             <>
             <img style={{
               width: "40px",
@@ -353,11 +359,11 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               </>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open} /*sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}*/>
+        <Drawer variant="permanent" open={open} sx={{
+          width: matches ? drawerWidth : 'initial',
+          flexShrink: matches ? 0 : 'unset',
+          [`& .MuiDrawer-paper`]: matches ? { width: drawerWidth, boxSizing: 'border-box' } : {},
+        }}>
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -370,20 +376,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
+                    justifyContent: matches ? 'initial' :  matches ? 'initial' : open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : 'auto',
+                      mr: matches ? 3 : open ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
                     <HomeIcon />
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text} sx={{ opacity: matches ? 1 : open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -394,20 +400,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
+                    justifyContent:  matches ? 'initial' : open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr:  open ? 3 : 'auto',
+                      mr:  matches ? 3 : open ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
                     {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text} sx={{ opacity: matches ? 1 : open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -417,20 +423,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               <ListItemButton
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent:  matches ? 'initial' : open ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: matches ? 3 : open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary={"Settings"} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={"Settings"} sx={{ opacity: matches ? 1 : open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           </List>
@@ -442,20 +448,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   <ListItemButton
                     sx={{
                       minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
+                      justifyContent:  matches ? 'initial' : open ? 'initial' : 'center',
                       px: 2.5,
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        mr: open ? 3 : 'auto',
+                        mr: matches ? 3 : open ? 3 : 'auto',
                         justifyContent: 'center',
                       }}
                     >
                       <StorageIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Manage"} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={"Manage"} sx={{ opacity: matches ? 1 : open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
               </List>
