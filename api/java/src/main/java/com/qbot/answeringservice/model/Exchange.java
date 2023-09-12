@@ -10,10 +10,13 @@ public class Exchange {
     private String question;
     private String answer;
 
-    public Exchange(String exchangeId, String question, String answer) {
+    private Double[] embeddings;
+
+    public Exchange(String exchangeId, String question, String answer,Double[] embeddings) {
         this.exchangeId = exchangeId;
         this.question = question;
         this.answer = answer;
+        this.embeddings = embeddings;
     }
 
     public String getExchangeId() {
@@ -27,4 +30,6 @@ public class Exchange {
     public String getAnswer() {
         return answer;
     }
+
+    public Double[] getEmbeddings() { return embeddings; }
 }
