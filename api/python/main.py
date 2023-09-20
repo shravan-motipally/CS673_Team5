@@ -33,7 +33,7 @@ async def startup_event():
     app.vectordb = persist()
     app.retriever = app.vectordb.as_retriever()
 
-    app.llm = LlamaCpp(model_path="/home/pi/app/WizardLM-7B-uncensored.ggmlv3.q5_0.bin", verbose=True, n_ctx=4096)
+    app.llm = LlamaCpp(model_path="/home/pi/app/model/WizardLM-7B-uncensored.ggmlv3.q5_0.bin", verbose=True, n_ctx=4096)
     app.chain = load_qa_chain(app.llm, chain_type="stuff")
 
 def metadata_func(record: dict, metadata: dict) -> dict:
