@@ -1,0 +1,10 @@
+fastapi==0.85.1
+requests==2.28
+uvicorn==0.18.3
+pandas==1.5.3
+langchain==0.0.234
+chromadb==0.3.29
+pypdf==3.12.2
+llama-cpp-python==0.1.72
+sentence_transformers==2.2.2
+jq==1.6.0
