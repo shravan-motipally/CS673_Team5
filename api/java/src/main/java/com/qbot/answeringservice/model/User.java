@@ -3,8 +3,11 @@ package com.qbot.answeringservice.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
 @Document(collection = "user")
 public class User {
 
@@ -21,21 +24,5 @@ public class User {
         this.loginId = loginId;
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public UUID getLoginId() {
-        return loginId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 }

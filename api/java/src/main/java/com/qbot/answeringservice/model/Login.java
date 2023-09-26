@@ -3,8 +3,11 @@ package com.qbot.answeringservice.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
 @Document(collection = "login")
 public class Login {
 
@@ -17,17 +20,5 @@ public class Login {
         this.loginId = loginId;
         this.userName = userName;
         this.saltedHash = saltedHash;
-    }
-
-    public UUID getLoginId() {
-        return loginId;
-    }
-
-    public String getSaltedHash() {
-        return saltedHash;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 }
