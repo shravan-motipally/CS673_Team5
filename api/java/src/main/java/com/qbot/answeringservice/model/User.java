@@ -1,6 +1,7 @@
 package com.qbot.answeringservice.model;
 
-import org.springframework.data.annotation.Id;
+import org.mongojack.Id;
+import org.mongojack.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -20,5 +21,6 @@ public class User {
     private final UUID loginId;
     private final String firstName;
     private final String lastName;
-    private final List<Role> roles;
+    @ObjectId
+    private final List<String> roleIds;
 }
