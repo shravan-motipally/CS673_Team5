@@ -27,6 +27,16 @@ public class UserServiceTest {
     UserService userService = new UserService();
 
     @Test
+    public void testCreateUser() {
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+
+        User createdUser = userService
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+        Assertions.assertNotNull(createdUser);
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
     public void testFindAll() {
         Mockito.when(userRepo.findAll()).thenReturn(getAdminUsers());
         List<User> foundUsers = userService.findAllUsers();

@@ -26,6 +26,27 @@ public class UserControllerTest {
     UserController userController;
 
     @Test
+    public void testCreateUser() {
+        Mockito.when(userService.createUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+
+        ResponseEntity<User> response = userController
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+        Assertions.assertNotNull(response.getBody());
+        Mockito.verify(userService, Mockito.times(1)).createUser(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserThrowException() {
+        Mockito.when(userService.createUser(ArgumentMatchers.any(User.class)))
+                .thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<User> response = userController
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     public void testGetAllUsers() {
         Mockito.when(userService.findAllUsers()).thenReturn(getAdminUsers());
 
@@ -55,6 +76,27 @@ public class UserControllerTest {
         List<User> returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
         Assertions.assertFalse(returnedUsers.isEmpty());
+    }
+
+    @Test
+    public void testUpdateUser() {
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+
+        ResponseEntity<User> response = userController
+                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+        Assertions.assertNotNull(response.getBody());
+        Mockito.verify(userService, Mockito.times(1)).updateUser(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserThrowException() {
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class)))
+                .thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<User> response = userController
+                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test

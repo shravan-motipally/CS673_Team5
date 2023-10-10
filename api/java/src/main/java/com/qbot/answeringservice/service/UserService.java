@@ -15,6 +15,13 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
+    public User createUser(User user) {
+        if (user.getId() == null) {
+            user.setId(UUID.randomUUID());
+        }
+        return userRepo.save(user);
+    }
+
     public List<User> findAllUsers() {
         return userRepo.findAll();
     }
@@ -29,6 +36,10 @@ public class UserService {
 
     public List<User> findByRoleId(String roleId) {
         return userRepo.findUsersByRole(roleId);
+    }
+
+    public User updateUser(User user) {
+        return userRepo.save(user);
     }
 
     public void deleteUser(UUID userId) throws IllegalArgumentException {
