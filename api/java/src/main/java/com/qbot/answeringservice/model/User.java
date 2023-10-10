@@ -25,4 +25,6 @@ public class User {
     private String lastName;
     @ObjectId
     private final List<String> roleIds;
+    @ObjectId
+    private final List<String> courseIds;
 }

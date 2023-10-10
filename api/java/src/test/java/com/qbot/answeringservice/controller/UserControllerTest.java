@@ -30,7 +30,7 @@ public class UserControllerTest {
         Mockito.when(userService.createUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
 
         ResponseEntity<User> response = userController
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
         Assertions.assertNotNull(response.getBody());
         Mockito.verify(userService, Mockito.times(1)).createUser(ArgumentMatchers.any(User.class));
     }
@@ -41,7 +41,7 @@ public class UserControllerTest {
                 .thenThrow(new IllegalArgumentException());
 
         ResponseEntity<User> response = userController
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -83,7 +83,7 @@ public class UserControllerTest {
         Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
 
         ResponseEntity<User> response = userController
-                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
         Assertions.assertNotNull(response.getBody());
         Mockito.verify(userService, Mockito.times(1)).updateUser(ArgumentMatchers.any(User.class));
     }
@@ -94,7 +94,7 @@ public class UserControllerTest {
                 .thenThrow(new IllegalArgumentException());
 
         ResponseEntity<User> response = userController
-                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -112,7 +112,7 @@ public class UserControllerTest {
         adminRoleIds.add("6514b83d67e0b4d82e053ecb");
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds);
+        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;

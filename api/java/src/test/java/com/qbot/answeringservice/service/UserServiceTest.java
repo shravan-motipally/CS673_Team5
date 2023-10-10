@@ -31,7 +31,7 @@ public class UserServiceTest {
         Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
 
         User createdUser = userService
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null));
+                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
         Assertions.assertNotNull(createdUser);
         Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
     }
@@ -105,7 +105,7 @@ public class UserServiceTest {
         adminRoleIds.add("6514b83d67e0b4d82e053ecb");
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds);
+        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;
