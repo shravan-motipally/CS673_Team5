@@ -58,6 +58,15 @@ public class UserControllerTest {
     }
 
     @Test
+    public void testGetAllUsersThrowException() {
+        Mockito.when(userService.findAllUsers()).thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<List<User>> response = userController.getAllUsers();
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     public void testGetUserByLoginId() {
         Mockito.when(userService.findByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(getAdminUsers().get(0));
 
@@ -65,6 +74,16 @@ public class UserControllerTest {
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         User returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
+    }
+
+    @Test
+    public void testGetUserByLoginIdThrowException() {
+        Mockito.when(userService.findByLoginId(ArgumentMatchers.any(UUID.class)))
+                .thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<User> response = userController.getUserByLoginId(UUID.randomUUID());
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
@@ -76,6 +95,15 @@ public class UserControllerTest {
         List<User> returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
         Assertions.assertFalse(returnedUsers.isEmpty());
+    }
+
+    @Test
+    public void testGetUserByRoleIdThrowException() {
+        Mockito.when(userService.findByRoleId(ArgumentMatchers.anyString())).thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<List<User>> response = userController.getUsersByRoleId(new String());
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
@@ -100,7 +128,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserThrowException() {
+    public void testDeleteUser() {
         ResponseEntity<User> response = userController.deleteUser(UUID.randomUUID());
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         Assertions.assertTrue(HttpStatus.OK.value() == response.getStatusCodeValue());

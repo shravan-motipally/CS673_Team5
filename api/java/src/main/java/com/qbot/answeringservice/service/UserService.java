@@ -42,7 +42,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public void deleteUser(UUID userId) throws IllegalArgumentException {
+    public void deleteUser(UUID userId) {
         if (userId != null) {
             userRepo.deleteById(userId);
         }

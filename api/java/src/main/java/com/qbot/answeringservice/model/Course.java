@@ -16,7 +16,7 @@ public class Course {
     @Id
     @ObjectId
     private String id;
-    private String SchoolId;
+    private String schoolId;
     private String departmentId;
     private String catalogId;
     private String name;
