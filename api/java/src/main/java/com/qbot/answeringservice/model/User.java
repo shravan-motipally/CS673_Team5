@@ -1,41 +1,30 @@
 package com.qbot.answeringservice.model;
 
-import org.springframework.data.annotation.Id;
+import org.mongojack.Id;
+import org.mongojack.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Document(collection = "user")
 public class User {
 
     @Id
-    private final UUID id;
-    private final String photoUrl;
-    private final UUID loginId;
-    private final String firstName;
-    private final String lastName;
-
-    public User(UUID id, String photoUrl, UUID loginId, String firstName, String lastName) {
-        this.id = id;
-        this.photoUrl = photoUrl;
-        this.loginId = loginId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public UUID getLoginId() {
-        return loginId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
+    private UUID id;
+    private String photoUrl;
+    private UUID loginId;
+    private String firstName;
+    private String lastName;
+    @ObjectId
+    private final List<String> roleIds;
+    @ObjectId
+    private final List<String> courseIds;
 }

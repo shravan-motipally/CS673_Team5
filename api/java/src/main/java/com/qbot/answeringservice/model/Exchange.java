@@ -3,6 +3,9 @@ package com.qbot.answeringservice.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+
+@Getter
 @Document(collection = "exchange")
 public class Exchange {
     @Id
@@ -14,17 +17,5 @@ public class Exchange {
         this.exchangeId = exchangeId;
         this.question = question;
         this.answer = answer;
-    }
-
-    public String getExchangeId() {
-        return exchangeId;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public String getAnswer() {
-        return answer;
     }
 }
