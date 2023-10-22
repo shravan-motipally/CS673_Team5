@@ -21,8 +21,8 @@ public class AnsweringService {
     @Autowired
     private final CourseService courseService;
 
-    public AnsweringService(ExchangeRepository repository, CourseService courseService) {
-        this.repository = repository;
+    public AnsweringService(ExchangeRepository exchangeRepository, CourseService courseService) {
+        this.repository = exchangeRepository;
         this.courseService = courseService;
     }
 
@@ -33,6 +33,19 @@ public class AnsweringService {
             return new ExchangeCollection(null, count, exchanges);
         }
         return new ExchangeCollection(null, 0L, Collections.emptyList());
+    }
+
+    public ExchangeCollection getExchangesByCourseId(String courseId) {
+        ExchangeCollection resultCollection = new ExchangeCollection(null, 0, null);
+        if (courseId != null) {
+            List<Exchange> resultExchanges = repository.findExchangesByCourseId(courseId);
+            resultCollection.setCourseId(courseId);
+            resultCollection.setExchanges(resultExchanges);
+            resultCollection.setNumOfQuestions(resultExchanges.size());
+        } else {
+            resultCollection.setExchanges(Collections.emptyList());
+        }
+        return resultCollection;
     }
 
     public boolean saveExchanges(ExchangeCollection exchanges) {

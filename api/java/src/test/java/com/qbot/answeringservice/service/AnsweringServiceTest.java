@@ -51,6 +51,23 @@ public class AnsweringServiceTest {
     }
 
     @Test
+    public void testGetExchangesByCourseId() {
+        Mockito.when(exchangeRepo.findExchangesByCourseId(ArgumentMatchers.anyString())).thenReturn(getTestExchanges());
+
+        ExchangeCollection returnedExchanges = answeringService.getExchangesByCourseId("test-course-id");
+        Assertions.assertNotNull(returnedExchanges);
+        Assertions.assertFalse(returnedExchanges.getExchanges().isEmpty());
+    }
+
+    @Test
+    public void testGetExchangesByCourseIdNullInput() {
+        ExchangeCollection returnedExchanges = answeringService.getExchangesByCourseId(null);
+        Assertions.assertNotNull(returnedExchanges);
+        Assertions.assertTrue(returnedExchanges.getExchanges().isEmpty());
+        Mockito.verify(exchangeRepo, Mockito.times(0)).findExchangesByCourseId(ArgumentMatchers.anyString());
+    }
+
+    @Test
     public void testSaveExchanges() {
         List<Exchange> testExchanges = getTestExchanges();
         ExchangeCollection testCollection = new ExchangeCollection("test-course-id", testExchanges.size(),
