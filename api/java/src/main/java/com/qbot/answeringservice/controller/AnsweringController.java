@@ -1,8 +1,7 @@
 package com.qbot.answeringservice.controller;
 
-import com.qbot.answeringservice.dto.AllExchanges;
+import com.qbot.answeringservice.dto.ExchangeCollection;
 import com.qbot.answeringservice.service.AnsweringService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,9 +18,9 @@ public class AnsweringController {
         this.answeringService = answeringService;
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000", "https://qbot-slak.onrender.com"})
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping("/all")
-    public ResponseEntity<AllExchanges> getAllExchanges() {
+    public ResponseEntity<ExchangeCollection> getAllExchanges() {
         // TODO: introduce auth
         // if (verified)
         // {
@@ -30,9 +29,9 @@ public class AnsweringController {
         // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000", "https://qbot-slak.onrender.com"})
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping("/questions")
-    public ResponseEntity<Void> saveQuestionsAndAnswerExchanges(@RequestBody AllExchanges exchanges) {
+    public ResponseEntity<Void> saveQuestionsAndAnswerExchanges(@RequestBody ExchangeCollection exchanges) {
         // TODO: introduce auth
         // if (verified)
         // {

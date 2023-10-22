@@ -4,16 +4,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Document(collection = "exchange")
 public class Exchange {
     @Id
     private String exchangeId;
+    @Setter
+    private String courseId;
     private String question;
     private String answer;
 
-    public Exchange(String exchangeId, String question, String answer) {
+    public Exchange(String exchangeId, String courseId, String question, String answer) {
         this.exchangeId = exchangeId;
         this.question = question;
         this.answer = answer;

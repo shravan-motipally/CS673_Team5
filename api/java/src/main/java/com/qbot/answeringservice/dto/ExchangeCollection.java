@@ -9,12 +9,14 @@ import java.util.List;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AllExchanges {
+public class ExchangeCollection {
 
+    private final String courseId;
     private final long numOfQuestions;
     private final List<Exchange> exchanges;
 
-    public AllExchanges(long numOfQuestions, List<Exchange> exchanges) {
+    public ExchangeCollection(String courseId, long numOfQuestions, List<Exchange> exchanges) {
+        this.courseId = courseId;
         this.numOfQuestions = numOfQuestions;
         this.exchanges = exchanges;
     }
