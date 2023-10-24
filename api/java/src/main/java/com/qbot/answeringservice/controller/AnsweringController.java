@@ -49,7 +49,11 @@ public class AnsweringController {
     @GetMapping(path = "/{courseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExchangeCollection> getByCourseId(@PathVariable("courseId") String courseId) {
         try {
-            return ResponseEntity.ok(answeringService.getExchangesByCourseId(courseId));
+            if (courseId != null) {
+                return ResponseEntity.ok(answeringService.getExchangesByCourseId(courseId));
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
         } catch (Exception e) {
             logger.error("Server error: message: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

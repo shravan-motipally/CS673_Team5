@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.qbot.answeringservice.dto.ExchangeCollection;
@@ -30,6 +31,22 @@ public class AnsweringControllerTest {
         ResponseEntity<ExchangeCollection> response = answeringController.getAllExchanges();
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
+    public void testGetByCourseId() {
+        Mockito.when(answeringService.getExchangesByCourseId(ArgumentMatchers.anyString()))
+                .thenReturn(getTestExchangeCollection());
+        ResponseEntity<ExchangeCollection> response = answeringController.getByCourseId("test-course-id");
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
+    public void testGetByCourseIdNullId() {
+        ResponseEntity<ExchangeCollection> response = answeringController.getByCourseId(null);
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.getStatusCode().is4xxClientError());
     }
 
     @Test
