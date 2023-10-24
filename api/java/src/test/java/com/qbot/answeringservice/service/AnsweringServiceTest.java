@@ -1,6 +1,7 @@
 package com.qbot.answeringservice.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -74,8 +75,29 @@ public class AnsweringServiceTest {
                 testExchanges);
 
         Mockito.when(courseService.findByCourseIds(ArgumentMatchers.any())).thenReturn(getTestCourses());
+        Mockito.when(exchangeRepo.findExchangesByCourseId(ArgumentMatchers.anyString()))
+                .thenReturn(Collections.emptyList());
 
         Assertions.assertTrue(answeringService.saveExchanges(testCollection));
+
+        Mockito.verify(exchangeRepo, Mockito.times(0)).deleteAll(ArgumentMatchers.anyList());
+        for (Exchange exchange : testCollection.getExchanges()) {
+            Assertions.assertEquals(testCollection.getCourseId(), exchange.getCourseId());
+        }
+    }
+
+    @Test
+    public void testUpdateExchanges() {
+        List<Exchange> testExchanges = getTestExchanges();
+        ExchangeCollection testCollection = new ExchangeCollection("test-course-id", testExchanges.size(),
+                testExchanges);
+
+        Mockito.when(courseService.findByCourseIds(ArgumentMatchers.any())).thenReturn(getTestCourses());
+        Mockito.when(exchangeRepo.findExchangesByCourseId(ArgumentMatchers.anyString())).thenReturn(getTestExchanges());
+
+        Assertions.assertTrue(answeringService.saveExchanges(testCollection));
+
+        Mockito.verify(exchangeRepo, Mockito.times(1)).deleteAll(ArgumentMatchers.anyList());
         for (Exchange exchange : testCollection.getExchanges()) {
             Assertions.assertEquals(testCollection.getCourseId(), exchange.getCourseId());
         }

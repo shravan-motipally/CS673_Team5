@@ -61,7 +61,9 @@ public class AnsweringService {
                     // Because we don't allow educators to update or remove individual exchanges,
                     // delete all existing exchanges for course before uploading new ones
                     List<Exchange> existingExchanges = repository.findExchangesByCourseId(courseId);
-                    repository.deleteAll(existingExchanges);
+                    if (!existingExchanges.isEmpty()) {
+                        repository.deleteAll(existingExchanges);
+                    }
 
                     // set foreign keys of new exchanges to match course
                     this.associateExchangesWithCourse(exchanges, courseId);
@@ -75,7 +77,7 @@ public class AnsweringService {
                 return false;
             }
         } catch (Exception e) {
-            logger.error("Error storing exchanges: error message: {}", e.getMessage());
+            logger.error("Error storing exchanges: {}", e.getMessage());
             return false;
         }
         return true;
