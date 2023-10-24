@@ -67,7 +67,7 @@ public class AnsweringController {
             // TODO: introduce auth
             // if (verified)
             // {
-            if (answeringService.saveExchanges(exchanges)) {
+            if (exchanges != null && answeringService.saveExchanges(exchanges)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.badRequest().build();

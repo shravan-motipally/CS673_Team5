@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.qbot.answeringservice.dto.ExchangeCollection;
@@ -57,6 +56,13 @@ public class AnsweringControllerTest {
         ResponseEntity<Void> response = answeringController.saveQuestionAndAnswerExchanges(testCollection);
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
+    public void testSaveQuestionsAndAnswerExchangesNullPayload() {
+        ResponseEntity<Void> response = answeringController.saveQuestionAndAnswerExchanges(null);
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.getStatusCode().is4xxClientError());
     }
 
     @Test
