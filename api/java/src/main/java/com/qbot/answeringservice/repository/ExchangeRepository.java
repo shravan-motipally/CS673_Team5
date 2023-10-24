@@ -2,7 +2,6 @@ package com.qbot.answeringservice.repository;
 
 import java.util.List;
 
-import org.mongojack.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,6 +14,6 @@ public interface ExchangeRepository extends MongoRepository<Exchange, String> {
     @Query("{ question: '?0' }")
     Exchange findExchangeByQuestion(String question);
 
-    @Query("{ courseId: ObjectId('?0') }")
+    @Query("{ courseId: '?0' }")
     List<Exchange> findExchangesByCourseId(String courseId);
 }

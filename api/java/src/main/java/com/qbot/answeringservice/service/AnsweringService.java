@@ -1,16 +1,17 @@
 package com.qbot.answeringservice.service;
 
-import com.qbot.answeringservice.dto.ExchangeCollection;
-import com.qbot.answeringservice.model.Course;
-import com.qbot.answeringservice.model.Exchange;
-import com.qbot.answeringservice.repository.ExchangeRepository;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import com.qbot.answeringservice.dto.ExchangeCollection;
+import com.qbot.answeringservice.model.Course;
+import com.qbot.answeringservice.model.Exchange;
+import com.qbot.answeringservice.repository.ExchangeRepository;
 
 @Service
 public class AnsweringService {
@@ -57,6 +58,12 @@ public class AnsweringService {
             if (courseId != null) {
                 List<Course> courseResults = courseService.findByCourseIds(new String[] { courseId });
                 if (courseResults != null && !courseResults.isEmpty()) {
+                    // Because we don't allow educators to update or remove individual exchanges,
+                    // delete all existing exchanges for course before uploading new ones
+                    List<Exchange> existingExchanges = repository.findExchangesByCourseId(courseId);
+                    repository.deleteAll(existingExchanges);
+
+                    // set foreign keys of new exchanges to match course
                     this.associateExchangesWithCourse(exchanges, courseId);
                     repository.saveAll(exchanges.getExchanges());
                 } else {
