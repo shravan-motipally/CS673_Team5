@@ -11,12 +11,12 @@ import {Exchange} from "./Edit";
 import {getAllQnA} from "../api/QuestionAnswerApi";
 
 const Home = () => {
-  const { screenState } = useContext(ScreenContext);
+  const { screenState, setScreenState } = useContext(ScreenContext);
   const [commonlyAskedQuestions, setCommonlyAskedQuestions] = useState<Array<Exchange>>([]);
 
   useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA();
+      const { exchanges } = await getAllQnA(screenState, setScreenState);
       setCommonlyAskedQuestions(exchanges.slice(0, 6));
     })();
   }, []);

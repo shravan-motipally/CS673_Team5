@@ -20,8 +20,9 @@ export interface ScreenState {
 	isError: boolean,
 	photoUrl: string,
 	generativeMode: boolean,
-	darkMode: boolean
-	generativeModel: GenerativeModel
-	semanticSimilarityModel: string
-	semanticSimilarityThreshold: number
+	darkMode: boolean,
+	generativeModel: GenerativeModel,
+	semanticSimilarityModel: string,
+	semanticSimilarityThreshold: number,
+	allQnA: Array<any>
 }

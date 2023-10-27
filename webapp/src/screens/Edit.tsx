@@ -27,7 +27,7 @@ export interface Exchange {
 }
 
 const Edit = () => {
-  const { screenState } = useContext(ScreenContext);
+  const { screenState, setScreenState } = useContext(ScreenContext);
   const [rowData, setRowData] = useState<Array<Exchange>>([]);
   const [file, setFile] = useState<File>();
   const [error, setError] = useState<boolean>(false);
@@ -58,7 +58,7 @@ const Edit = () => {
 
 	useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA();
+      const { exchanges } = await getAllQnA(screenState, setScreenState);
       setRowData(exchanges);
     })();
   }, []);

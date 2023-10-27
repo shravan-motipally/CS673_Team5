@@ -20,10 +20,10 @@ export const processAnswerForBloom = (initialAnswer: string) => {
   return initialAnswer.substring(indexOfFirst + searchTerm.length + 1);
 }
 
-export const answerQuestion = async (question: string, screenState: ScreenState) => {
+export const answerQuestion = async (question: string, screenState: ScreenState, setScreenState: any) => {
   let res;
   try {
-    const answers = await getAllQnA();
+    const answers = await getAllQnA(screenState, setScreenState);
     const { exchanges }: { exchanges: Array<Exchange> } = answers;
     const { found, answer } = findExactAnswerToQuestion(question, exchanges);
     if (!found) {
