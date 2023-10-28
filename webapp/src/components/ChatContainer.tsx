@@ -24,10 +24,14 @@ import {styled, useTheme} from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import {Exchange} from "../screens/Edit";
 import Button from "@mui/material/Button";
-import {ButtonGroup, Fab, FormHelperText, FormLabel, Tooltip} from "@mui/material";
+import {AppBar, ButtonGroup, Drawer, Fab, FormHelperText, FormLabel, Tooltip} from "@mui/material";
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import {getAllQnA} from "../api/QuestionAnswerApi";
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -49,10 +53,19 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
   const theme = useTheme();
   const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
+  const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
+
 
   React.useEffect(() => {
     (ref.current as HTMLDivElement).ownerDocument.body.scrollTop = 0;
   }, [value]);
+
+  useEffect(() => {
+    (async () => {
+      const { exchanges } = await getAllQnA();
+      setAllQuestions(exchanges);
+    })();
+  }, []);
 
   useEffect(() => {
     if (messages.length === 0 && starting) {
@@ -190,92 +203,131 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     setDisplayQuestions(!displayQuestions);
   }, [displayQuestions]);
 
+
+
+  const questionMenuItems = useMemo(() => {
+    if (allQuestions.length !== 0) {
+      return allQuestions.map((question, index) => (
+          <Button
+              fullWidth
+              sx={{ fontSize: "0.75rem", height: "4rem" }}
+              variant="outlined"
+              size="large"
+              key={"qb-" + question.exchangeId}
+              onClick={() => {
+                onButtonClick(question.question);
+              }}
+          >
+            {question.question}
+          </Button>
+      ))
+    } else {
+      return []
+    }
+  }, [allQuestions])
+
   return (
-    <Box sx={{ pb: 7 }} ref={ref}>
-      <CssBaseline />
-			<main className="chat-container">
-			  {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg} />)}
-			  <span ref={dummyRef}></span>
-			</main>
-      <Grid sx={{ ml: 6, display: displayQuestions ? 'flex' : 'none' }} container spacing={2}>
-        <FormControl fullWidth>
-          <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
-        </FormControl>
-        <span ref={commonlyAskedQuestionsRef} />
-        {questionButtons}
-      </Grid>
-      <Tooltip title={displayQuestions ? "Hide questions" : "Show commonly asked questions"}>
-        <Fab
-          size="small"
-          color="primary"
-          aria-label="add"
-          onClick={onFabClick}
-          sx={{
+      <Box sx={{pb: 7, alignContent: 'center'}} ref={ref}>
+        <CssBaseline/>
+        <Grid className="chat-container">
+          {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
+          <span ref={dummyRef}></span>
+        </Grid>
+        <Grid sx={{ml: 6, display: displayQuestions ? 'flex' : 'none'}} container spacing={2}>
+          <FormControl fullWidth>
+            <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
+          </FormControl>
+          <span ref={commonlyAskedQuestionsRef}/>
+          {questionButtons}
+        </Grid>
+
+        <ReportGmailerrorredIcon sx={{position: 'fixed', bottom: 0, left: 0}}/>
+        <Paper sx={{
+          m: 2,
           position: 'fixed',
-          bottom: 72,
-          right: 16
-        }}>
-          {displayQuestions ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon />}
-        </Fab>
-      </Tooltip>
-      <ReportGmailerrorredIcon sx={{ position: 'fixed', bottom: 0, left: 0 }} />
-      <Paper sx={{ m: 1, position: 'fixed', bottom: 0, right: 0, backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff', width: "60%" }} elevation={3}>
-        <FormControl fullWidth  variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
-          <OutlinedInput
-            id="question-input"
-            type={'text'}
-            endAdornment={
-              <>
-                {screenState.generativeMode ?
-                  <Tooltip title={"Although we make every effort to assure accuracy of responses to your questions. Still, we assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an \"as is\" basis with no guarantees of completeness, accuracy, usefulness or timeliness."} >
-                    <InputAdornment position="end" sx={{ mr: 1 }}>
-                      <PriorityHighIcon />
-                    </InputAdornment>
-                  </Tooltip>
-                 : <div/>}
-                <InputAdornment position="end" sx={{ mr: 1 }}>
-                  <IconButton
-                    aria-label="Ask question"
-                    onClick={(e) => {
-                      if (!isEmptyNullOrUndefined(question)) {
-                        setLoading(true);
-                        setAnswer("");
-                        askQuestion(e);
-                      }
-                    }}
-                    onMouseDown={() => {}}
-                    edge="end"
-                  >
-                    {!loading ? <SendIcon /> : <CircularProgress />}
-                  </IconButton>
-                </InputAdornment>
-              </>
-            }
-            value={question}
-            label="Ask your question here"
-            onChange={(e) => {
-              if (!isEmptyNullOrUndefined(e.target.value)) {
-                setQuestion(e.target.value);
-              } else {
-                setQuestion("");
-              }
+          bottom: 2,
+          backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+          width: "55%"
+        }} elevation={3}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
+            <OutlinedInput
+                id="question-input"
+                type={'text'}
+                endAdornment={<>
+                  {screenState.generativeMode ?
+                      <Tooltip
+                          title={"Although we make every effort to assure accuracy of responses to your questions. Still, we assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an \"as is\" basis with no guarantees of completeness, accuracy, usefulness or timeliness."}>
+                        <InputAdornment position="end" sx={{mr: 1}}>
+                          <PriorityHighIcon/>
+                        </InputAdornment>
+                      </Tooltip>
+                      : <div/>}
+                  <InputAdornment position="end" sx={{mr: 1}}>
+                    <IconButton
+                        aria-label="Ask question"
+                        onClick={(e) => {
+                          if (!isEmptyNullOrUndefined(question)) {
+                            setLoading(true);
+                            setAnswer("");
+                            askQuestion(e);
+                          }
+                        }}
+                        onMouseDown={() => {
+                        }}
+                        edge="end"
+                    >
+                      {!loading ? <SendIcon/> : <CircularProgress/>}
+                    </IconButton>
+                  </InputAdornment>
+                </>}
+                value={question}
+                label="Ask your question here"
+                onChange={(e) => {
+                  if (!isEmptyNullOrUndefined(e.target.value)) {
+                    setQuestion(e.target.value);
+                  } else {
+                    setQuestion("");
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (!isEmptyNullOrUndefined(question) && e.keyCode == 13) {
+                    setLoading(true);
+                    setAnswer("");
+                    askQuestion(e);
+                    setDisplayQuestions(false);
+                  }
+                }}
+                inputProps={{
+                  maxLength: 250
+                }}/>
+          </FormControl>
+        </Paper>
+        <Drawer
+            sx={{
+              m: 1,
+              width: 160,
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: 400,
+                boxSizing: 'border-box',
+                zIndex: 1,
+              },
             }}
-            onKeyDown={(e) => {
-              if (!isEmptyNullOrUndefined(question) && e.keyCode == 13) {
-                setLoading(true);
-                setAnswer("");
-                askQuestion(e);
-                setDisplayQuestions(false);
-              }
-            }}
-            inputProps={{
-              maxLength: 250
-            }}
-          />
-        </FormControl>
-      </Paper>
-		</Box>
+            variant="permanent"
+            anchor="right"
+        >
+          <Toolbar />
+          <Typography color={"primary"}>
+            FAQ
+          </Typography>
+          <Box>
+            <List sx={{m:1}}>
+              {questionMenuItems}
+            </List>
+          </Box>
+        </Drawer>
+      </Box>
   )
 }
 

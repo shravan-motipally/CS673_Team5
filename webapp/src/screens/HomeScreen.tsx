@@ -35,6 +35,7 @@ const Home = () => {
         >
           <ChatContainer questions={commonlyAskedQuestions} />
         </Box>
+
       </main>
     </ThemeProvider>
 	);

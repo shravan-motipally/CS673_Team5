@@ -16,6 +16,7 @@ import {getBackendHealth} from "./api/HealthCheckApi";
 import smotipally from './screens/images/smotipally.png';
 import Settings from './screens/Settings';
 import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
+import LandingPage from "./screens/LandingPage";
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
@@ -27,7 +28,8 @@ export const ScreenContext = createContext<ScreenContextType>({
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7
+		semanticSimilarityThreshold: 0.7,
+		currentClass: null
 	},
 	setScreenState: () => {}
 });
@@ -62,6 +64,9 @@ const showScreen = (screen: string) => {
 	switch(screen) {
 		case 'home':
 			return <HomeScreen/>;
+			break;
+		case 'landing page':
+			return <LandingPage/>;
 			break;
 		case 'about':
 			return <About />;
@@ -100,7 +105,8 @@ export const App = () => {
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7
+		semanticSimilarityThreshold: 0.7,
+		currentClass: null
 	});
 
 	useEffect(() => {
@@ -111,7 +117,7 @@ export const App = () => {
 				if (!loaded) {
 					setScreenState({...screenState, screen: 'error', isError: true});
 				} else {
-					setScreenState({...screenState, screen: 'home'})
+					setScreenState({...screenState, screen: 'landing page'})
 				}
 			}
 		})();
@@ -130,9 +136,11 @@ export const App = () => {
 
   return (
     <ScreenContext.Provider value={contextValue}>
-		  <Container>
-		    {showScreen(screenState.screen)}
-		  </Container>
+			{screenState.screen === 'landing page'
+					? showScreen(screenState.screen) :
+					<Container>
+						{showScreen(screenState.screen)}
+					</Container>}
 	  </ScreenContext.Provider>
   );
 }

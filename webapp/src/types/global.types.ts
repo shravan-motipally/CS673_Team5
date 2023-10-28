@@ -24,4 +24,5 @@ export interface ScreenState {
 	generativeModel: GenerativeModel
 	semanticSimilarityModel: string
 	semanticSimilarityThreshold: number
+	currentClass: string | null
 }
