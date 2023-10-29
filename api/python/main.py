@@ -1,83 +1,106 @@
+import os
+from typing import List, Dict
+import pymongo
 from fastapi import FastAPI
+from pydantic import BaseModel
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory, MongoDBChatMessageHistory
 
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.llms import LlamaCpp
-from langchain.chains.question_answering import load_qa_chain
-
-from langchain.document_loaders import JSONLoader
-from langchain.document_loaders import TextLoader
-# from pathlib import Path
-# import json
+import openai
 
 app = FastAPI()
 
+
+class Chat(BaseModel):
+    message: str
+    session_id: str
+
+
 @app.get("/")
 async def default():
-    return {"Hello": "World!"}
+    return "Welcome to QBot Generation using OpenAI"
 
-@app.get("/chatpdf")
-async def chat_pdf(question):
+
+@app.post("/chat")
+async def chat(chat_message: Chat):
     # validate if question is worth asking
-    answer = query(question)
-    return {"answer": answer}
+    answer = query(chat_message)
+    return answer
+
 
 @app.on_event("startup")
 async def startup_event():
-    app.document = multi_doc_load()
-    app.texts = split()
+    mongo_cluster_uri = os.environ.get("MONGODB_ATLAS_CLUSTER_URI")
+    mongo_client = pymongo.MongoClient(mongo_cluster_uri)
+    database = mongo_client["qbot-db"]
+    app.chat_history_collection = database["chat_history"]
 
-    app.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    app.vectordb = persist()
-    app.retriever = app.vectordb.as_retriever()
-
-    app.llm = LlamaCpp(model_path="/home/pi/app/model/WizardLM-7B-uncensored.ggmlv3.q5_0.bin", verbose=True, n_ctx=4096)
-    app.chain = load_qa_chain(app.llm, chain_type="stuff")
-
-def metadata_func(record: dict, metadata: dict) -> dict:
-    metadata["question"] = record.get("question")
-
-    return metadata
-
-def pdf_load():
-    loader = PyPDFLoader("/home/pi/app/CS633_Syllabus.pdf")
-    return loader.load()
-
-def multi_doc_load():
-    documents = []
-    loader = PyPDFLoader("/home/pi/app/CS633_Syllabus.pdf")
-    documents.extend(loader.load())
-    loader = PyPDFLoader("/home/pi/app/LECTURE1.pdf")
-    documents.extend(loader.load())
-    loader = TextLoader("/home/pi/app/questions_and_answers.txt")
-    documents.extend(loader.load())
-
-    return documents
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    app.database = "qbot-db"
+    app.collection_name = "chat_history"
+    app.llm = ChatOpenAI(temperature=0, openai_api_key=openai_api_key,
+                         model_name="ft:gpt-3.5-turbo-0613:qbot::8E0jSFxr")
 
 
-def load():
-    #loader = PyPDFLoader("/home/pi/app/java-design-patterns.pdf")
-    file_path = "/home/pi/app/qbot-db.exchange.json"
-    # return json.loads(Path(file_path).read_text())
-    loader = JSONLoader(
-        file_path=file_path,
-        jq_schema="[]",
-        content_key="answer",
-        metadata_func=metadata_func)
-    return loader.load()
+def find_chat_history(session_id: str):
+    if app.chat_history_collection is not None:
+        history = app.chat_history_collection.find({'session_id': session_id})
+        results = list(history)
+        if len(results) != 0:
+            for hist in history:
+                print("history" + hist)
+            return history
+        else:
+            return []
+    else:
+        return None
 
-def split():
-    text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
-    return text_splitter.split_documents(app.document)
 
-def persist():
-    vectordb = Chroma.from_documents(app.texts, app.embeddings, persist_directory="/home/pi/app/chroma")
-    vectordb.persist()
-    return vectordb
+def insert_chat_history(session_id: str, chat_history: List[Dict[str, str]]):
+    if app.chat_history_collection is not None:
+        try:
+            app.chat_history_collection.save({"session_id": session_id, "chat_history": chat_history})
+        except:
+            print("Exception occurred in saving chat history in chat history collection")
 
-def query(question):
-    docs = app.retriever.get_relevant_documents(question)
-    answer = app.chain.run(input_documents=docs, question=question)
-    return answer
+
+def query(chat_message: Chat):
+    # mongo_cluster_uri = os.environ.get("MONGODB_ATLAS_CLUSTER_URI")
+    # app.message_history = MongoDBChatMessageHistory(
+    #     connection_string=mongo_cluster_uri,
+    #     session_id=chat_message.session_id,
+    #     database_name=app.database,
+    #     collection_name=app.collection_name
+    # )
+    # app.chat_memory = ConversationBufferMemory(
+    #     memory_key='history',
+    #     chat_memory=app.message_history,
+    #     return_messages=True
+    # )
+    # app.conversation = ConversationChain(
+    #     llm=app.llm,
+    #     memory=app.chat_memory
+    # )
+    # chat_history = find_chat_history(chat_message.session_id)
+    # response = app.conversation.run(
+    #     {"input": chat_message.message, "history": chat_history if chat_history is not None else []})
+    post_prompt = " Don’t justify your answers. Don’t give me information not mentioned in the PROVIDED CONTEXT.  Do " \
+                  "not answer any questions not related to Computer Science, Software Engineering or Boston " \
+                  "University classes."
+    completion = completion = openai.ChatCompletion.create(
+        model="ft:gpt-3.5-turbo-0613:qbot::8E0jSFxr",
+        messages=[
+            {"role": "system", "content": "You are QBot, a factual chatbot that can be playful but can also be "
+                                          "sarcastic at times.  You are to act on behalf of Boston University "
+                                          "Professors in the Computer Science department in order to answer questions "
+                                          "that students ask you.  You are well versed in Computer Science and "
+                                          "Software Engineering concepts.  Give short straightforward answers to "
+                                          "questions. If you do not know the answer to a question, say that you do "
+                                          "not know and to ask the Professor the same question you were asked.  But "
+                                          "do not give the wrong answer"},
+            {"role": "user", "content": chat_message.message + post_prompt}
+        ]
+    )
+    response = completion.choices[0].message
+    return response
