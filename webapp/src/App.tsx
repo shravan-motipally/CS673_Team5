@@ -27,8 +27,7 @@ export const ScreenContext = createContext<ScreenContextType>({
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7,
-		allQnA: []
+		semanticSimilarityThreshold: 0.7
 	},
 	setScreenState: () => {}
 });
@@ -101,8 +100,7 @@ export const App = () => {
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7,
-		allQnA: []
+		semanticSimilarityThreshold: 0.7
 	});
 
 	useEffect(() => {

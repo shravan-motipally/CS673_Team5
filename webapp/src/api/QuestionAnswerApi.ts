@@ -4,23 +4,15 @@ import * as qna from "@tensorflow-models/qna"
 import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
 import {getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} from "../utils/Urls";
 import {ExcelJson} from "../utils/ExcelUtils";
-import {useContext} from 'react';
 
-export const getAllQnA = async (screenState: any, setScreenState: any) => {
-  if (screenState.getAllQnA && screenState.allQnA.length > 0) {
-    return screenState.allQnA;
-  } else {
-    const res = await axios({
-      timeout: 300000,
-      url: getAllQnAUrl(),
-      method: "GET"
-    });
-    setScreenState({
-      ...screenState,
-      allQnA: res.data
-    });
-    return res.data;
-  }
+export const getAllQnA = async () => {
+  const res = await axios({
+    timeout: 300000,
+    url: getAllQnAUrl(),
+    method: "GET"
+  });
+
+  return res.data;
 }
 
 export const updateQuestions = async (jsonData: ExcelJson) => {

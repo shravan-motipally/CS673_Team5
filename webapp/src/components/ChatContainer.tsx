@@ -110,7 +110,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     setMessages([...messages, currentMessage]);
     setQuestion('');
     (async () => {
-      const res = await answerQuestion(question, screenState, setScreenState);
+      const res = await answerQuestion(question, screenState);
       setLoading(false);
       setAnswer(res);
       const receiverId = Math.floor(Math.random() * 1000);
@@ -151,7 +151,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     
     setMessages([...messages, currentMessage]);
     (async () => {
-      const res = await answerQuestion(questionClicked, screenState, setScreenState);
+      const res = await answerQuestion(questionClicked, screenState);
       setLoading(false);
       setAnswer(res);
       const receiverId = Math.floor(Math.random() * 1000);

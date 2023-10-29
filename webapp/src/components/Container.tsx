@@ -195,7 +195,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA(screenState, setScreenState);
+      const { exchanges } = await getAllQnA();
       setAllQuestions(exchanges);
     })();
   }, []);
