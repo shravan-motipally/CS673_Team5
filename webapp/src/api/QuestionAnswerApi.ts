@@ -6,13 +6,18 @@ import {getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} fro
 import {ExcelJson} from "../utils/ExcelUtils";
 
 export const getAllQnA = async () => {
-  const res = await axios({
-    timeout: 300000,
-    url: getAllQnAUrl(),
-    method: "GET"
-  });
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllQnAUrl(),
+      method: "GET"
+    });
 
-  return res.data;
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { exchanges: [] };
+  }
 }
 
 export const updateQuestions = async (jsonData: ExcelJson) => {
