@@ -1,6 +1,6 @@
 import {
   findExactAnswerToQuestion,
-  getAllQnA, getTheSemanticallySimilarExchange
+  getTheSemanticallySimilarExchange
 } from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 import {askAScienceQuestion} from "../api/BloomGenerationApi";
@@ -23,8 +23,7 @@ export const processAnswerForBloom = (initialAnswer: string) => {
 export const answerQuestion = async (question: string, screenState: ScreenState) => {
   let res;
   try {
-    const answers = await getAllQnA();
-    const { exchanges }: { exchanges: Array<Exchange> } = answers;
+    const exchanges: Array<Exchange> = screenState.exchanges;
     const { found, answer } = findExactAnswerToQuestion(question, exchanges);
     if (!found) {
       const semanticallySimilarExchange = await getTheSemanticallySimilarExchange(exchanges, question, screenState.semanticSimilarityModel);

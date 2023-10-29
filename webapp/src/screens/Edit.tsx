@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
 import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
 import * as excel from "xlsx";
-import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
+import {updateQuestions} from "../api/QuestionAnswerApi";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {ScreenContext} from "../App";
 import Divider from "@mui/material/Divider";
@@ -58,7 +58,7 @@ const Edit = () => {
 
 	useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA();
+      const exchanges = screenState.exchanges;
       setRowData(exchanges);
     })();
   }, []);

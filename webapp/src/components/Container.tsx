@@ -37,7 +37,6 @@ import {Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
-import {getAllQnA} from "../api/QuestionAnswerApi";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {StyledMenu} from "./StyledMenu";
@@ -120,7 +119,6 @@ interface ContainerProps {
 
 const Container: React.FC<ContainerProps> = ( { children } ) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
-  const [canOpen, setCanOpen] = React.useState<boolean>(false);
   const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(null);
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
   const [questionsDropDownAnchor, setQuestionsDropDownAnchor] = React.useState<null | HTMLElement>(null)
@@ -158,7 +156,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       screen: 'login',
       isAuthed: screenState.isAuthed,
     });
-    setCanOpen(true);
     setLogoutAnchor(null);
   }, [screenState]);
 
@@ -175,7 +172,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         isAuthed: !screenState.isAuthed,
       });
     }
-    setCanOpen(false);
   }, [screenState]);
 
   const toggleDarkMode = React.useCallback(() => {
@@ -194,11 +190,12 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
 
   useEffect(() => {
-    (async () => {
-      const { exchanges } = await getAllQnA();
-      setAllQuestions(exchanges);
-    })();
-  }, []);
+    if (screenState.exchanges.length == 0) {
+      setAllQuestions([]);
+    } else {
+      setAllQuestions(screenState.exchanges);
+    }
+  }, [screenState]);
 
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
