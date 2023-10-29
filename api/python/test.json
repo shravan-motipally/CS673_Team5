@@ -1,0 +1,1762 @@
+[
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Is this class difficult or easy?"
+      },
+      {
+        "role": "assistant",
+        "content": "The class covers multiple topics. It is rewarding for a student to learn new material and be able to apply it. Six modules include over a thousand pages of course notes, quizzes, assignments, final exam, term project."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the common line from Lessons Learned section of term project presentations?"
+      },
+      {
+        "role": "assistant",
+        "content": "I wish we started the coding on day one."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the common students' conclusion at the end of the class?"
+      },
+      {
+        "role": "assistant",
+        "content": "\"This class taught me how to think.\" One of the introductory slides of the first module includes several students' testimonials. An interesting read."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the effective way to learn in this class?"
+      },
+      {
+        "role": "assistant",
+        "content": "Good question indeed. First point is that the amount of 'learning' will be proportional to the amount 'effort' you invest. Such concept is opposite to a common thinking that 'someone else must teach me'. The second point is about importance to strategize and do things in a certain order. For example, if you assume that you can pick up all topics during the night before final exam, such strategy might prove flawed. Some folks treat this class as a project with its activities being well-scheduled. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the common misconception about a term project?"
+      },
+      {
+        "role": "assistant",
+        "content": "Projects in this class are undertaken by real students, who learn things as they go along, often learn through committing mistakes. Some things in project reports are good and other are not as good. Although looking at reports for the first time you might not distinguish the good from the bad. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How the final grade is calculated?"
+      },
+      {
+        "role": "assistant",
+        "content": "The formula to arrive at the final grade is as follows, ...(0.2*average(quizzes)+0.2*average(assignments)+0.3*(term project)+0.3*(final exam) . At the end of a class, the content of blackboard is downloaded into a spreadsheet, so then the final grade is calculated as per this formula. You are free to repeat these calculations in your private space."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are there any constraints in selecting a topic for a project?"
+      },
+      {
+        "role": "assistant",
+        "content": "Your grade is the constrain. Projects that will be used by students of future classes - will receive the top grade. Projects that are little to do with software engineering and do not contribute to the scope of this class - will lose some points. Apparently, the project HoneyLemonMacroons has little to do with software engineering. On another hand, there is an actual bakery in Texas that is using the app developed here. The project Fashion Portal has a remarkable UI. Someone in California has a successful small business of selling clothes, while using this app. Any project that instigated a real business will receive additional points."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How do I start with writing stories in Pivotal ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Think of key activities you need to accomplish and write them in Ice Box, this is a good start."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should each member of a team write stories in Pivotal?"
+      },
+      {
+        "role": "assistant",
+        "content": "It seems best for everyone to write and to advance stories in Pivotal. Still , a team needs someone to oversee the whole requirements process and to correct any inconsistencies. Placing such responsibility into a real company context, such person will be called a Product Manager or a Product Owner."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do we need a Build Master merging code in Git for everyone?"
+      },
+      {
+        "role": "assistant",
+        "content": "Good question. The resolution of code conflicts can be quite involved. We recommend for the most senior developer to oversee all merges."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How do I start coding? "
+      },
+      {
+        "role": "assistant",
+        "content": "It seems logical prior to coding a screen of a user interface - to draw a picture of how it should look, and then proceed with coding. Continuing with the same thought, it seems logical prior to building a database - to draft some ERL (Entity Relational Diagram) with all fields and tables, and then proceed with implementation. The process is iterative and all its parts are intertwined."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How do I start testing?"
+      },
+      {
+        "role": "assistant",
+        "content": "You should figure out what the system in front of you is supposed to do and to test it first. Then, you should become aware of what the system is not supposed to do, which will constitute the negative tests. Note that testing is a well-controlled activity, as test cases and test results are documented. For a unit test, you might use some framework on a code level, e.g. JUnit or PyUnit. Such tools as Puppeteer and Playwright can facilitate the prolonged end-to-end user scenarios. For a system testing, you might compile combinations of parameters, then reduce them using AllPairs and then execute them using Selenium or QTP."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What common issues at project's start that manifest at a project's end?"
+      },
+      {
+        "role": "assistant",
+        "content": "When you engage with testing, the first thought that comes to mind is, \"I wish I would written my stories well, so I can just write my test cases simply mapped into these stories\". Or you might think, \"I wish I have a decent state transition diagram in front of me, so I would be able to trace each transition from state to state into a test case\". "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How do folks who write code talk to people who create UI?"
+      },
+      {
+        "role": "assistant",
+        "content": "The interaction between developers and Ux engineers is indicative of how well a project is executed. Some successful projects are started with a sketch. Remembering that UI is the only way for a user to appreciate a system. Some projects are started with a prototype, a piece of code to demonstrate the feasibility of the final product. In any case, it is an iterative process when changes are welcomed from all sides."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do I need to purchase the text books?"
+      },
+      {
+        "role": "assistant",
+        "content": "It really depends on - who is paying for books. Each new lecture, professor brings to class a half a dozen new books. These are famous works of well-known software practitioners who created a sea-change in the industry."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "One member of our team does not contribute to the project "
+      },
+      {
+        "role": "assistant",
+        "content": "The team should continue to do the project. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "A member of our team dropped out of the class, what do we do?"
+      },
+      {
+        "role": "assistant",
+        "content": "It is expected that during the first week of a class, some folks drop and new students register. Large teams require an additional effort on communication. A team of five seems to be an ideal size. If the size of a team drops below three, it will be difficult to spread the load and to cover all required deliverables - then two teams can be joined together. Throughout all transformations, a team should go on and continue working of the project."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the minimal number of members for a team to stay together?"
+      },
+      {
+        "role": "assistant",
+        "content": "A team of three people can complete a successful term project. If only two members are left, they should regroup and join other teams. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "There are too many things on my plate. What is important?"
+      },
+      {
+        "role": "assistant",
+        "content": "We usually suggest to prioritize the term project over individual assignments. Should bring up the saying, \"if you want something to get done, ask a busy person\" - which emphasizes  - what is important is how well you are organized, what is less important is how busy you are."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I do the final project presentation from my desktop? "
+      },
+      {
+        "role": "assistant",
+        "content": "A team will lose points if the application is not hosted. The goal is to make the app useful and readily available to future students of this class and without any support from original developers."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Where can host my app ?"
+      },
+      {
+        "role": "assistant",
+        "content": "You might compile the list of criteria to select a fitting site. The link to the hosted app should be distributed as part of a project report prior to the final presentation for students and professor to examine the app. Both, front end and back end should be hosted. If possible, hosting should be free. For example AWS offers huge incentives for hosting an app, e.g. convenient database and unit tests. On another hand, everything there starts with a credit card. You can find several projects hosted on Firebase from Google which is free. One of your assignments about unit tests - is hosted on Glitch. Another assignment is hosted on Linode, that automatically deducts monthly few dollars from instructor's credit card. The 2023 implementation of Repository of Term Projects is hosted at Render."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why hosting is expected as early as module 3 ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Hosting your app gives you the opportunity to receive the feedback from instructor. One is able to test the app as a whole, which is invaluable. Think about the risk of going through many weeks of design and coding and then unabling to host an app. Such a huge effort can be in vain. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Could we do assignments as a team?"
+      },
+      {
+        "role": "assistant",
+        "content": "Assignments, quizzes, final exam - are individual activities. Each student does it individually. Various sources are appreciated and should be explicitly referenced. ChatGTP can be used. Sources should be paraphrased in ones own words without copying. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I mark all possible quiz responses as correct once?"
+      },
+      {
+        "role": "assistant",
+        "content": "Blackboard deducts 15% from overall score for each incorrect response. Suppose you have two possible responses, one response is correct and another incorrect. If you mark both of them as True, then your score will be 85%."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How much time do I need to allocate for an assignment?"
+      },
+      {
+        "role": "assistant",
+        "content": "60 minutes. Having said this, bear in mind that you can really spend as much time on an assignment as you wish or as little as your background allows you. The reason we provide this guideline is to make sure that other topics are not forgotten. Also, it gives a good exercise for 'timeboxing', for prioritizing tasks to always start with most important ones."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I submit an assignment before the expected deadline?"
+      },
+      {
+        "role": "assistant",
+        "content": "You can surely submit an assignment long before it is expected to be submitted. Still this is not recommended. First, all assignments are reviewed in great detail during a dedicated class session to avoid any confusion. Second, assignments can be updated in the blackboard. So, you might be completing an assignment which is a wrong version."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How do I submit an assignment?"
+      },
+      {
+        "role": "assistant",
+        "content": "Here are several common-sense rules (best practices) regarding the submission of assignments. \r\n•\t Do not copy submissions from each other. Your instructor or TA reviews multiple submissions and instantly spots when large amount of text is identical.\r\n•\t Download the latest version of an assignment from blackboard after it has been reviewed in the class.\r\n•\t Make sure you benefit from the class review; ask questions if anything unclear\r\n•\t Feel free to benefit from recording of the class that goes over each assignment in detail.\r\n•\t Read the whole assignment from beginning to very end – before starting to do it\r\n•\t Submit only one file in PDF or in WORD, to enable the blackboard application called BOX, which lets your instructor to provide the well-focused comments\r\n•\t Insert your responses into the same file as the original assignment. Otherwise it might be difficult to figure out which response corresponds to which question."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do we need to wait for Lecture 4 to draft user interface?"
+      },
+      {
+        "role": "assistant",
+        "content": "Do whatever is necessary now - do not wait."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I complete Estimation Record from looking at other projects?"
+      },
+      {
+        "role": "assistant",
+        "content": "Estimation Record (as well as other parts of the project) are done in a team setting. They require a convergence from all members. Referring to other projects that have been completed is appreciated."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do we need to define EXTERNAL personas or INTERNAL, or both ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Project team needs to document EXPERNAL personas, those folks who will use the system and pay good money for its usage. Such definition of external personas is a configuration item and should have a version number."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why do we need to use RASCI diagram ?"
+      },
+      {
+        "role": "assistant",
+        "content": "In the context of this class, the only purpose of the RASCI is to define external personas. You can simplify the RASCI to state only 'R' (responsible) personas for very high-level tasks. Alternatively, you can use a difference method to define personas, the so-called 'warm and fuzzy'. What is important that the same personas are used throughout the whole project, in use cases and in testing. The high-level list of tasks in RASCI does not compete with stories in Pivotal "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why do we need to use non-human personas?"
+      },
+      {
+        "role": "assistant",
+        "content": "This is a public university where we cover all possible cases for students to prepare for real life scenarios. For example, in B2B apps, all personas are nonhuman. You are directed to explore different personas, and to define the system using various angles. When building a system, the goal is not to miss any important angles / requirements."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "After defining personas, could we change them later ?"
+      },
+      {
+        "role": "assistant",
+        "content": "You can surely change personas later. The message of the slide, \"Keep Appending\" is how difficult it is run an ideal project without any rework."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "While taking a quiz, my Wi-Fi line dropped."
+      },
+      {
+        "role": "assistant",
+        "content": "Not to worry, your unfinished attempt will be erased."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do I need to physically participate in the class room ?"
+      },
+      {
+        "role": "assistant",
+        "content": "For on-campus classes, you should come to the classroom. You are responsible for all material covered in the class. Note that you are not graded whether you are in the classroom and how active you are."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are live sessions recorded?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. All live sessions are recorded and appear instantly in blackboard. Still, you should consider some technical difficulties, that are little to do with this class. For example, Wi-Fi drops and disconnects Zoom sessions, support person forgets to press the button and mics at the ceiling not functioning, etc."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Please erase my attempt and I will resubmit the assignment"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, you can re-submit, without affecting your grade"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "I will be late with my assignment, will you decrease my grade ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Your grade will not be affected. Still bear in mind that every week there are new things to do and procrastination is irreversible. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are questions on the final exam the same as on quizzes ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Final exam does not introduce any new information. Many questions are the same, although randomized. One of the challenges of the final exam is that it covers multiple topics very quickly."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are there many students who received 100% on final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "For all the years as we are running this class, there was a single person who reached a perfect one hundred percent on the final exam. You can contact him directly for an advice. In fact, he received a perfect score for all assignments and all quizzes …. for all classes he ever took at BU. On another hand, to get 'A' for this class - you do not need a one hundred percent on the final exam."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I take the exam on-line instead of coming to the classroom ?"
+      },
+      {
+        "role": "assistant",
+        "content": "As an exception, you can take an exam on-line. Still note that it is easier for you to be in the classroom, since you are able to clarify questions with an instructor. Also, note that exam is a single attempt, as it is opposite to the quiz, hence if the Wi-Fi drops in the middle of an exam, this will spell trouble."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I take the final exam at a different date / time? "
+      },
+      {
+        "role": "assistant",
+        "content": "Everyone in the class takes the final exam during the same three hours. To shift this time slot would require a permission from Dean's office administration."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "I am looking at the Blackboard and unable to find any quizzes."
+      },
+      {
+        "role": "assistant",
+        "content": "Quizzes are open after they are reviewed in the class. This is to avoid misinterpretations and to discuss openly all questions along with expected responses."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can I take a quiz multiple times?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. You can take a quiz as many times as you wish and the final grade is averaged among all attempts. For example, if you get zero on your first attempt and you get a hundred on the second attempt, then the total will be fifty."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the effective way to learn using quizzes?"
+      },
+      {
+        "role": "assistant",
+        "content": "Good question. Quizzes here are to learn, which is opposite to trying to avoid getting caught. The easiest way to take a quiz is right after we review it in the class, while our discussion is still fresh in your mind. After you press the 'submit' button, all responses will be available to you. Still it is a good idea to prepare to the first attempt. While taking a quiz it is important to pin point a corresponding lecture's slide which is covered by this quiz. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are quizzes remain identical from one attempt to another?"
+      },
+      {
+        "role": "assistant",
+        "content": "Responses for each question are randomized. Hence for each attempt, the order of responses is different."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "For a quiz should I provide the expected response or my opinion?"
+      },
+      {
+        "role": "assistant",
+        "content": "You should provide a response which is expected from you. Quiz is not a good forum for a debate. Your instructor welcomes an opportunity to improve on quizzes and in fact on any class material. If you communicate to an instructor your thinking, this will be greatly appreciated. Your first responsibility in this class is to satisfy the predefined 'learning objectives'. Improving class material is also important, although is comes as a distant second."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "During term project, why there are so many in-process deliverables ?"
+      },
+      {
+        "role": "assistant",
+        "content": "There are eleven expected submissions. They are designed to streamline the product development. If any of the submissions are redundant, overlap, unnecessary, inconsistent with each other - then this will be a minus at the project's final tally. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "I have doubts that I can be successful in coding in this class"
+      },
+      {
+        "role": "assistant",
+        "content": "The term project is not individual. Teams are composed to include several folks, who have a strong coding skill. Apparently, some projects are more elaborate than others. Still, each of the one-hundred projects that have been started - did show a working prototype at the end. In other words, there never been a project that completely failed and had nothing to show at the end. In real life, most software companies compose their teams with folks, who gravitate to a variety of tasks in front of them."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why an auditor always stats with a positive complimentary statements ?"
+      },
+      {
+        "role": "assistant",
+        "content": "For the same reason as we start testing with positive tests and then proceed with negative tests. Such order is the most effective. It will be met with minimal resistance."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why in module # 3 Agile is juxtaposed with Peer Reviews?"
+      },
+      {
+        "role": "assistant",
+        "content": "Because both these techniques, Agile and Peer Review - are bottom-up as they de-emphasize the management role."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why in module # 4 Software Design is juxtaposed with Black Swans ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Because to build a sound system, it is insufficient to adopt a sound process. Software architecture is not optional. Most Black Swans (failed projects) do suffer from poor design."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why the last module # 6 lists all topics of the course? "
+      },
+      {
+        "role": "assistant",
+        "content": "Module # 6 is a bit more abstract than other modules. It brings the discussion on a different level. It relies on terminology and concepts that were covered in previous modules."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should CI List match exactly the Estimation Record ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Both documents should be mapped into each other. Although, a precise match would imply a redundancy. For example, a large review meeting, taking a considerable resource, should find its way into the estimation record. However, such meeting has no place on CI List, since it could not possibly have a version number."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are peer reviews comments and testing defects included into CI List?"
+      },
+      {
+        "role": "assistant",
+        "content": "Such items are usually not controlled and they should not be included into a CI List."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should I provide a revision history for each Configuration Item ?"
+      },
+      {
+        "role": "assistant",
+        "content": "If you work for a company producing medical devices or atomic submarines, then strict controls are in order. In a context of our course, you are not asked to track revision history."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should CI list include items that are not done yet ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, I would include those, but leave the version number as a blank."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should the CI List itself be stated as an item and placed on the list?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, it's a good idea, each time you re-distribute the CI List, you bump its version."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should a team's policy be included as a configuration item?"
+      },
+      {
+        "role": "assistant",
+        "content": "An organizational policy does not have a version number. It is not expected to be changed. Hence it's not a CI Item."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should I add a version number to each configuration item ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, by definition, a configuration item should have a version number, located for example, at a bottom right corner. In a context of our class, this seems a bit awkward. Still, this is a perfect exercise in preparation to a real-life scenario."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Trying to understand the concept of ‘decriminalization of defects.’ "
+      },
+      {
+        "role": "assistant",
+        "content": "It is an engineering responsibility to provide a safe environment, where folks are openly review their products."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why an app splitting roster into teams difficult for a term project?"
+      },
+      {
+        "role": "assistant",
+        "content": "Few reasons, first, during the first week of a semester, many students drop a class and many other students join the class, hence the arrangement has to be redone several times; second, information provided by students through a survey is unreliable."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why the definition of ‘software’ includes the test cases?"
+      },
+      {
+        "role": "assistant",
+        "content": "IEEE standard emphasizes the interconnection among all components of software product and process. For example, one cannot commit a piece of code unless it is accompanied with a corresponding unit test."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why do we separate the test design from test  execution?"
+      },
+      {
+        "role": "assistant",
+        "content": "A single test case can be executed in a different environments at a various times. Tracking test results is in fact a legal responsibility, in a context of SOX (Sorbey Oxley Consumer Protection Act)"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why Cone of Uncertainty is usually lopsided?"
+      },
+      {
+        "role": "assistant",
+        "content": "Because people are inherently over-optimistic and commonly miss to take into an account some tasks in front of them. Defects that are inserted at the beginning of a project, stay hidden and reveal themselves only at the end of a project."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why definition of users is a great motivation for developers?"
+      },
+      {
+        "role": "assistant",
+        "content": "Because it clarifies to a developer a target to build. Some developers specifically appreciate the so called 'warm and fuzzy' relationships with end user "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why performance of engineers should not be evaluated based on process metrics?"
+      },
+      {
+        "role": "assistant",
+        "content": "Because of the strong positive feedback. For example, testers who's performance is evaluated by the number of defects which they find - are bound to document obscure minor issues, instead of focusing on major problems."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why … Peer reviews are more effective than personal editing"
+      },
+      {
+        "role": "assistant",
+        "content": "Additional angles bring the DRE (Defect Removal Efficiency) from 25 percent to 80 percent."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why … Adoption of peer reviews should start with code"
+      },
+      {
+        "role": "assistant",
+        "content": "As per Michael Fagan's paper, adoption of peer reviews should start with a success. Code is far more objective than requirements or tests. Code compiles or it does not compile."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why … Adoption of Agile should not start with vertical slices?"
+      },
+      {
+        "role": "assistant",
+        "content": "This question refers to the Nokia Checklist from course notes. The first step is to establish a cadence for the team and not to focus on vertical slices"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why adoption of Ux should start with a new release ?"
+      },
+      {
+        "role": "assistant",
+        "content": "How do you define and review a new UI without a wireframe? It seems an impossible task. On another hand, if a UI has been used in the field, then it might seem logical to take the existing HTML screen (instead of recreating a separate wireframe) and to incorporate changes right into this current HTML screen. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why a version of configuration item should not be a part of its file name?"
+      },
+      {
+        "role": "assistant",
+        "content": "A configuration item maintained in a repository should have a stable file-name reflecting its content. A link to a configuration item is distributed widely and is independent from versions."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why wireframes should use no colors?"
+      },
+      {
+        "role": "assistant",
+        "content": "The purpose of wireframes is to review/converge on functionality. Colors are a distraction at the initial phase of UI design. David Pratt's book has a strong message with multiple examples to support this notion."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why Visual Studio is not a good fit for UX design?"
+      },
+      {
+        "role": "assistant",
+        "content": "Visual Studio is Microsoft IDE. Some novice developers built UIs using Visual Studio. Although they skip a crucial step of involving other team members, e.g. end users."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why … Introverts prefer Mob?"
+      },
+      {
+        "role": "assistant",
+        "content": "Mob Programming Paradigm offers a well-structured way to contribute, to chime in - and then immediately see your comments being implemented in flesh, in code. Many introverts might have issues with expressing themselves and Mob facilitates an non-threatening environment to play an active role in a productive team."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why … Defects tend to cluster?"
+      },
+      {
+        "role": "assistant",
+        "content": "One scenario, if the same developer keeps inserting the same type of a defect in multiple versions of the module that he/she is maintaining. Another scenario could be, if the module has an inherent design flaw. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why Kerberos password does not protect against social engineers?"
+      },
+      {
+        "role": "assistant",
+        "content": "Any SSO, including a Kerberos Password, exacerbates issues with social engineering. Knowing a single password, leads a bad actor to access multiple applications."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why a skillful hacker does not take data but leaves a back door?"
+      },
+      {
+        "role": "assistant",
+        "content": "There is a well-established market for back doors, e.g. Bank Of America offers money to anyone, who demonstrates how to penetrate their firewall"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why a System Admin might offer a new hire an extra access?"
+      },
+      {
+        "role": "assistant",
+        "content": "If a new hire starts doing things that are outside of envelop of his responsibilities, it will be flagged as a potential risk. Since actions of this new hire could be interpreted as intentionally fishing for information that he is not supposed to have. This is a common technique for admins (a trap) - used throughout an industry and described in literature."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why Defect Density for small changes is greater than for new code?"
+      },
+      {
+        "role": "assistant",
+        "content": "Two reasons, first, unknown ramifications to legacy code and second, the formula for defect density has a smaller number at the bottom for minor changes."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why Reliability test should be run after Functional test?"
+      },
+      {
+        "role": "assistant",
+        "content": " Hitting a button once - is a functional test. Hitting the same button a hundred times brings us into a different category of a reliability test. It is natural (and there is no other way) but to start with a functional test."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why an organization should grow its regression suites?"
+      },
+      {
+        "role": "assistant",
+        "content": "Regression suits grow along with a) each software release, b) with each major defect reposted by customers, c) with raising level of quality, which is necessary to expand the customer base"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why a unit test avoids communicating across a network?"
+      },
+      {
+        "role": "assistant",
+        "content": "Unit test avoids uncertainty by creating an isolated environment. A unit test avoids communicating through a network. Since by definition, a unit test is expected to be easy to execute and interpret results. A network is bound to introduce some uncertainty and unpredictability."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why unit tests do not go through a redundancy check?"
+      },
+      {
+        "role": "assistant",
+        "content": "Each unit test covers few distinct lines of code. Hence the redundancy among  various unit tests is unlikely."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why technical debt cannot be addressed with a Functional Test?"
+      },
+      {
+        "role": "assistant",
+        "content": "Technical debt becomes evident with scaling and with incorporating repeated changes into an existing software. Functional test might show a perfect result, after a first and after a second software change, although the third change can cause a failure. Ward Cunningham talks about refactoring  and budgeting software resources as a fitting strategy to address technical debt."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why allpairs find the same number of defects, as Cartesian?"
+      },
+      {
+        "role": "assistant",
+        "content": "Empirical studies show that most defects result from  interaction of two parameters. Savings from using ALLPAIRS do grow exponentially  as the number of parameters increases. Cartesian combinations encompass  all parameters, which does not change the number of resulting defects "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why a UI test is unable to provide an adequate coverage?"
+      },
+      {
+        "role": "assistant",
+        "content": "UI tests are limited. Unit tests, API tests usually count millions of executions. Google publishes statistics of 100MLN unit tests executed daily."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Why CMMI Assessment does not result in any certificate ?"
+      },
+      {
+        "role": "assistant",
+        "content": "SEI (Software Engineering Institute) maintaining CMMI promotes the notion of self-improvement. Staying away from  bumper-stickers and certificates, anything that could potentially deter from real progress."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Should we include professor and TA in our Slack channel ?"
+      },
+      {
+        "role": "assistant",
+        "content": "This is an interesting question. On one hand, in a spirit of complete openness you should include your professor and TA. We can assure you that there is absolutely nothing here to hide. Transparency is one of the key tenants of this class. How else can you prove it to your self, but by being a completely open. On another hand, it is understood that things could be said within a team that really not for anyone outside of a team. To conclude our dilemma here, you can go either way, you can include your professor and TA or not include, it is up to you."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Is 'class participation' counted toward the grade?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. Several semesters back, the 'class participation' was counted as 10% toward the grade. Although it was taken out and is not counted any longer. This is due to the natural inconsistency in how students express themselves, what they say and how they say it in the class."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Are 'discussions' counted toward the grade?"
+      },
+      {
+        "role": "assistant",
+        "content": "No. There is a folder in blackboard called 'discussions' where generations of previous students left their posts, while responding to several predefined topics. These posts serve as an additional body of knowledge to support your learning. Feel free to add a post, although this will not be a part of the formula to calculate the final grade."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Do you have many tricky questions on the final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "Final exam is one of the avenues to learn in the class. When adrenalin kicks in, folks absorb information so much quicker. Professor has no other goal in the class, but to facilitate the most effective learning. "
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "I pressed the 'submit' button on my quiz and I received no final score."
+      },
+      {
+        "role": "assistant",
+        "content": "Some quizzes include the so-called 'ESSAY-type' questions. An instructor needs to manually grade such quiz and then to release the overall grade. Apparently you should expect a delay while instructor grades a quiz. Such quiz is a simulation of a final exam where a number of questions are 'ESSAY-type'."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Is there anything that is restricted from usage during the final exam ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Final exam is OPEN BOOK. Only quizzes in blackboard will be off limits during the final exam."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the best way to prepare to the final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "Final exam is the last thing we do in a class. From all perspectives, it is in fact 'final'. We usually recommend to re-take all quizzes prior to the final exam. It is also a good idea to participate in the session that specifically covers the final exam's logistics and covers those few questions from the final exam that did not find their way into quizzes. Another good way to prepare is to mark each quiz question with a slide number from a corresponding lecture."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can we change letter-grade, after submition to the Registrar?"
+      },
+      {
+        "role": "assistant",
+        "content": "Such process takes a significant amount of effort. Professor has to complete a standard paper form, along with a an explicit justification for a change. There should be a good reason stated, for a grade change to be approved."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Elaborate on submission of the project final report. "
+      },
+      {
+        "role": "assistant",
+        "content": "One person should submit the very final report for the whole team. Names of team members are stated on the front page of the report. Each student receives an individual grade. Apparently, professor would not know how to deal with several slightly different reports submitted separately."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Does professor usually write recommendations to students?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes. Your professor can gladly offer a recommendation at LinkedIn, or at another university's site, if you apply for a degree, or at a company where you apply for a job."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How can assignment become outdated?"
+      },
+      {
+        "role": "assistant",
+        "content": "Assignments and quizzes are updated after they have been reviewed in the class. There is a separate session dedicated to review of assignments and quizzes. These updates are minor and usually just a clarifications instigated by students. Still, it is important that you use only those assignments that you download from blackboard after they have been openly examined during a live session."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What percent of the total grade is allocated toward quizzes?"
+      },
+      {
+        "role": "assistant",
+        "content": "Twenty percent"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What percent of the total grade is allocated toward assignments?"
+      },
+      {
+        "role": "assistant",
+        "content": "Twenty percent"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What percent of the total grade is allocated toward term project?"
+      },
+      {
+        "role": "assistant",
+        "content": "Thirty percent"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What percent of the total grade is allocated toward final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "Thirty percent"
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Can an Author play these roles: Moderator, Reader, Recorder?"
+      },
+      {
+        "role": "assistant",
+        "content": "Recommendation has always been, \"try it by the book\". You should get a glimpse, a taste for all techniques that we cover during lectures. You might like them and you might even find them indispensable. As a first step, you follow the exact steps and roles, as we discuss in the class, so to develop an appreciation for the process. As a second step, you might tailor the process to your specifics. Both steps are important."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How to narrow the cone of uncertainty?"
+      },
+      {
+        "role": "assistant",
+        "content": "The strongest leverage in improving the estimation accuracy is through internal parameters of a project, e.g. improving software design, hiring best possible people, establishing coding standards, assuring rigorous testing. Note that focusing on external project parameters is ineffective, e.g. allocating more time on estimation, hiring an estimation guru, using elaborate estimation tools - these measures will not bring any results particularly if a project itself is in trouble."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the format of the final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "Three-hours. Open-Book. Quizzes in blackboard are off limits."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "Is ChatGPT allowed to be used in this course?"
+      },
+      {
+        "role": "assistant",
+        "content": "Assignments are graded on their own merits, correctness, style, accuracy, etc. When submitting an assignment, the best way is to use your own words. The whole exercise of paraphrasing, reducing to papaper your thoughts, wordsmithing the most concise paragraph - is a great way to learn."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "When we do our peer reviews within the term project, is it necessary to assign roles, Moderator, Reader, Recorder, or we can do it in a  less formal manner with Author playing all these roles ?"
+      },
+      {
+        "role": "assistant",
+        "content": "Recommendation has always been to \"try it by the book\". You should get a glimpse, a taste for all techniques that we cover during lectures. You might like them and you might even find them indispensable. As a first step, you follow the exact steps and roles, as we discuss in the class, so to develop an appreciation for the process. As a second step, you might tailor the process to your specifics. Both steps are important."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "How to narrow the cone of uncertainty?"
+      },
+      {
+        "role": "assistant",
+        "content": "The strongest leverage in improving the estimation accuracy is through internal parameters of a project, e.g. improving software design, hiring best possible people, establishing coding standards, assuring rigorous testing. Note that focusing on external project parameters is ineffective, e.g. allocating more time on estimation, hiring an estimation guru, using elaborate estimation tools - these measures will not bring any results particularly if a project itself is in trouble."
+      }
+    ]
+  },
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "QBot is a factual chatbot that can be playful but can also be sarcastic one out of three times."
+      },
+      {
+        "role": "user",
+        "content": "What is the format of the final exam?"
+      },
+      {
+        "role": "assistant",
+        "content": "Three-hours. Open-Book. Quizzes in blackboard are off limits."
+      }
+    ]
+  }
+]

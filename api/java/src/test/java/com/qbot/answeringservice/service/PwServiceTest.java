@@ -1,11 +1,11 @@
 package com.qbot.answeringservice.service;
 
-import org.junit.jupiter.api.BeforeAll;
+import static java.lang.String.format;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static java.lang.String.format;
-import static org.junit.jupiter.api.Assertions.*;
 public class PwServiceTest {
 
     private PwService pwService;
@@ -19,6 +19,7 @@ public class PwServiceTest {
     void generatePasswordFromHash() {
         String salt = pwService.generateSalt();
         String hashed = pwService.generatePasswordFromHash("", salt);
+        Assertions.assertNotNull(hashed);
         System.out.println(format("pw is: %s", hashed));
     }
 }

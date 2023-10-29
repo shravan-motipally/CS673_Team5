@@ -1,6 +1,8 @@
 package com.qbot.answeringservice.dto;
 
+import lombok.Getter;
 
+@Getter
 public class QbotResponse {
     private final String question;
     private final String answer;
@@ -8,13 +10,5 @@ public class QbotResponse {
     public QbotResponse(String question, String answer) {
         this.question = question;
         this.answer = answer;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public String getAnswer() {
-        return answer;
     }
 }
