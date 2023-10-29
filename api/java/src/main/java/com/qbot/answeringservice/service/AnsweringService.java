@@ -49,6 +49,21 @@ public class AnsweringService {
         return resultCollection;
     }
 
+    @Deprecated
+    public boolean overwriteAllExchanges(ExchangeCollection exchanges) {
+        if (exchanges.getNumOfQuestions() == 0) {
+            return true;
+        }
+        try {
+            repository.deleteAll();
+            repository.saveAll(exchanges.getExchanges());
+        } catch (Exception e) {
+            logger.error("Error storing exchanges: {}", e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public boolean saveExchanges(ExchangeCollection exchanges) {
         if (exchanges.getNumOfQuestions() == 0) {
             return true;

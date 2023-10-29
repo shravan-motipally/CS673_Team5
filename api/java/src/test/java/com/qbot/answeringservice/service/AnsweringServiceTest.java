@@ -129,6 +129,17 @@ public class AnsweringServiceTest {
         Mockito.verify(exchangeRepo, Mockito.times(0)).saveAll(ArgumentMatchers.anyList());
     }
 
+    @Test
+    public void testOverwriteAllExchanges() {
+        List<Exchange> testExchanges = getTestExchanges();
+        ExchangeCollection testCollection = new ExchangeCollection("test-course-id", testExchanges.size(),
+                testExchanges);
+
+        Assertions.assertTrue(answeringService.overwriteAllExchanges(testCollection));
+        Mockito.verify(exchangeRepo, Mockito.times(1)).deleteAll();
+        Mockito.verify(exchangeRepo, Mockito.times(1)).saveAll(ArgumentMatchers.anyList());
+    }
+
     private List<Exchange> getTestExchanges() {
         List<Exchange> testExchanges = new ArrayList<>();
         testExchanges.add(new Exchange("1", null, "testQuestion", "testAnswer"));

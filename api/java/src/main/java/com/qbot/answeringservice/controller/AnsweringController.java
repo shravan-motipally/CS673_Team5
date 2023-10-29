@@ -40,7 +40,7 @@ public class AnsweringController {
             // }
             // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -55,14 +55,35 @@ public class AnsweringController {
                 return ResponseEntity.badRequest().build();
             }
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveQuestionAndAnswerExchanges(@RequestBody ExchangeCollection exchanges) {
+    public ResponseEntity<Void> uploadAllExchanges(@RequestBody ExchangeCollection exchanges) {
+        try {
+            // TODO: introduce auth
+            // if (verified)
+            // {
+            if (exchanges != null && answeringService.overwriteAllExchanges(exchanges)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+            // }
+            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            logger.error("Server error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
+    @PostMapping(path = "/{courseId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> uploadExchangesByCourse(@PathVariable("courseId") String courseId,
+            @RequestBody ExchangeCollection exchanges) {
         try {
             // TODO: introduce auth
             // if (verified)
@@ -75,7 +96,7 @@ public class AnsweringController {
             // }
             // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
