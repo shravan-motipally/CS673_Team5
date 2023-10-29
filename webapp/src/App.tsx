@@ -16,6 +16,7 @@ import {getBackendHealth} from "./api/HealthCheckApi";
 import smotipally from './screens/images/smotipally.png';
 import Settings from './screens/Settings';
 import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
+import {getAllQnA} from "./api/QuestionAnswerApi";
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
@@ -27,7 +28,8 @@ export const ScreenContext = createContext<ScreenContextType>({
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7
+		semanticSimilarityThreshold: 0.7,
+		exchanges: []
 	},
 	setScreenState: () => {}
 });
@@ -100,18 +102,20 @@ export const App = () => {
 		darkMode: false,
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
-		semanticSimilarityThreshold: 0.7
+		semanticSimilarityThreshold: 0.7,
+		exchanges: []
 	});
 
 	useEffect(() => {
 		(async () => {
 			if (loading) {
-				const loaded = await getBackendHealth();
+				const { exchanges } = await getAllQnA();
+
 				setLoading(false);
-				if (!loaded) {
-					setScreenState({...screenState, screen: 'error', isError: true});
+				if (exchanges != null && exchanges.length != 0) {
+					setScreenState({...screenState, exchanges: exchanges, screen: 'home'})
 				} else {
-					setScreenState({...screenState, screen: 'home'})
+					setScreenState({...screenState, exchanges: [], screen: 'error', isError: true});
 				}
 			}
 		})();

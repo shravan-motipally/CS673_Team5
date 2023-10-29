@@ -1,11 +1,4 @@
-import {
-	GPT2,
-	DISTIL_GPT2,
-	BLOOM,
-	GOOGLE_FLAN_T5_BASE,
-	GPT3_SMALL,
-	SUMMARIZATION_FB_BART_LARGE_CNN, OPEN_LLAMA_3B
-} from "../utils/Urls";
+import {Exchange} from "../screens/Edit";
 
 export interface ScreenContextType {
 	screenState: ScreenState,
@@ -24,4 +17,5 @@ export interface ScreenState {
 	generativeModel: GenerativeModel
 	semanticSimilarityModel: string
 	semanticSimilarityThreshold: number
+	exchanges: Array<Exchange>
 }
