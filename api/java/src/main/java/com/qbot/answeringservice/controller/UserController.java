@@ -33,7 +33,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.createUser(user));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -43,7 +43,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.findAllUsers());
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -53,7 +53,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.findByLoginId(loginId));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -63,7 +63,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.findByRoleId(roleId));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -73,7 +73,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.updateUser(user));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -84,7 +84,7 @@ public class UserController {
             userService.deleteUser(userId);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 

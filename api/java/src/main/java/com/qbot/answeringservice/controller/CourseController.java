@@ -36,7 +36,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok(courseService.createCourse(course));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -49,7 +49,7 @@ public class CourseController {
                     : courseService.findAllCourses();
             return ResponseEntity.ok(returnedCourses);
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -59,7 +59,7 @@ public class CourseController {
         try {
             return ResponseEntity.ok(courseService.updateCourse(course));
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -70,7 +70,7 @@ public class CourseController {
             courseService.deleteCourse(courseId);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
-            logger.error("Server error: message: " + e.getMessage());
+            logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
