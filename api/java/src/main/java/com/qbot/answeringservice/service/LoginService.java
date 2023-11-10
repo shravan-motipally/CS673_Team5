@@ -29,11 +29,11 @@ public class LoginService {
         this.pwService = pwService;
     }
 
-
     public boolean checkLogin(LoginDetail detail) {
         if (detail != null) {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
-            return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())), login.getSaltedHash());
+            return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())),
+                    login.getSaltedHash());
         }
         return false;
     }
