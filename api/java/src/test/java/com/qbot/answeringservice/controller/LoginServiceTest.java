@@ -34,6 +34,41 @@ public class LoginServiceTest {
     LoginService loginService;
 
     @Test
+    public void testCreateLogin() {
+        String testUsername = "testUsername";
+        String testPassword = "testPassword";
+        String testSalt = "testSaltValue";
+        Mockito.when(loginRepo.save(ArgumentMatchers.any(Login.class))).thenReturn(generateTestLogin());
+        Mockito.when(pwService.generateSalt()).thenReturn(testSalt);
+
+        Login response = loginService.createLogin(testUsername, testPassword);
+        Assertions.assertNotNull(response);
+
+        Mockito.verify(pwService, Mockito.times(1)).generateSalt();
+        Mockito.verify(pwService, Mockito.times(1)).generatePasswordFromHash(ArgumentMatchers.eq(testPassword),
+                ArgumentMatchers.eq(testSalt));
+        Mockito.verify(loginRepo, Mockito.times(1)).save(ArgumentMatchers.any(Login.class));
+    }
+
+    @Test
+    public void testCreateLoginWithoutProvidedPassword() {
+        String testUsername = "testUsername";
+        String testPassword = "testPassword";
+        String testSalt = "testSaltValue";
+        Mockito.when(loginRepo.save(ArgumentMatchers.any(Login.class))).thenReturn(generateTestLogin());
+        Mockito.when(pwService.generateUnsaltedPassword()).thenReturn(testPassword);
+        Mockito.when(pwService.generateSalt()).thenReturn(testSalt);
+
+        Login response = loginService.createLogin(testUsername);
+        Assertions.assertNotNull(response);
+
+        Mockito.verify(pwService, Mockito.times(1)).generateUnsaltedPassword();
+        Mockito.verify(pwService, Mockito.times(1)).generateSalt();
+        Mockito.verify(pwService, Mockito.times(1)).generatePasswordFromHash(ArgumentMatchers.eq(testPassword),
+                ArgumentMatchers.eq(testSalt));
+    }
+
+    @Test
     public void testCheckLogin() {
         String testPassword = "testPassword";
         Login testLogin = this.generateTestLogin();
@@ -93,7 +128,7 @@ public class LoginServiceTest {
     }
 
     private Login generateTestLogin() {
-        return new Login(UUID.randomUUID(), "testUsername", "testPassword");
+        return new Login(UUID.randomUUID(), "testUsername", "testPasswordHash");
     }
 
     private User generateTestUser() {
