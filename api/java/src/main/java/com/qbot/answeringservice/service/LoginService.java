@@ -7,6 +7,9 @@ import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.LoginRepository;
 import com.qbot.answeringservice.repository.UserRepository;
+
+import lombok.NonNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,15 @@ public class LoginService {
         this.loginRepository = loginRepository;
         this.userRepository = userRepository;
         this.pwService = pwService;
+    }
+
+    public Login createLogin(@NonNull final String userName, @NonNull final String password) {
+        return loginRepository.save(
+                new Login(null, userName, pwService.generatePasswordFromHash(password, pwService.generateSalt())));
+    }
+
+    public Login createLogin(@NonNull final String userName) {
+        return createLogin(userName, pwService.generateUnsaltedPassword());
     }
 
     public boolean checkLogin(LoginDetail detail) {
