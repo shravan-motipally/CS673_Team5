@@ -3,21 +3,14 @@ package com.qbot.answeringservice.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qbot.answeringservice.dto.CourseList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.mongodb.lang.Nullable;
 import com.qbot.answeringservice.model.Course;
@@ -31,6 +24,7 @@ public class CourseController {
     @Autowired
     CourseService courseService;
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
         try {
@@ -41,18 +35,20 @@ public class CourseController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Course>> getCourses(@RequestParam("courseIds") @Nullable String[] courseIds) {
+    public ResponseEntity<CourseList> getCourses(@RequestParam("courseIds") @Nullable String[] courseIds) {
         try {
-            List<Course> returnedCourses = new ArrayList<>();
-            returnedCourses = (courseIds != null) ? courseService.findByCourseIds(courseIds)
-                    : courseService.findAllCourses();
+            CourseList returnedCourses;
+            returnedCourses = (courseIds != null) ? courseService.getSpecificCourses(courseIds)
+                    : courseService.getAllCourses();
             return ResponseEntity.ok(returnedCourses);
         } catch (Exception e) {
             logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Course> updateCourse(@RequestBody Course course) {
@@ -64,6 +60,7 @@ public class CourseController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @DeleteMapping(path = "/{courseId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Course> deleteCourse(@PathVariable("courseId") String courseId) {
         try {

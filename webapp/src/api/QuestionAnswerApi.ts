@@ -2,17 +2,38 @@ import axios from 'axios';
 import {Exchange} from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna"
 import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
-import {getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} from "../utils/Urls";
+import {getAllCoursesUrl, getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} from "../utils/Urls";
 import {ExcelJson} from "../utils/ExcelUtils";
+import {CourseList} from "../components/onepirate/Home";
 
 export const getAllQnA = async () => {
-  const res = await axios({
-    timeout: 300000,
-    url: getAllQnAUrl(),
-    method: "GET"
-  });
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllQnAUrl(),
+      method: "GET"
+    });
 
-  return res.data;
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { exchanges: [] };
+  }
+}
+
+export const getAllCourses = async (): Promise<CourseList> => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllCoursesUrl(),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { courses: [] };
+  }
 }
 
 export const updateQuestions = async (jsonData: ExcelJson) => {

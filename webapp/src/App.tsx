@@ -12,11 +12,11 @@ import { createContext } from 'react';
 import { ScreenContextType, ScreenState } from './types/global.types';
 import Backdrop from '@mui/material/Backdrop';
 
-import {getBackendHealth} from "./api/HealthCheckApi";
 import smotipally from './screens/images/smotipally.png';
 import Settings from './screens/Settings';
 import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
-import LandingPage from "./screens/LandingPage";
+import Home from "./components/onepirate/Home";
+import Admin from "./screens/Admin";
 
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
@@ -29,7 +29,10 @@ export const ScreenContext = createContext<ScreenContextType>({
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
 		semanticSimilarityThreshold: 0.7,
-		currentClass: null
+		exchanges: [],
+		currentClass: null,
+		currentClassName: null,
+		roles: [],
 	},
 	setScreenState: () => {}
 });
@@ -66,7 +69,7 @@ const showScreen = (screen: string) => {
 			return <HomeScreen/>;
 			break;
 		case 'landing page':
-			return <LandingPage/>;
+			return <Home/>;
 			break;
 		case 'about':
 			return <About />;
@@ -77,14 +80,17 @@ const showScreen = (screen: string) => {
 		case 'login':
 			return <Login />;
 			break;
-		case 'admin':
+		case 'manage':
 			return <Edit />
+			break;
+		case 'admin':
+			return <Admin />
 			break;
 		case 'config':
 			return <Settings />
 			break;
 		case 'loading':
-			return <Loading />
+			return <Home />
 			break;
 		case 'error':
 			return <Error />
@@ -106,28 +112,13 @@ export const App = () => {
 		generativeModel: GPT2,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
 		semanticSimilarityThreshold: 0.7,
-		currentClass: null
+		exchanges: [],
+		currentClass: null,
+		currentClassName: null,
+		roles: [],
 	});
 
-	useEffect(() => {
-		(async () => {
-			if (loading) {
-				const loaded = await getBackendHealth();
-				setLoading(false);
-				if (!loaded) {
-					setScreenState({...screenState, screen: 'error', isError: true});
-				} else {
-					setScreenState({...screenState, screen: 'landing page'})
-				}
-			}
-		})();
-	}, [loading])
 
-	useEffect(() => {
-		if (screenState.screen === "loading") {
-			setLoading(true);
-		}
-	}, [screenState])
 
 	const contextValue = {
 		screenState,
@@ -136,7 +127,8 @@ export const App = () => {
 
   return (
     <ScreenContext.Provider value={contextValue}>
-			{screenState.screen === 'landing page'
+			{/** TODO: Update ternary with stateful operation **/}
+			{screenState.screen === 'loading' || screenState.screen === 'landing page'
 					? showScreen(screenState.screen) :
 					<Container>
 						{showScreen(screenState.screen)}

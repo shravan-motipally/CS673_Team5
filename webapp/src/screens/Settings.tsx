@@ -19,6 +19,7 @@ import {
   GOOGLE_FLAN_T5_BASE,
   GPT2,
   GPT3_SMALL,
+  OPEN_AI,
   OPEN_LLAMA_3B, PARAPHRASE_MINILM, PARAPHRASE_MINILM_MULTILINGUAL,
   SUMMARIZATION_FB_BART_LARGE_CNN
 } from "../utils/Urls";
@@ -40,7 +41,7 @@ const Settings = () => {
   }, [screenState]);
 
   const paraphraseModels = [PARAPHRASE_MINILM, PARAPHRASE_MINILM_MULTILINGUAL];
-  const genModels = [GPT2, BLOOM, DISTIL_GPT2, GPT3_SMALL, SUMMARIZATION_FB_BART_LARGE_CNN, OPEN_LLAMA_3B, GOOGLE_FLAN_T5_BASE];
+  const genModels = [GPT2, BLOOM, DISTIL_GPT2, GPT3_SMALL, OPEN_AI, SUMMARIZATION_FB_BART_LARGE_CNN, OPEN_LLAMA_3B, GOOGLE_FLAN_T5_BASE];
 
   const handleGenerativeModelChange = useCallback((model: typeof genModels[number]) => {
     setGenModel(model);

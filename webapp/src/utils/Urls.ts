@@ -9,9 +9,11 @@ export const HUGGINGFACE_INFERENCE_API =
   "https://api-inference.huggingface.co/models";
 // ANSWERING SVC APIs
 export const getAllQnAUrl = () => ANSWERING_SVC_URL + "/exchanges/all";
+export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses"
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
+export const getOpenAIUrl = () => "http://localhost:7861/chat";
 // Generative models
 export const GPT2 = "gpt2";
 export const BLOOM = "bigscience/bloom";
@@ -20,6 +22,7 @@ export const GPT3_SMALL = "minhtoan/gpt3-small-finetune-cnndaily-news";
 export const SUMMARIZATION_FB_BART_LARGE_CNN = "facebook/bart-large-cnn";
 export const OPEN_LLAMA_3B = "openlm-research/open_llama_3b";
 export const GOOGLE_FLAN_T5_BASE = "google/flan-t5-base";
+export const OPEN_AI = "open-ai";
 
 // Semantic Similarity models
 export const PARAPHRASE_MINILM_MULTILINGUAL =

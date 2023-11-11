@@ -136,8 +136,8 @@ public class UserControllerTest {
     }
 
     private List<User> getAdminUsers() {
-        List<String> adminRoleIds = new ArrayList<>();
-        adminRoleIds.add("6514b83d67e0b4d82e053ecb");
+        List<Integer> adminRoleIds = new ArrayList<>();
+        adminRoleIds.add(1);
 
         List<User> adminUsers = new ArrayList<>();
         User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);

@@ -4,7 +4,7 @@ import {useRef, useState, useCallback, useEffect, useContext, useMemo} from 'rea
 import './styles/ChatContainer.css';
 import { Message } from './types/Chat.types';
 import ChatMessage from './ChatMessage';
-import ai from '../screens/images/ai.png';
+import ai from '../screens/images/bot32.png';
 import student from '../screens/images/student.png';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
@@ -21,7 +21,7 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from '@mui/material/CircularProgress';
 import {ScreenContext} from "../App";
 import {styled, useTheme} from '@mui/material/styles';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import {Exchange} from "../screens/Edit";
 import Button from "@mui/material/Button";
 import {AppBar, ButtonGroup, Drawer, Fab, FormHelperText, FormLabel, Tooltip} from "@mui/material";
@@ -31,7 +31,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
-import {getAllQnA} from "../api/QuestionAnswerApi";
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -62,10 +61,10 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 
   useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA();
+      const exchanges = screenState.exchanges;
       setAllQuestions(exchanges);
     })();
-  }, []);
+  }, [screenState])
 
   useEffect(() => {
     if (messages.length === 0 && starting) {
@@ -203,7 +202,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     setDisplayQuestions(!displayQuestions);
   }, [displayQuestions]);
 
-
+  const drawerWidth = 500;
 
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
@@ -211,7 +210,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           <Button
               fullWidth
               sx={{ fontSize: "0.75rem", height: "4rem" }}
-              variant="outlined"
+              variant="text"
               size="large"
               key={"qb-" + question.exchangeId}
               onClick={() => {
@@ -227,106 +226,105 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   }, [allQuestions])
 
   return (
-      <Box sx={{pb: 7, alignContent: 'center'}} ref={ref}>
+      <Box sx={{ display: 'flex', pb: 7, alignContent: 'center', flexGrow: 1 }} ref={ref}>
         <CssBaseline/>
-        <Grid className="chat-container">
-          {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
-          <span ref={dummyRef}></span>
-        </Grid>
-        <Grid sx={{ml: 6, display: displayQuestions ? 'flex' : 'none'}} container spacing={2}>
-          <FormControl fullWidth>
-            <FormLabel id="faq-label">Commonly Asked Questions</FormLabel>
-          </FormControl>
-          <span ref={commonlyAskedQuestionsRef}/>
-          {questionButtons}
-        </Grid>
+        <Grid container>
+          <Grid className="chat-container">
+            {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
+            <span ref={dummyRef}></span>
+          </Grid>
 
-        <ReportGmailerrorredIcon sx={{position: 'fixed', bottom: 0, left: 0}}/>
-        <Paper sx={{
-          m: 2,
-          position: 'fixed',
-          bottom: 2,
-          backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-          width: "55%"
-        }} elevation={3}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
-            <OutlinedInput
-                id="question-input"
-                type={'text'}
-                endAdornment={<>
-                  {screenState.generativeMode ?
-                      <Tooltip
-                          title={"Although we make every effort to assure accuracy of responses to your questions. Still, we assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an \"as is\" basis with no guarantees of completeness, accuracy, usefulness or timeliness."}>
-                        <InputAdornment position="end" sx={{mr: 1}}>
-                          <PriorityHighIcon/>
-                        </InputAdornment>
-                      </Tooltip>
-                      : <div/>}
-                  <InputAdornment position="end" sx={{mr: 1}}>
-                    <IconButton
-                        aria-label="Ask question"
-                        onClick={(e) => {
-                          if (!isEmptyNullOrUndefined(question)) {
-                            setLoading(true);
-                            setAnswer("");
-                            askQuestion(e);
-                          }
-                        }}
-                        onMouseDown={() => {
-                        }}
-                        edge="end"
-                    >
-                      {!loading ? <SendIcon/> : <CircularProgress/>}
-                    </IconButton>
-                  </InputAdornment>
-                </>}
-                value={question}
-                label="Ask your question here"
-                onChange={(e) => {
-                  if (!isEmptyNullOrUndefined(e.target.value)) {
-                    setQuestion(e.target.value);
-                  } else {
-                    setQuestion("");
-                  }
+          <Grid item xs={12}>
+            <ReportGmailerrorredIcon sx={{position: 'fixed', bottom: 0, left: 0}}/>
+            <Paper sx={{
+              m: 2,
+              position: 'fixed',
+              bottom: 2,
+              backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+              width: "55%"
+            }} elevation={3}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
+                <OutlinedInput
+                    id="question-input"
+                    type={'text'}
+                    endAdornment={<>
+                      {screenState.generativeMode ?
+                          <Tooltip
+                              title={"Although we make every effort to assure accuracy of responses to your questions. Still, we assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an \"as is\" basis with no guarantees of completeness, accuracy, usefulness or timeliness."}>
+                            <InputAdornment position="end" sx={{mr: 1}}>
+                              <PriorityHighIcon/>
+                            </InputAdornment>
+                          </Tooltip>
+                          : <div/>}
+                      <InputAdornment position="end" sx={{mr: 1}}>
+                        <IconButton
+                            aria-label="Ask question"
+                            onClick={(e) => {
+                              if (!isEmptyNullOrUndefined(question)) {
+                                setLoading(true);
+                                setAnswer("");
+                                askQuestion(e);
+                              }
+                            }}
+                            onMouseDown={() => {
+                            }}
+                            edge="end"
+                        >
+                          {!loading ? <SendIcon/> : <CircularProgress/>}
+                        </IconButton>
+                      </InputAdornment>
+                    </>}
+                    value={question}
+                    label="Ask your question here"
+                    onChange={(e) => {
+                      if (!isEmptyNullOrUndefined(e.target.value)) {
+                        setQuestion(e.target.value);
+                      } else {
+                        setQuestion("");
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isEmptyNullOrUndefined(question) && e.keyCode == 13) {
+                        setLoading(true);
+                        setAnswer("");
+                        askQuestion(e);
+                        setDisplayQuestions(false);
+                      }
+                    }}
+                    inputProps={{
+                      maxLength: 250
+                    }}/>
+              </FormControl>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={6}>
+            <Drawer
+                sx={{
+                  m: 1,
+                  width: drawerWidth,
+                  flexShrink: 0,
+                  '& .MuiDrawer-paper': {
+                    width: drawerWidth,
+                    boxSizing: 'border-box'
+                  },
                 }}
-                onKeyDown={(e) => {
-                  if (!isEmptyNullOrUndefined(question) && e.keyCode == 13) {
-                    setLoading(true);
-                    setAnswer("");
-                    askQuestion(e);
-                    setDisplayQuestions(false);
-                  }
-                }}
-                inputProps={{
-                  maxLength: 250
-                }}/>
-          </FormControl>
-        </Paper>
-        <Drawer
-            sx={{
-              m: 1,
-              width: 160,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': {
-                width: 400,
-                boxSizing: 'border-box',
-                zIndex: 1,
-              },
-            }}
-            variant="permanent"
-            anchor="right"
-        >
-          <Toolbar />
-          <Typography color={"primary"}>
-            FAQ
-          </Typography>
-          <Box>
-            <List sx={{m:1}}>
-              {questionMenuItems}
-            </List>
-          </Box>
-        </Drawer>
+                variant="permanent"
+                anchor="right"
+            >
+              <Toolbar />
+              <Typography color={"primary"}>
+                FAQ
+              </Typography>
+              <Box>
+                <List sx={{m:1}}>
+                  {questionMenuItems}
+                </List>
+              </Box>
+            </Drawer>
+          </Grid>
+        </Grid>
       </Box>
   )
 }

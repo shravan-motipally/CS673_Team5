@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject, ThemeProvider } from '@mui/material/styles';
+import { styled, useTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -14,36 +14,28 @@ import ListItemText from '@mui/material/ListItemText';
 import StorageIcon from '@mui/icons-material/Storage';
 import Button from '@mui/material/Button';
 
-import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
 import SettingsIcon from '@mui/icons-material/Settings';
-
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 import {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import { ScreenContext } from '../App';
-import ai from '../screens/images/ai.png';
+import ai from '../screens/images/bot.png';
 
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import MuiDrawer from '@mui/material/Drawer';
-import {DialogContent, Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
+import {Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
-import {getAllQnA} from "../api/QuestionAnswerApi";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import {StyledMenu} from "./StyledMenu";
 import {Message} from "./types/Chat.types";
 import student from "../screens/images/student.png";
 import {answerQuestion} from "../models/Chat";
+import {isAdministrator} from "../utils/RoleUtils";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -83,11 +75,12 @@ interface ContainerProps {
 
 const Container: React.FC<ContainerProps> = ( { children } ) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
-  const [canOpen, setCanOpen] = React.useState<boolean>(false);
   const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(null);
+  const [courseAnchor, setCourseAnchor] = React.useState<null | HTMLElement>(null);
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
   const [questionsDropDownAnchor, setQuestionsDropDownAnchor] = React.useState<null | HTMLElement>(null)
   const logoutIsOpen = Boolean(logoutAnchor);
+  const courseMenuOpen = Boolean(courseAnchor);
   const questionIsOpen = Boolean(questionsDropDownAnchor);
 
   const [messages, setMessages] = useState<Array<Message>>([]);
@@ -102,6 +95,9 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const [switchCourseMenuOpen, setSwitchCourseMenuOpen] = useState<boolean>(false);
+  const drawerWidth = 240;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -118,6 +114,15 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const onMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLogoutAnchor(event.currentTarget);
   }
+
+  const onSwitchCourseMenuOpen = (event: React.MouseEvent<HTMLDivElement>) => {
+    setCourseAnchor(event.currentTarget);
+  }
+
+  const handleCoursseMenuClose = () => {
+    setLogoutAnchor(null);
+  };
+
   const handleQuestionsClick = (event: React.MouseEvent<HTMLElement>) => {
     setQuestionsDropDownAnchor(event.currentTarget);
   };
@@ -131,12 +136,11 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       screen: 'login',
       isAuthed: screenState.isAuthed,
     });
-    setCanOpen(true);
     setLogoutAnchor(null);
   }, [screenState]);
 
   const onLogout = React.useCallback(() => {
-    if (screenState.screen === 'admin' || screenState.screen === 'config') {
+    if (screenState.screen === 'manage' || screenState.screen === 'config') {
       setScreenState({
         ...screenState,
         isAuthed: !screenState.isAuthed,
@@ -148,7 +152,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         isAuthed: !screenState.isAuthed,
       });
     }
-    setCanOpen(false);
   }, [screenState]);
 
   const toggleDarkMode = React.useCallback(() => {
@@ -165,13 +168,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     });
   }, [screenState]);
 
+  const goToLandingPage = useCallback(() => {
+    setScreenState({
+      ...screenState,
+      screen: 'landing page'
+    });
+  }, [screenState]);
 
   useEffect(() => {
-    (async () => {
-      const { exchanges } = await getAllQnA();
-      setAllQuestions(exchanges);
-    })();
-  }, []);
+    if (screenState.exchanges.length == 0) {
+      setAllQuestions([]);
+    } else {
+      setAllQuestions(screenState.exchanges);
+    }
+  }, [screenState]);
 
 
   const onButtonClick = useCallback((questionClicked: string) => {
@@ -227,9 +237,9 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
-      <Box sx={{ display: 'flex', width: "50%", marginLeft: "200px"}}>
+      <Box sx={{ display: 'flex'}}>
         <CssBaseline />
-        <AppBar position="fixed" open={open} /*sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} */>
+        <AppBar position="fixed" open={open} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
           <Toolbar>
             <img style={{
               width: "40px",
@@ -237,7 +247,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               borderRadius: "50%",
               margin: "2px 5px",
             }} src={ai} />
-            <Typography variant="h6" noWrap component="div" sx={{ marginLeft: "10px", flexGrow: 1 }}>
+            <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
             <Tooltip title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
@@ -301,7 +311,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   <MenuItem onClick={() => {
-                    setScreenState( { ...screenState, screen: 'admin' })
+                    setScreenState( { ...screenState, screen: 'manage' })
                   }}>
                     <ListItemIcon>
                       <StorageIcon fontSize="small" color={"primary"}/>
@@ -326,12 +336,21 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               </div>}
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open} >
+        <Drawer variant="permanent" open={open} sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+        }} >
           <Divider />
           <Toolbar />
           <List sx={{ paddingBottom:0, paddingTop: 0 }}>
-            {['Landing Page'].map((text, index) => (
-                <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={() => { setScreenState( { ...screenState, screen: 'landing page' }); }}>
+            {[screenState.currentClassName + ' Home'].map((text, index) => (
+                <ListItem
+                  key={"ContainerKey-" + text}
+                  disablePadding sx={{ display: 'block' }}
+                  onClick={() => {
+                    setScreenState( { ...screenState, screen: 'home' });
+                  }}>
                   <ListItemButton
                       sx={{
                         minHeight: 48,
@@ -355,7 +374,14 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           </List>
           <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {['Help', 'About'].map((text, index) => (
-              <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ?  'help' : 'about' }); } }>
+              <ListItem
+                key={"ContainerKey-" + text}
+                disablePadding sx={{ display: 'block' }}
+                onClick={ () => {
+                  setScreenState( {
+                    ...screenState,
+                    screen: index % 2 === 0 ?  'help' : 'about' });
+                } }>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -403,7 +429,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             <>
               <Divider />
               <List>
-                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'manage'  }); } }>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -421,6 +447,34 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                       <StorageIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Manage"} color={"secondary"} sx={{m:1}}/>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </> :
+            <div/>
+          }
+          { screenState.isAuthed && isAdministrator(screenState.roles) ?
+            <>
+              <Divider />
+              <List>
+                <ListItem key={"ContainerKey-Admin"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <StorageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Admin"} color={"secondary"} sx={{m:1}}/>
                   </ListItemButton>
                 </ListItem>
               </List>

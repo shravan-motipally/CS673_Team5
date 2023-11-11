@@ -53,9 +53,10 @@ export default function Login() {
       if (isNotNullOrUndefined(details)) {
         setScreenState({
           ...screenState,
-          screen: 'home',
+          screen: 'manage',
           isAuthed: true,
-          photoUrl: details.photoUrl
+          photoUrl: details.photoUrl,
+          roles: ["Account Administrator", "Educator"],
         });
         setShowBadLogin(false);
       } else {
