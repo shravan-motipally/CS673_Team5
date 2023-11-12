@@ -344,7 +344,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           <Divider />
           <Toolbar />
           <List sx={{ paddingBottom:0, paddingTop: 0 }}>
-            {[screenState.currentClassName + ' Home'].map((text, index) => (
+            { screenState.currentClass !== null ?  [screenState.currentClassName + ' Home'].map((text, index) => (
                 <ListItem
                   key={"ContainerKey-" + text}
                   disablePadding sx={{ display: 'block' }}
@@ -370,7 +370,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     <ListItemText primary={text} color={"secondary"} sx={{m:1}} />
                   </ListItemButton>
                 </ListItem>
-            ))}
+            )) : <div/>}
           </List>
           <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {['Help', 'About'].map((text, index) => (
@@ -474,7 +474,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     >
                       <StorageIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Admin"} color={"secondary"} sx={{m:1}}/>
+                    <ListItemText primary={"Administration"} color={"secondary"} sx={{m:1}}/>
                   </ListItemButton>
                 </ListItem>
               </List>

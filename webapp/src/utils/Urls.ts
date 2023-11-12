@@ -9,8 +9,11 @@ export const HUGGINGFACE_INFERENCE_API =
   "https://api-inference.huggingface.co/models";
 // ANSWERING SVC APIs
 export const getAllQnAUrl = () => ANSWERING_SVC_URL + "/exchanges/all";
-export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses"
+export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
+export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
+export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
+export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
 export const getOpenAIUrl = () => "http://localhost:7861/chat";

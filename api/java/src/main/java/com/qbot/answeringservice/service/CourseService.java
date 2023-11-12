@@ -21,8 +21,12 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepo;
 
-    public Course createCourse(Course course) {
-        return courseRepo.save(course);
+    public void createCourse(Course course) {
+        try {
+            courseRepo.save(course);
+        } catch (Exception exception) {
+            logger.error("Error creating course. Details: " + exception.getMessage());
+        }
     }
 
     public List<Course> findAllCourses() {

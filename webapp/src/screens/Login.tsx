@@ -11,7 +11,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@mui/material/styles';
 import { ScreenContext } from '../App';
-import {useCallback, useContext, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import {login} from "../api/LoginApi";
 import LoginIcon from '@mui/icons-material/Login';
 import {darkTheme, lightTheme} from "../utils/Themes";
@@ -49,14 +49,13 @@ export default function Login() {
 
     (async () => {
       const details = await login(loginDetails.username, loginDetails.password);
-
       if (isNotNullOrUndefined(details)) {
         setScreenState({
           ...screenState,
-          screen: 'manage',
+          screen: details.roles.includes("Account Administrator") ? 'admin' : 'manage',
           isAuthed: true,
           photoUrl: details.photoUrl,
-          roles: ["Account Administrator", "Educator"],
+          roles: details.roles,
         });
         setShowBadLogin(false);
       } else {
@@ -65,6 +64,22 @@ export default function Login() {
     })();
 
   }, [setScreenState, showBadLogin, setShowBadLogin]);
+
+  useEffect(() => {
+    if (screenState.isAuthed) {
+      if (screenState.roles.includes('Account Administrator')) {
+        setScreenState({
+          ...screenState,
+          screen: 'admin',
+        })
+      } else {
+        setScreenState({
+          ...screenState,
+          screen: 'manage',
+        })
+      }
+    }
+  }, [screenState])
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>

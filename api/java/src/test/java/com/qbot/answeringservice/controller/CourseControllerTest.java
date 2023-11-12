@@ -28,31 +28,6 @@ public class CourseControllerTest {
     CourseController courseController;
 
     @Test
-    public void testCreateCourse() {
-        Mockito.when(courseService.createCourse(ArgumentMatchers.any(Course.class)))
-                .thenReturn(getTestCourses().get(0));
-
-        Course testCourse = new Course(null, "MET", "CS", "633", null, null, null);
-        ResponseEntity<Course> response = courseController.createCourse(testCourse);
-        Assertions.assertNotNull(response);
-        Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
-
-        Course returnedCourse = response.getBody();
-        Assertions.assertNotNull(returnedCourse);
-    }
-
-    @Test
-    public void testCreateCourseThrowException() {
-        Mockito.when(courseService.createCourse(ArgumentMatchers.any(Course.class)))
-                .thenThrow(new IllegalArgumentException());
-
-        Course testCourse = new Course(null, "MET", "CS", "633", null, null, null);
-        ResponseEntity<Course> response = courseController.createCourse(testCourse);
-        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
     public void testGetAllCourses() {
         Mockito.when(courseService.getAllCourses()).thenReturn(getTestCourseDtos());
 

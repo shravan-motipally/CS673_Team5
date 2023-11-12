@@ -26,9 +26,10 @@ public class CourseController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
+    public ResponseEntity<Void> createCourse(@RequestBody Course course) {
         try {
-            return ResponseEntity.ok(courseService.createCourse(course));
+            courseService.createCourse(course);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -42,6 +43,19 @@ public class CourseController {
             CourseList returnedCourses;
             returnedCourses = (courseIds != null) ? courseService.getSpecificCourses(courseIds)
                     : courseService.getAllCourses();
+            return ResponseEntity.ok(returnedCourses);
+        } catch (Exception e) {
+            logger.error("Server error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
+    @GetMapping(path="/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Course>> getAllCourses() {
+        try {
+            List<Course> returnedCourses;
+            returnedCourses = courseService.findAllCourses();
             return ResponseEntity.ok(returnedCourses);
         } catch (Exception e) {
             logger.error("Server error: {}", e.getMessage());

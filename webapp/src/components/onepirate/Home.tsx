@@ -9,7 +9,7 @@ import ProductCTA from './modules/views/ProductCTA';
 import AppAppBar from './modules/views/AppAppBar';
 import withRoot from './modules/withRoot';
 import {useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {getAllCourses, getAllQnA} from "../../api/QuestionAnswerApi";
+import {getAllCoursesForSelection, getAllQnA} from "../../api/QuestionAnswerApi";
 import {ScreenContext} from "../../App";
 import {Alert, Box, FormHelperText, MenuItem, Select, ThemeProvider, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../../utils/Themes";
@@ -38,7 +38,7 @@ function Index() {
     (async () => {
       if (loading) {
         const { exchanges } = await getAllQnA();
-        const { courses } = await getAllCourses();
+        const { courses } = await getAllCoursesForSelection();
         setClasses(courses);
         if (courses.length === 0) {
           setCourseError(true);
@@ -60,9 +60,7 @@ function Index() {
   }, [screenState]);
 
   const getClassName = useCallback((courseId: string) => {
-    console.log("classes: " + JSON.stringify(classes));
     const course = classes.find(course => course.courseId === courseId)
-    console.log("course: " + JSON.stringify(course));
     if (course !== undefined) {
       return course.shortName;
     } else {
@@ -77,7 +75,6 @@ function Index() {
   }, [classes]);
 
   const handleClassChange = useCallback((classSel: string) => {
-    console.log('setting class selected to: ' + classSel);
     setClassSelected(classSel);
     setScreenState({
       ...screenState,

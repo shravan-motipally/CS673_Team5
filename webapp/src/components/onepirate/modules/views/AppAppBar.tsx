@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
+import {useContext} from "react";
+import {ScreenContext} from "../../../../App";
 
 const rightLink = {
   fontSize: 16,
@@ -11,6 +13,8 @@ const rightLink = {
 };
 
 function AppAppBar() {
+  const { screenState, setScreenState } = useContext(ScreenContext);
+
   return (
     <div>
       <AppBar position="fixed">
@@ -20,8 +24,10 @@ function AppAppBar() {
             variant="h6"
             underline="none"
             color="inherit"
-            href="/premium-themes/onepirate/"
             sx={{ fontSize: 24 }}
+            onClick={() => {
+              setScreenState({...screenState, screen: 'landing page'})
+            }}
           >
             {'QBot'}
           </Link>
@@ -30,8 +36,10 @@ function AppAppBar() {
               color="inherit"
               variant="h6"
               underline="none"
-              href="/premium-themes/onepirate/sign-in/"
               sx={rightLink}
+              onClick={() => {
+                setScreenState({...screenState, screen: 'login'})
+              }}
             >
               {'Sign In'}
             </Link>
