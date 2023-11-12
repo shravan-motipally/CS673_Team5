@@ -229,7 +229,9 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
       <Box sx={{ display: 'flex', pb: 7, alignContent: 'center', flexGrow: 1 }} ref={ref}>
         <CssBaseline/>
         <Grid container>
-          <Grid className="chat-container">
+          <Grid sx={{
+            width: "calc(100% - 480px)"
+          }} className="chat-container">
             {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
             <span ref={dummyRef}></span>
           </Grid>

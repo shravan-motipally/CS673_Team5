@@ -10,6 +10,7 @@ import Divider from "@mui/material/Divider";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import ClassesTable from "./tabs/ClassesTable";
+import EducatorsTable from "./tabs/EducatorsTable";
 
 const Admin = () => {
   const { screenState } = useContext(ScreenContext);
@@ -48,7 +49,7 @@ const Admin = () => {
                 <Tab label="Manage Classes" />
                 <Tab label="Manage Educators" />
               </Tabs>
-              { tabValue === 0 ? <ClassesTable /> : <div/>}
+              { tabValue === 0 ? <ClassesTable /> : <EducatorsTable />}
             </Box>
           </Container>
         </Box>

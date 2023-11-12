@@ -6,6 +6,8 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
+import {useContext} from "react";
+import {ScreenContext} from "../../../../App";
 
 const item: SxProps<Theme> = {
   display: 'flex',
@@ -27,6 +29,8 @@ const image = {
 };
 
 function ProductHowItWorks() {
+  const { screenState, setScreenState } = useContext(ScreenContext);
+
   return (
     <Box
       component="section"
@@ -107,8 +111,10 @@ function ProductHowItWorks() {
           size="large"
           variant="contained"
           component="a"
-          href="/premium-themes/onepirate/sign-up/"
           sx={{ mt: 8 }}
+          onClick={() => {
+            setScreenState({...screenState, screen: 'landing page'})
+          }}
         >
           Get started
         </Button>

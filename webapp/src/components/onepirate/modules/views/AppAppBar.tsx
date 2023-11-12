@@ -5,11 +5,13 @@ import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
 import {useContext} from "react";
 import {ScreenContext} from "../../../../App";
+import ai from "../../../../screens/images/bot32.png";
 
 const rightLink = {
   fontSize: 16,
   color: 'common.white',
   ml: 3,
+  cursor: 'pointer'
 };
 
 function AppAppBar() {
@@ -19,18 +21,18 @@ function AppAppBar() {
     <div>
       <AppBar position="fixed">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ flex: 1 }} />
-          <Link
-            variant="h6"
-            underline="none"
-            color="inherit"
-            sx={{ fontSize: 24 }}
-            onClick={() => {
-              setScreenState({...screenState, screen: 'landing page'})
-            }}
-          >
-            {'QBot'}
-          </Link>
+          {/*<Box sx={{ flex: 1 }} />*/}
+          <img style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              margin: "2px 5px",
+              cursor: "pointer",
+            }} src={ai}
+             onClick={() => {
+               setScreenState({...screenState, screen: 'landing page'})
+           }}
+          />
           <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link
               color="inherit"
