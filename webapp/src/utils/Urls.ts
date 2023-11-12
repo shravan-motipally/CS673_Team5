@@ -22,9 +22,6 @@ export const GPT2 = "gpt2";
 export const BLOOM = "bigscience/bloom";
 export const DISTIL_GPT2 = "distilgpt2";
 export const GPT3_SMALL = "minhtoan/gpt3-small-finetune-cnndaily-news";
-export const SUMMARIZATION_FB_BART_LARGE_CNN = "facebook/bart-large-cnn";
-export const OPEN_LLAMA_3B = "openlm-research/open_llama_3b";
-export const GOOGLE_FLAN_T5_BASE = "google/flan-t5-base";
 export const OPEN_AI = "open-ai";
 
 // Semantic Similarity models
