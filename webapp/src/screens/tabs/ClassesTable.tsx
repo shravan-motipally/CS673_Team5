@@ -8,8 +8,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Toolbar from "@mui/material/Toolbar";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {createNewCourse, deleteCourse, getAllCoursesForAdministration} from "../../api/QuestionAnswerApi";
+import {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+import {
+  createNewCourse,
+  deleteCourse,
+  getAllCoursesForAdministration,
+  updateQuestions
+} from "../../api/QuestionAnswerApi";
 import {
   Alert,
   alpha,
@@ -31,6 +36,15 @@ import Button from "@mui/material/Button";
 import BuildIcon from '@mui/icons-material/Build';
 import AddIcon from '@mui/icons-material/Add';
 import TextField from "@mui/material/TextField";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as excel from "xlsx";
+import {
+  courseExcelSettings,
+  coursesSpreadSheetData,
+  transformToJson
+} from "../../utils/ExcelUtils";
+import xlsx from "json-as-xlsx";
+import DownloadIcon from '@mui/icons-material/Download';
 
 export interface CourseDoc {
   id: string,
@@ -455,7 +469,10 @@ export default function ClassesTable() {
   const [openNewCourseDialog, setOpenNewCourseDialog] = useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<CourseDoc | undefined>();
+  const [file, setFile] = useState<File>();
 
+  const [error, setError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -579,6 +596,75 @@ export default function ClassesTable() {
     setOpenNewCourseDialog(true);
   }, []);
 
+  const handleBulkUpload = useCallback(() => {
+
+  }, [file]);
+
+  const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
+    setError(false);
+    setErrorMsg("");
+    if (event !== null && event.target.files !== null && event.target.files[0] !== undefined) {
+      setFile(event.target.files[0]);
+    } else {
+      setError(true);
+      setErrorMsg("Invalid file chosen.  Please try again!")
+    }
+  }, [file, error, errorMsg]);
+
+  useEffect(() => {
+    if (file !== null && file !== undefined) {
+      if (file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+        setError(true);
+        setErrorMsg("Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now.");
+        return;
+      }
+
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target === null) {
+            throw Error("file reading error");
+          } else {
+            const data = e.target.result;
+            const readData = excel.read(data, { type: 'binary'});
+            const wsname = readData.SheetNames[0];
+            const ws = readData.Sheets[wsname];
+
+            const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
+            // @ts-ignore
+            const jsonData = transformToJson(dataParse);
+            (async () => {
+              // const res = await updateQuestions(jsonData);
+              // if (res.status !== 200) {
+                setError(true);
+                setErrorMsg("Unable to save questions/answers at the moment as it is not implemented, please try again later")
+              // }
+              // setRowData(jsonData.exchanges);
+            })();
+          }
+        }
+        reader.onerror = (e) => {
+          console.error("Error reading excel file");
+          setErrorMsg("Error reading excel file");
+          setError(true);
+        }
+        reader.readAsBinaryString(file);
+      } catch (e) {
+        console.error("Error reading excel file");
+        setErrorMsg("Error reading excel file");
+        setError(true);
+      }
+    }
+  }, [file]);
+
+  const downloadExcel = useCallback(() => {
+    const data = coursesSpreadSheetData;
+    // @ts-ignore
+    data[0].content = classes;
+    xlsx(data, courseExcelSettings);
+  }, [classes]);
 
   return (
     <Box sx={{ width:"100% "}}>
@@ -590,6 +676,12 @@ export default function ClassesTable() {
               <AlertTitle>Error</AlertTitle>
               There was an issue {getClassesError ? "pulling courses" : "deleting courses"} — <strong>Refresh your page!</strong>
             </Alert> : <div/>}
+          {error ?
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              There was an issue uploading your classes — <strong>{errorMsg}</strong>
+            </Alert> : <div/>
+          }
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -637,6 +729,10 @@ export default function ClassesTable() {
               <>
                 <Stack direction="row" spacing={2}>
                   <Button size="small" onClick={handleNewCourse} startIcon={<AddIcon />}>Course</Button>
+                  <Button size="small" component="label" onClick={handleBulkUpload} startIcon={<UploadFileIcon />}>
+                    <input type="file" hidden onChange={onFileChange}/>Upload
+                  </Button>
+                  <Button size="small" onClick={downloadExcel} startIcon={<DownloadIcon />}>Download</Button>
                 </Stack>
               </>
             )}

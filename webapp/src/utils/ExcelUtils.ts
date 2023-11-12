@@ -12,6 +12,22 @@ export const spreadSheetData = [
   },
 ];
 
+export const coursesSpreadSheetData = [
+  {
+    sheet: "Courses List",
+    columns: [
+      { label: "Course ID", value: "id" },
+      { label: "School ID", value: "schoolId"},
+      { label: "Department ID", value: "departmentId" },
+      { label: "Course Number", value: "catalogId" },
+      { label: "Course Name", value: "name" },
+      { label: "Course Description", value: "description" },
+      { label: "Semester", value: "semester" }
+    ],
+    content: [],
+  }
+]
+
 export interface ExcelJson {
   numOfQuestions: number,
   exchanges: Array<Exchange>
@@ -41,6 +57,14 @@ export const transformToJson: (stringArr: string[][]) => ExcelJson = (stringArr:
 
 export const settings = {
   fileName: "QuestionsAnswersCS673", // Name of the resulting spreadsheet
+  extraLength: 3, // A bigger number means that columns will be wider
+  writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
+  writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
+  RTL: false, // Display the columns from right-to-left (the default value is false)
+}
+
+export const courseExcelSettings = {
+  fileName: "CoursesList", // Name of the resulting spreadsheet
   extraLength: 3, // A bigger number means that columns will be wider
   writeMode: "writeFile", // The available parameters are 'WriteFile' and 'write'. This setting is optional. Useful in such cases https://docs.sheetjs.com/docs/solutions/output#example-remote-file
   writeOptions: {}, // Style options from https://docs.sheetjs.com/docs/api/write-options
