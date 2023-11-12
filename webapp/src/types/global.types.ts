@@ -7,6 +7,8 @@ export interface ScreenContextType {
 
 type GenerativeModel = string;
 
+export type Role = 'Educator' | 'Account Administrator';
+
 export interface ScreenState {
 	screen: string,
 	isAuthed: boolean,
@@ -18,4 +20,7 @@ export interface ScreenState {
 	semanticSimilarityModel: string
 	semanticSimilarityThreshold: number
 	exchanges: Array<Exchange>
+	currentClass: string | null
+	currentClassName: string | null
+	roles: Array<Role>
 }

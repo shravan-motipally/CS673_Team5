@@ -2,8 +2,18 @@ import axios from 'axios';
 import {Exchange} from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna"
 import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
-import {getAllQnAUrl, loginUrl, SEMANTIC_SIMILARITY_URL, updateQuestionsUrl} from "../utils/Urls";
+import {
+  addNewCourseUrl, deleteCourseUrl,
+  getAllCoursesForAdministrationUrl,
+  getAllCoursesUrl,
+  getAllQnAUrl,
+  loginUrl,
+  SEMANTIC_SIMILARITY_URL,
+  updateQuestionsUrl
+} from "../utils/Urls";
 import {ExcelJson} from "../utils/ExcelUtils";
+import {CourseList} from "../components/onepirate/Home";
+import {CourseDoc} from "../screens/tabs/ClassesTable";
 
 export const getAllQnA = async () => {
   try {
@@ -17,6 +27,71 @@ export const getAllQnA = async () => {
   } catch (err) {
     console.log("Backend is down or questions API returned an exception: " + err)
     return { exchanges: [] };
+  }
+}
+
+export const getAllCoursesForSelection = async (): Promise<CourseList> => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllCoursesUrl(),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { courses: [] };
+  }
+}
+
+export const getAllCoursesForAdministration = async (): Promise<Array<CourseDoc>> => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllCoursesForAdministrationUrl(),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return [];
+  }
+}
+
+export const createNewCourse = async (course: Partial<CourseDoc>) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: addNewCourseUrl(),
+      method: "POST",
+      data: course,
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error("Error creating course");
+    return false;
+  }
+}
+
+export const deleteCourse = async (courseId: string) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: deleteCourseUrl(courseId),
+      method: "DELETE",
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error("Error deleting course");
+    return false;
   }
 }
 

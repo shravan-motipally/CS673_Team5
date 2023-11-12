@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject, ThemeProvider } from '@mui/material/styles';
+import { styled, useTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -14,55 +14,28 @@ import ListItemText from '@mui/material/ListItemText';
 import StorageIcon from '@mui/icons-material/Storage';
 import Button from '@mui/material/Button';
 
-import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
-import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import { ScreenContext } from '../App';
-import ai from '../screens/images/ai.png';
+import ai from '../screens/images/bot.png';
 
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import MuiDrawer from '@mui/material/Drawer';
-import {Menu, MenuItem, Switch, Tooltip} from "@mui/material";
+import {Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import {StyledMenu} from "./StyledMenu";
-
-const drawerWidth = 240;
-
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
+import {Message} from "./types/Chat.types";
+import student from "../screens/images/student.png";
+import {answerQuestion} from "../models/Chat";
+import {isAdministrator} from "../utils/RoleUtils";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -86,8 +59,6 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -95,22 +66,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  }),
-);
+
 
 
 interface ContainerProps {
@@ -120,13 +76,28 @@ interface ContainerProps {
 const Container: React.FC<ContainerProps> = ( { children } ) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
   const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(null);
+  const [courseAnchor, setCourseAnchor] = React.useState<null | HTMLElement>(null);
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
   const [questionsDropDownAnchor, setQuestionsDropDownAnchor] = React.useState<null | HTMLElement>(null)
   const logoutIsOpen = Boolean(logoutAnchor);
+  const courseMenuOpen = Boolean(courseAnchor);
   const questionIsOpen = Boolean(questionsDropDownAnchor);
+
+  const [messages, setMessages] = useState<Array<Message>>([]);
+  const [starting, setStarting] = useState<boolean>(true);
+  const [value, setValue] = React.useState(0);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
+  const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
+  const [question, setQuestion] = useState<string>("");
+  const [answer, setAnswer] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const [switchCourseMenuOpen, setSwitchCourseMenuOpen] = useState<boolean>(false);
+  const drawerWidth = 240;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -143,6 +114,15 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const onMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLogoutAnchor(event.currentTarget);
   }
+
+  const onSwitchCourseMenuOpen = (event: React.MouseEvent<HTMLDivElement>) => {
+    setCourseAnchor(event.currentTarget);
+  }
+
+  const handleCoursseMenuClose = () => {
+    setLogoutAnchor(null);
+  };
+
   const handleQuestionsClick = (event: React.MouseEvent<HTMLElement>) => {
     setQuestionsDropDownAnchor(event.currentTarget);
   };
@@ -160,7 +140,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   }, [screenState]);
 
   const onLogout = React.useCallback(() => {
-    if (screenState.screen === 'admin' || screenState.screen === 'config') {
+    if (screenState.screen === 'manage' || screenState.screen === 'config') {
       setScreenState({
         ...screenState,
         isAuthed: !screenState.isAuthed,
@@ -188,6 +168,12 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     });
   }, [screenState]);
 
+  const goToLandingPage = useCallback(() => {
+    setScreenState({
+      ...screenState,
+      screen: 'landing page'
+    });
+  }, [screenState]);
 
   useEffect(() => {
     if (screenState.exchanges.length == 0) {
@@ -197,15 +183,52 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     }
   }, [screenState]);
 
+
+  const onButtonClick = useCallback((questionClicked: string) => {
+    setLoading(true);
+    const currentMessage: Message = {
+      id: Math.floor(Math.random() * 1000),
+      text: questionClicked,
+      createdAt: Date.now(),
+      uid: "1",
+      photoURL: student,
+      type: "sent"
+    };
+
+    setMessages([...messages, currentMessage]);
+    (async () => {
+      const res = await answerQuestion(questionClicked, screenState);
+      setLoading(false);
+      setAnswer(res);
+      const receiverId = Math.floor(Math.random() * 1000);
+      setMessages([...messages, currentMessage, {
+        id: receiverId,
+        text: res,
+        createdAt: Date.now(),
+        uid: "2",
+        photoURL: ai,
+        type: "received"
+      }]);
+    })();
+    setDisplayQuestions(false);
+  }, [messages, screenState]);
+
+
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
       return allQuestions.map((question, index) => (
-        <Tooltip key={"tt-q-" + index} title={question.answer} >
-          <MenuItem key={"tt-mi-" + index} sx={{ textOverflow: "ellipsis" }} onClick={() => {setQuestionsDropDownAnchor(null)}} disableRipple disableTouchRipple  >
-            {question.question}
-            <QuestionMarkIcon key={"tt-qmi-" + index} sx={{ marginLeft: "auto" }} />
-          </MenuItem>
-        </Tooltip>
+        <Button
+            fullWidth
+            sx={{ fontSize: "0.75rem", height: "4rem" }}
+            variant="outlined"
+            size="large"
+            key={"qb-" + question.exchangeId}
+            onClick={() => {
+              onButtonClick(question.question);
+            }}
+        >
+          {question.question}
+        </Button>
       ))
     } else {
       return []
@@ -214,55 +237,19 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex'}}>
         <CssBaseline />
-        <AppBar position="fixed" open={open} /*sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} */>
+        <AppBar position="fixed" open={open} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <>
             <img style={{
               width: "40px",
               height: "40px",
               borderRadius: "50%",
               margin: "2px 5px",
             }} src={ai} />
-            <Typography variant="h6" noWrap component="div" sx={{ marginLeft: "10px", flexGrow: 1 }}>
+            <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
-            <Button
-              id="show-more-quetions-button"
-              aria-controls={questionIsOpen ? 'questions-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={questionIsOpen ? 'true' : undefined}
-              variant="contained"
-              disableElevation
-              onClick={handleQuestionsClick}
-              endIcon={<KeyboardArrowDownIcon />}
-            >
-              FAQ
-            </Button>
-            <StyledMenu
-              id="questions-menu"
-              MenuListProps={{
-                'aria-labelledby': 'show-more-quetions-button',
-              }}
-              anchorEl={questionsDropDownAnchor}
-              open={questionIsOpen}
-              onClose={handleQuestionsClose}
-            >
-              {questionMenuItems}
-            </StyledMenu>
             <Tooltip title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
               <Switch color="default" checked={screenState.generativeMode} onChange={toggleGenerativeMode} name="generativeMode" />
             </Tooltip>
@@ -324,10 +311,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   <MenuItem onClick={() => {
-                    setScreenState( { ...screenState, screen: 'admin' })
+                    setScreenState( { ...screenState, screen: 'manage' })
                   }}>
                     <ListItemIcon>
-                      <StorageIcon fontSize="small" />
+                      <StorageIcon fontSize="small" color={"primary"}/>
                     </ListItemIcon>
                     Manage
                   </MenuItem>
@@ -347,47 +334,54 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   </MenuItem>
                 </Menu>
               </div>}
-              </>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open} /*sx={{
+        <Drawer variant="permanent" open={open} sx={{
           width: drawerWidth,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}*/>
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
-          </DrawerHeader>
+        }} >
+          <Divider />
           <Toolbar />
           <List sx={{ paddingBottom:0, paddingTop: 0 }}>
-            {['Home'].map((text, index) => (
-              <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={() => { setScreenState( { ...screenState, screen: 'loading' }); }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
-                    }}
+            { screenState.currentClass !== null ?  [screenState.currentClassName + ' Home'].map((text, index) => (
+                <ListItem
+                  key={"ContainerKey-" + text}
+                  disablePadding sx={{ display: 'block' }}
+                  onClick={() => {
+                    setScreenState( { ...screenState, screen: 'home' });
+                  }}>
+                  <ListItemButton
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5,
+                      }}
                   >
-                    <HomeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                    <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : 'auto',
+                          justifyContent: 'center',
+                        }}
+                    >
+                      <HomeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={text} color={"secondary"} sx={{m:1}} />
+                  </ListItemButton>
+                </ListItem>
+            )) : <div/>}
           </List>
           <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {['Help', 'About'].map((text, index) => (
-              <ListItem key={"ContainerKey-" + text} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: index % 2 === 0 ?  'help' : 'about' }); } }>
+              <ListItem
+                key={"ContainerKey-" + text}
+                disablePadding sx={{ display: 'block' }}
+                onClick={ () => {
+                  setScreenState( {
+                    ...screenState,
+                    screen: index % 2 === 0 ?  'help' : 'about' });
+                } }>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -404,7 +398,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   >
                     {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text} color={"secondary"} sx={{m:1}} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -427,7 +421,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                 >
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary={"Settings"} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={"Settings"} color={"secondary"} sx={{m:1}}/>
               </ListItemButton>
             </ListItem>
           </List>
@@ -435,7 +429,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             <>
               <Divider />
               <List>
-                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'manage'  }); } }>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -452,7 +446,35 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     >
                       <StorageIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Manage"} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={"Manage"} color={"secondary"} sx={{m:1}}/>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </> :
+            <div/>
+          }
+          { screenState.isAuthed && isAdministrator(screenState.roles) ?
+            <>
+              <Divider />
+              <List>
+                <ListItem key={"ContainerKey-Admin"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <StorageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Administration"} color={"secondary"} sx={{m:1}}/>
                   </ListItemButton>
                 </ListItem>
               </List>
@@ -460,7 +482,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             <div/>
           }
         </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+
+
+
+        <Box component="main" sx={{ flexGrow: 1, p: 3}}>
           <DrawerHeader />
           {children}
         </Box>
