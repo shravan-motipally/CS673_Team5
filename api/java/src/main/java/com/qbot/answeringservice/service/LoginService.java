@@ -4,6 +4,7 @@ import com.qbot.answeringservice.dto.LoginDetail;
 import com.qbot.answeringservice.dto.LoginResponse;
 import com.qbot.answeringservice.exception.UnathorizedUserException;
 import com.qbot.answeringservice.model.Login;
+import com.qbot.answeringservice.model.Role;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.LoginRepository;
 import com.qbot.answeringservice.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -57,7 +59,8 @@ public class LoginService {
         try {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
             User user = userRepository.findUserByLoginId(login.getLoginId());
-            return new LoginResponse(user.getFirstName(), user.getLastName(), user.getPhotoUrl());
+            return new LoginResponse(user.getFirstName(), user.getLastName(), user.getPhotoUrl(),
+                    user.getRoleIds().stream().map(Role::getRoleNameById).collect(Collectors.toList()));
         } catch (Exception e) {
             logger.info(format("User not found with details userName: %s", detail.getUsername()));
             return null;

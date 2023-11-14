@@ -16,11 +16,10 @@ import {darkTheme, lightTheme} from "../utils/Themes";
 import {
   BLOOM,
   DISTIL_GPT2,
-  GOOGLE_FLAN_T5_BASE,
   GPT2,
   GPT3_SMALL,
-  OPEN_LLAMA_3B, PARAPHRASE_MINILM, PARAPHRASE_MINILM_MULTILINGUAL,
-  SUMMARIZATION_FB_BART_LARGE_CNN
+  OPEN_AI,
+  PARAPHRASE_MINILM, PARAPHRASE_MINILM_MULTILINGUAL
 } from "../utils/Urls";
 import InputLabel from "@mui/material/InputLabel";
 import {StyledInput} from "../components/StyledInput";
@@ -40,7 +39,7 @@ const Settings = () => {
   }, [screenState]);
 
   const paraphraseModels = [PARAPHRASE_MINILM, PARAPHRASE_MINILM_MULTILINGUAL];
-  const genModels = [GPT2, BLOOM, DISTIL_GPT2, GPT3_SMALL, SUMMARIZATION_FB_BART_LARGE_CNN, OPEN_LLAMA_3B, GOOGLE_FLAN_T5_BASE];
+  const genModels = [GPT2, BLOOM, DISTIL_GPT2, GPT3_SMALL, OPEN_AI];
 
   const handleGenerativeModelChange = useCallback((model: typeof genModels[number]) => {
     setGenModel(model);

@@ -22,6 +22,6 @@ public class User {
     private UUID loginId;
     private String firstName;
     private String lastName;
-    private final List<String> roleIds;
-    private final List<String> courseIds;
+    private List<Integer> roleIds;
+    private List<String> courseIds;
 }

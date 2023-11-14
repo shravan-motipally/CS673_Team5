@@ -8,7 +8,6 @@ import {useContext, useEffect, useState} from "react";
 import {ScreenContext} from "../App";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Exchange} from "./Edit";
-import {getAllQnA} from "../api/QuestionAnswerApi";
 
 const Home = () => {
   const { screenState } = useContext(ScreenContext);
@@ -16,7 +15,7 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      const { exchanges } = await getAllQnA();
+      const exchanges = screenState.exchanges;
       setCommonlyAskedQuestions(exchanges.slice(0, 6));
     })();
   }, []);

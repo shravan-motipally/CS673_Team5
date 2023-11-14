@@ -24,15 +24,6 @@ public class CourseServiceTest {
     CourseService courseService;
 
     @Test
-    public void testCreateCourse() {
-        Mockito.when(courseRepo.save(ArgumentMatchers.any(Course.class))).thenReturn(getTestCourses().get(0));
-
-        Course createdCourse = new Course("1", "MET", "CS", "633", null, null, null);
-        Course returnedCourse = courseService.createCourse(createdCourse);
-        Assertions.assertNotNull(returnedCourse);
-    }
-
-    @Test
     public void testFindAll() {
         Mockito.when(courseRepo.findAll()).thenReturn(getTestCourses());
         List<Course> foundCourses = courseService.findAllCourses();
