@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.mongojack.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.qbot.answeringservice.dto.UserRequest;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,8 +22,14 @@ public class User {
     private UUID id;
     private String photoUrl;
     private UUID loginId;
+    private String emailAddress;
     private String firstName;
     private String lastName;
     private List<Integer> roleIds;
     private List<String> courseIds;
+
+    public static User fromUserRequest(UserRequest request) {
+        return new User(request.getId(), request.getPhotoUrl(), null, request.getEmailAddress(), request.getFirstName(),
+                request.getLastName(), request.getRoleIds(), request.getCourseIds());
+    }
 }

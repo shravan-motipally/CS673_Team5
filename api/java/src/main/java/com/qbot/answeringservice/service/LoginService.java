@@ -1,24 +1,23 @@
 package com.qbot.answeringservice.service;
 
-import com.qbot.answeringservice.dto.LoginDetail;
-import com.qbot.answeringservice.dto.LoginResponse;
-import com.qbot.answeringservice.exception.UnathorizedUserException;
-import com.qbot.answeringservice.model.Login;
-import com.qbot.answeringservice.model.Role;
-import com.qbot.answeringservice.model.User;
-import com.qbot.answeringservice.repository.LoginRepository;
-import com.qbot.answeringservice.repository.UserRepository;
+import static java.lang.String.format;
 
-import lombok.NonNull;
+import java.util.Base64;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.stream.Collectors;
+import com.qbot.answeringservice.dto.LoginDetail;
+import com.qbot.answeringservice.dto.LoginResponse;
+import com.qbot.answeringservice.exception.UnathorizedUserException;
+import com.qbot.answeringservice.model.Login;
+import com.qbot.answeringservice.model.User;
+import com.qbot.answeringservice.repository.LoginRepository;
+import com.qbot.answeringservice.repository.UserRepository;
 
-import static java.lang.String.format;
+import lombok.NonNull;
 
 @Service
 public class LoginService {
@@ -35,8 +34,8 @@ public class LoginService {
     }
 
     public Login createLogin(@NonNull final String userName, @NonNull final String password) {
-        return loginRepository.save(
-                new Login(null, userName, pwService.generatePasswordFromHash(password, pwService.generateSalt())));
+        return loginRepository.save(new Login(UUID.randomUUID(), userName,
+                pwService.generatePasswordFromHash(password, pwService.generateSalt())));
     }
 
     public Login createLogin(@NonNull final String userName) {
@@ -58,7 +57,7 @@ public class LoginService {
         }
         try {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
-            User user = userRepository.findUserByLoginId(login.getLoginId());
+            User user = userRepository.findUserByLoginId(login.getId());
             return LoginResponse.fromUser(user);
         } catch (Exception e) {
             logger.info(format("User not found with details userName: %s", detail.getUsername()));

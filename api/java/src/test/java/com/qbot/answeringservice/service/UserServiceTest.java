@@ -15,6 +15,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mongodb.assertions.Assertions;
+import com.qbot.answeringservice.dto.LoginDetail;
+import com.qbot.answeringservice.dto.UserRequest;
+import com.qbot.answeringservice.dto.UserResponse;
+import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.UserRepository;
 
@@ -23,17 +27,40 @@ public class UserServiceTest {
     @Mock
     UserRepository userRepo;
 
+    @Mock
+    LoginService loginService;
+
     @InjectMocks
     UserService userService = new UserService();
 
     @Test
     public void testCreateUser() {
-        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
 
-        User createdUser = userService
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        UserResponse createdUser = userService.createUser(getUserRequest());
         Assertions.assertNotNull(createdUser);
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
         Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserValidationFailure() {
+        UserResponse createdUser = userService.createUser(getUserRequest());
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserLoginServiceFailure() {
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(null);
+        UserResponse createdUser = userService.createUser(getUserRequest());
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
     }
 
     @Test
@@ -100,14 +127,24 @@ public class UserServiceTest {
         Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.any(UUID.class));
     }
 
+    private UserRequest getUserRequest() {
+        LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
+        return new UserRequest(UUID.randomUUID(), null, loginDetail, "test@email.com", "Test", "User", null, null);
+    }
+
     private List<User> getAdminUsers() {
         List<Integer> adminRoleIds = new ArrayList<>();
         adminRoleIds.add(1);
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);
+        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "test@email.com", "Test", "User",
+                adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;
+    }
+
+    private Login getTestLogin() {
+        return new Login(UUID.randomUUID(), "test@email.com", "testPasswordHash");
     }
 }

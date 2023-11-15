@@ -132,8 +132,8 @@ public class LoginServiceTest {
     }
 
     private User generateTestUser() {
-        return new User(UUID.randomUUID(), "photo/url/null.png", UUID.randomUUID(), "firstName", "lastName", null,
-                null);
+        return new User(UUID.randomUUID(), "photo/url/null.png", UUID.randomUUID(), "test@email.biz", "firstName",
+                "lastName", null, null);
     }
 
 }

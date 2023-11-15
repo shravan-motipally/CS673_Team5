@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qbot.answeringservice.dto.UserRequest;
+import com.qbot.answeringservice.dto.UserResponse;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.service.UserService;
 
@@ -28,13 +30,12 @@ public class UserController {
 
     private final UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest user) {
         try {
             return ResponseEntity.ok(userService.createUser(user));
         } catch (Exception e) {

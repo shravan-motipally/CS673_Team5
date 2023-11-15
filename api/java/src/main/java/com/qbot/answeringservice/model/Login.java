@@ -12,12 +12,12 @@ import java.util.UUID;
 public class Login {
 
     @Id
-    private final UUID loginId;
+    private final UUID id;
     private final String userName;
     private final String saltedHash;
 
-    public Login(UUID loginId, String userName, String saltedHash) {
-        this.loginId = loginId;
+    public Login(UUID id, String userName, String saltedHash) {
+        this.id = id;
         this.userName = userName;
         this.saltedHash = saltedHash;
     }
