@@ -1,5 +1,6 @@
 package com.qbot.answeringservice.model;
 
+import com.qbot.answeringservice.dto.CourseDto;
 import org.mongojack.Id;
 import org.mongojack.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -14,6 +14,7 @@ export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/cou
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
+export const bulkUploadCoursesUrl = ()  =>  ANSWERING_SVC_URL + "/courses/all"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
 export const getOpenAIUrl = () => "http://localhost:7861/chat";

@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Toolbar from "@mui/material/Toolbar";
 import {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
 import {
+  bulkUploadCourses,
   createNewCourse,
   deleteCourse,
   getAllCoursesForAdministration,
@@ -41,7 +42,7 @@ import * as excel from "xlsx";
 import {
   courseExcelSettings,
   coursesSpreadSheetData,
-  transformToJson
+  transformCoursesToJson,
 } from "../../utils/ExcelUtils";
 import xlsx from "json-as-xlsx";
 import DownloadIcon from '@mui/icons-material/Download';
@@ -255,7 +256,7 @@ interface CourseDialogProps {
 }
 
 const isNullOrUndefined = (str: string | undefined) => {
-  return str === undefined || str === null;
+  return str === undefined || str === null || str === "";
 }
 
 const CourseDialog = (props: CourseDialogProps) => {
@@ -298,11 +299,22 @@ const CourseDialog = (props: CourseDialogProps) => {
       setCatalogIdError(true);
     }
     return !issueFound;
-  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError])
+  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError,
+    schoolId, departmentId, catalogId, name, description, semester]);
 
-  const handleAdditionSemester = useCallback(() => {
+  const resetErrorFields = useCallback(() => {
+    setDescriptionError(false);
+    setNameError(false);
+    setSchoolIdError(false);
+    setSemesterError(false);
+    setDepartmentIdError(false);
+    setCatalogIdError(false);
+  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError]);
+
+  const handleAddingCourse = useCallback(() => {
     (async () => {
       if (validateCourseFields()) {
+        resetErrorFields();
         const coursePartial: Partial<CourseDoc> = {
           id: course === undefined ? undefined : course.id,
           schoolId: schoolId ? schoolId: "",
@@ -317,12 +329,6 @@ const CourseDialog = (props: CourseDialogProps) => {
           if (!successful) {
             setNewCourseCreationError(true);
           }
-          setSemester("");
-          setDescription("");
-          setName("");
-          setCatalogId("");
-          setSchoolId("");
-          setDepartmentId("");
           handleClose();
         } catch (e) {
           setNewCourseCreationError(true);
@@ -333,6 +339,36 @@ const CourseDialog = (props: CourseDialogProps) => {
 
   const openDialog = useMemo(() => openNewCourseDialog, [openNewCourseDialog]);
 
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNameError(false);
+    setName(e.target.value);
+  }, [name, nameError]);
+
+  const handleSemesterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSemesterError(false);
+    setSemester(e.target.value);
+  }, [semester, semesterError]);
+
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescriptionError(false);
+    setDescription(e.target.value);
+  }, [catalogId, descriptionError]);
+
+  const handleCatalogIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCatalogIdError(false);
+    setCatalogId(e.target.value);
+  }, [catalogId, catalogIdError]);
+
+  const handleDepartmentIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartmentIdError(false);
+    setDepartmentId(e.target.value);
+  }, [departmentId, departmentIdError]);
+
+  const handleSchoolIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSchoolIdError(false);
+    setSchoolId(e.target.value);
+  }, [schoolId, schoolIdError]);
+
   useEffect(() => {
     if (course !== null && course !== undefined) {
       setName(course.name);
@@ -341,6 +377,13 @@ const CourseDialog = (props: CourseDialogProps) => {
       setCatalogId(course.catalogId);
       setDepartmentId(course.departmentId);
       setSchoolId(course.schoolId);
+    } else if (course === null || course === undefined) {
+      setName("");
+      setSemester("");
+      setDescription("");
+      setCatalogId("");
+      setDepartmentId("");
+      setSchoolId("");
     }
   }, [course]);
 
@@ -360,97 +403,78 @@ const CourseDialog = (props: CourseDialogProps) => {
           autoFocus
           margin="dense"
           id="semester"
-          label="Semester"
+          // label="Semester"
           fullWidth
           variant="standard"
-          value={semester}
-          onChange={(e) => {
-            setSemesterError(false);
-            setSemester(e.target.value);
-          }}
+          value={semester ?? ''}
+          onChange={handleSemesterChange}
           error={semesterError}
-          helperText={semesterError ? "Enter a semester in (Fall|Spring|Summer) YYYY format, ex: Fall 2023" : ""}
+          helperText={"Enter a semester in (Fall|Spring|Summer) YYYY format, ex: Fall 2023"}
         />
         <TextField
           autoFocus
           margin="dense"
           id="schoolId"
-          label="School"
+          // label="School"
           fullWidth
           variant="standard"
-          value={schoolId}
-          onChange={(e) => {
-            setSchoolIdError(false);
-            setSchoolId(e.target.value);
-          }}
+          value={schoolId ?? ''}
+          onChange={handleSchoolIdChange}
           error={schoolIdError}
-          helperText={schoolIdError ? "Enter school of the course. Ex: MET" : ""}
+          helperText={"Enter school of the course. Ex: MET"}
         />
         <TextField
           autoFocus
           margin="dense"
           id="departmentId"
-          label="Department"
+          // label="Department"
           fullWidth
           variant="standard"
-          value={departmentId}
-          onChange={(e) => {
-            setDepartmentIdError(false);
-            setDepartmentId(e.target.value);
-          }}
+          value={departmentId ?? ''}
+          onChange={handleDepartmentIdChange}
           error={departmentIdError}
-          helperText={departmentIdError ? "Enter departmentId of the course. Ex: CS " : ""}
+          helperText={"Enter departmentId of the course. Ex: CS "}
         />
         <TextField
           autoFocus
           margin="dense"
           id="catalogId"
-          label="Course Number"
+          // label="Course Number"
           fullWidth
           variant="standard"
-          value={catalogId}
-          onChange={(e) => {
-            console.log(catalogId);
-            setCatalogIdError(false);
-            setCatalogId(e.target.value);
-          }}
+          value={catalogId ?? ''}
+          onChange={handleCatalogIdChange}
           error={catalogIdError}
-          helperText={catalogIdError ? "Enter the course number of the course. Ex: 633" : ""}
+          helperText={"Enter the course number of the course. Ex: 633"}
         />
         <TextField
           autoFocus
           margin="dense"
           id="course"
-          label="Course Name"
+          // label="Course Name"
           fullWidth
           variant="standard"
-          value={name}
-          onChange={(e) => {
-            setNameError(false);
-            setName(e.target.value);
-          }}
+          value={name ?? ''}
+          onChange={handleNameChange}
           error={nameError}
-          helperText={nameError ? "Enter name of the course. Ex: Software Engineering" : ""}
+          helperText={"Enter name of the course. Ex: Software Engineering"}
         />
         <TextField
           autoFocus
           margin="dense"
           id="description"
-          label="Course Description"
+          // label="Course Description"
           fullWidth
           variant="standard"
-          value={description}
-          onChange={(e) => {
-            setDescriptionError(false);
-            setDescription(e.target.value);
-          }}
+          value={description ?? ''}
+          onChange={handleDescriptionChange}
           error={descriptionError}
-          helperText={descriptionError ? "Enter a detailed description of the course." : ""}
+          helperText={"Enter a detailed description of the course."}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleAdditionSemester}>{course !== undefined ? "Update" : "Add"}</Button>
+        <Button onClick={handleAddingCourse}>{course !== undefined ? "Update" : "Add"}</Button>
       </DialogActions>
     </Dialog>
   )
@@ -517,7 +541,7 @@ export default function EducatorsTable() {
     }
   }, [selected])
 
-  const handleCellSelection = (id: string) => {
+  const handleCellSelection = useCallback((id: string) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
 
@@ -534,7 +558,11 @@ export default function EducatorsTable() {
       );
     }
     setSelected(newSelected);
-  };
+    if (newSelected.length === 0) {
+      // none selected
+      setSelectedCourse(undefined);
+    }
+  }, [selected]);
 
   useEffect(() => {
     (async () => {
@@ -559,20 +587,21 @@ export default function EducatorsTable() {
     return [];
   }, [classes, loading]);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = useCallback((event: unknown, newPage: number) => {
     setPage(newPage);
-  };
+  }, [page]);
 
   const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   }, [classes]);
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = useCallback((id: string) => selected.indexOf(id) !== -1, [selected]);
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = useMemo(() => {
+    return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  }, [page, rowsPerPage]);
 
   const visibleRows = React.useMemo(
     () =>
@@ -634,14 +663,14 @@ export default function EducatorsTable() {
 
             const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
             // @ts-ignore
-            const jsonData = transformToJson(dataParse);
+            const jsonData = transformCoursesToJson(dataParse);
             (async () => {
-              // const res = await updateQuestions(jsonData);
-              // if (res.status !== 200) {
-              setError(true);
-              setErrorMsg("Unable to save questions/answers at the moment as it is not implemented, please try again later")
-              // }
-              // setRowData(jsonData.exchanges);
+              const success = await bulkUploadCourses(jsonData);
+              if (!success) {
+                setError(true);
+                setErrorMsg("Unable to save courses at the moment, please try again later")
+              }
+              setClasses(jsonData.courses);
             })();
           }
         }
@@ -708,7 +737,7 @@ export default function EducatorsTable() {
                 id="tableTitle"
                 component="div"
               >
-                Classes
+                Educators
               </Typography>
             )}
             {numSelected > 0 ? (

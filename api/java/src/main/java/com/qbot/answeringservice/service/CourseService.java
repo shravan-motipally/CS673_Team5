@@ -3,6 +3,7 @@ package com.qbot.answeringservice.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.qbot.answeringservice.dto.BulkUploadCourseRequest;
 import com.qbot.answeringservice.dto.CourseDto;
 import com.qbot.answeringservice.dto.CourseList;
 import org.slf4j.Logger;
@@ -57,4 +58,17 @@ public class CourseService {
         }
     }
 
+    public boolean overwriteAllCourses(BulkUploadCourseRequest courseList) {
+        if (courseList.getCourses().size() == 0) {
+            return true;
+        }
+        try {
+            courseRepo.deleteAll();
+            courseRepo.saveAll(courseList.getCourses());
+        } catch (Exception e) {
+            logger.error("Error storing courseList: {}", e.getMessage());
+            return false;
+        }
+        return true;
+    }
 }
