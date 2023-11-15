@@ -1,4 +1,6 @@
 import {Exchange} from "../screens/Edit";
+import {Course} from "../components/onepirate/Home";
+import {CourseDoc} from "../screens/tabs/ClassesTable";
 
 export const spreadSheetData = [
   {
@@ -17,23 +19,23 @@ export const coursesSpreadSheetData = [
     sheet: "Courses List",
     columns: [
       { label: "Course ID", value: "id" },
+      { label: "Semester", value: "semester" },
       { label: "School ID", value: "schoolId"},
       { label: "Department ID", value: "departmentId" },
       { label: "Course Number", value: "catalogId" },
       { label: "Course Name", value: "name" },
-      { label: "Course Description", value: "description" },
-      { label: "Semester", value: "semester" }
+      { label: "Course Description", value: "description" }
     ],
     content: [],
   }
 ]
 
-export interface ExcelJson {
+export interface ExcelJsonQuestions {
   numOfQuestions: number,
   exchanges: Array<Exchange>
 }
 
-export const transformToJson: (stringArr: string[][]) => ExcelJson = (stringArr: string[][]) => {
+export const transformToJson: (stringArr: string[][]) => ExcelJsonQuestions = (stringArr: string[][]) => {
   if (stringArr.length === 0 || stringArr.length === 1) {
     console.error("Invalid array given");
     throw Error("Invalid array given");
@@ -52,6 +54,37 @@ export const transformToJson: (stringArr: string[][]) => ExcelJson = (stringArr:
   return {
     numOfQuestions: numOfQuestions,
     exchanges: exchanges
+  }
+}
+
+export interface ExcelJsonCourses {
+  numCourses: number,
+  courses: Array<CourseDoc>
+}
+
+export const transformCoursesToJson: (stringArr: string[][]) => ExcelJsonCourses = (stringArr: string[][]) => {
+  if (stringArr.length === 0 || stringArr.length === 1) {
+    console.error("Invalid array given");
+    throw Error("Invalid array given");
+  }
+  const numCourses = stringArr.length -1;
+  const courses: Array<CourseDoc> = [];
+  stringArr.forEach((questionArray: string[], index) => {
+    if (index !== 0 && questionArray.length === 7) {
+      courses.push({
+        id: questionArray[0],
+        semester: questionArray[1],
+        schoolId: questionArray[2],
+        departmentId: questionArray[3],
+        catalogId: questionArray[4],
+        name: questionArray[5],
+        description: questionArray[6],
+      })
+    }
+  });
+  return {
+    numCourses: numCourses,
+    courses: courses
   }
 }
 

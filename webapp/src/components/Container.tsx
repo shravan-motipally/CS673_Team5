@@ -426,7 +426,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             </ListItem>
           </List>
           { screenState.isAuthed ?
-            <>
+            <div>
               <Divider />
               <List>
                 <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'manage'  }); } }>
@@ -450,7 +450,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   </ListItemButton>
                 </ListItem>
               </List>
-            </> :
+            </div> :
             <div/>
           }
           { screenState.isAuthed && isAdministrator(screenState.roles) ?

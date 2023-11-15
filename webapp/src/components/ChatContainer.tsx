@@ -181,7 +181,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 
   const questionButtons = useMemo(() => {
     return questions.map(question => (
-      <Grid xs={3} sx={{ ml: 1, mr: 1 }} alignContent={"center"} justifyContent={"center"} >
+      <Grid sx={{ ml: 1, mr: 1 }} alignContent={"center"} justifyContent={"center"} >
         <Button
           fullWidth
           sx={{ fontSize: "0.75rem", height: "4rem" }}

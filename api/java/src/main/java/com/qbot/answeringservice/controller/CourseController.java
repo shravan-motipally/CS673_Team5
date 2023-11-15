@@ -3,6 +3,7 @@ package com.qbot.answeringservice.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qbot.answeringservice.dto.BulkUploadCourseRequest;
 import com.qbot.answeringservice.dto.CourseList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,26 @@ public class CourseController {
     public ResponseEntity<Course> updateCourse(@RequestBody Course course) {
         try {
             return ResponseEntity.ok(courseService.updateCourse(course));
+        } catch (Exception e) {
+            logger.error("Server error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
+    @PostMapping(path = "/all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateAllCourses(@RequestBody BulkUploadCourseRequest courseList) {
+        try {
+            // TODO: introduce auth
+            // if (verified)
+            // {
+            if (courseList != null && courseService.overwriteAllCourses(courseList)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+            // }
+            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
             logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
