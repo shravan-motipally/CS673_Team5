@@ -4,7 +4,7 @@ import {useRef, useState, useCallback, useEffect, useContext, useMemo} from 'rea
 import './styles/ChatContainer.css';
 import { Message } from './types/Chat.types';
 import ChatMessage from './ChatMessage';
-import ai from '../screens/images/bot32.png';
+import ai from '../screens/images/botChat.png';
 import student from '../screens/images/student.png';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
@@ -172,7 +172,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: ai,
+        photoURL: screenState.darkMode ? ai : ai,
         type: "received"
       }]);
     })();

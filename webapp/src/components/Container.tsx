@@ -36,6 +36,7 @@ import {Message} from "./types/Chat.types";
 import student from "../screens/images/student.png";
 import {answerQuestion} from "../models/Chat";
 import {isAdministrator} from "../utils/RoleUtils";
+import {display} from "@mui/system";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -241,12 +242,15 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         <CssBaseline />
         <AppBar position="fixed" open={open} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
           <Toolbar>
-            <img style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              margin: "2px 5px",
-            }} src={ai} />
+            <IconButton onClick={goToLandingPage} aria-label="QBOT HOME" size="large">
+              <img style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "20%",
+                margin: "2px 5px",
+                cursor: "pointer",
+              }} src={ai} />
+            </IconButton>
             <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
