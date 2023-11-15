@@ -3,7 +3,7 @@ import {Exchange} from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna"
 import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
 import {
-  addNewCourseUrl, deleteCourseUrl,
+  addNewCourseUrl, bulkUploadCoursesUrl, deleteCourseUrl,
   getAllCoursesForAdministrationUrl,
   getAllCoursesUrl,
   getAllQnAUrl,
@@ -11,7 +11,7 @@ import {
   SEMANTIC_SIMILARITY_URL,
   updateQuestionsUrl
 } from "../utils/Urls";
-import {ExcelJson} from "../utils/ExcelUtils";
+import {ExcelJsonCourses, ExcelJsonQuestions} from "../utils/ExcelUtils";
 import {CourseList} from "../components/onepirate/Home";
 import {CourseDoc} from "../screens/tabs/ClassesTable";
 
@@ -95,7 +95,28 @@ export const deleteCourse = async (courseId: string) => {
   }
 }
 
-export const updateQuestions = async (jsonData: ExcelJson) => {
+export const bulkUploadCourses = async (courses: ExcelJsonCourses) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: bulkUploadCoursesUrl(),
+      method: "POST",
+      data: courses,
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    if (res.status === 200) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error("Error bulk uploading courses");
+    return false;
+  }
+}
+
+export const updateQuestions = async (jsonData: ExcelJsonQuestions) => {
   const res = await axios({
     timeout: 300000,
     url: updateQuestionsUrl(),
