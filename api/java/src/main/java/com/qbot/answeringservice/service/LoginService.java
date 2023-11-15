@@ -59,8 +59,7 @@ public class LoginService {
         try {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
             User user = userRepository.findUserByLoginId(login.getLoginId());
-            return new LoginResponse(user.getFirstName(), user.getLastName(), user.getPhotoUrl(),
-                    user.getRoleIds().stream().map(Role::getRoleNameById).collect(Collectors.toList()));
+            return LoginResponse.fromUser(user);
         } catch (Exception e) {
             logger.info(format("User not found with details userName: %s", detail.getUsername()));
             return null;
