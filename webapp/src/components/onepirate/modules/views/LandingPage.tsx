@@ -22,7 +22,7 @@ const LandingPage = (  ) => {
         src={backgroundImage}
         alt="increase priority"
       />
-      <Typography style={{ marginBottom: "200px" }} color="inherit" align="center" variant="h2" marked="center">
+      <Typography style={{ marginBottom: "200px", marginTop: "40px"}} color="inherit" align="center" variant="h2" marked="center">
         Welcome to QBot
       </Typography>
 

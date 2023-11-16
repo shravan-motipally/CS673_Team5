@@ -5,7 +5,7 @@ import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
 import {useContext} from "react";
 import {ScreenContext} from "../../../../App";
-import ai from "../../../../screens/images/bot32White.png";
+import ai from "../../../../screens/images/botTransparentWhite.png";
 import Typography from "@mui/material/Typography";
 
 const rightLink = {

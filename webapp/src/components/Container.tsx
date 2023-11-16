@@ -24,7 +24,10 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 import {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import { ScreenContext } from '../App';
-import ai from '../screens/images/bot.png';
+import ai from '../screens/images/botTransparentWhite.png';
+import aiLight from '../screens/images/botTransparentBlack.png';
+import aiDark from '../screens/images/botTransparentWhite.png';
+
 
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -33,10 +36,11 @@ import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
 import {Message} from "./types/Chat.types";
-import student from "../screens/images/student.png";
+import student from "../screens/images/studentBlack.png";
 import {answerQuestion} from "../models/Chat";
 import {isAdministrator} from "../utils/RoleUtils";
 import {display} from "@mui/system";
+import studentLight from "../screens/images/studentWhite.png";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -192,7 +196,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       text: questionClicked,
       createdAt: Date.now(),
       uid: "1",
-      photoURL: student,
+      photoURL: screenState.darkMode ? studentLight : student,
       type: "sent"
     };
 
@@ -207,7 +211,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: ai,
+        photoURL: screenState.darkMode ? aiDark : aiLight,
         type: "received"
       }]);
     })();
