@@ -24,8 +24,14 @@ public class UserService {
     @Autowired
     private LoginService loginService;
 
+    private EmailValidator emailValidator;
+
     @Autowired
     private UserRepository userRepo;
+
+    public UserService() {
+        this.emailValidator = EmailValidator.getInstance();
+    }
 
     public UserResponse createUser(UserRequest userRequest) {
         if (userRequest.getId() == null) {
@@ -48,7 +54,7 @@ public class UserService {
                 return null;
             }
         } else {
-            logger.info("Validation failure(s) when creating new user: {}", validationResults);
+            logger.info("Validation failure(s) when creating new user:\n {}", validationResults);
             return null;
         }
     }
@@ -82,8 +88,11 @@ public class UserService {
     private String validateUserRequest(UserRequest userRequest) {
         StringBuilder builder = new StringBuilder();
 
-        if (userRequest.getEmailAddress() == null
-                || !EmailValidator.getInstance().isValid(userRequest.getEmailAddress())) {
+        if (this.emailValidator == null) {
+            builder.append("Email validation service is missing");
+            logger.error("Email validation service cannot be instantiated");
+        } else if (userRequest.getEmailAddress() == null
+                || !this.emailValidator.isValid(userRequest.getEmailAddress())) {
             builder.append("Email Address is invalid/missing\n");
         }
 

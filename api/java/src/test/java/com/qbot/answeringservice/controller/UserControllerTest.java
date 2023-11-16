@@ -130,7 +130,7 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUser() {
-        ResponseEntity<User> response = userController.deleteUser(UUID.randomUUID().toString());
+        ResponseEntity<Void> response = userController.deleteUser(UUID.randomUUID().toString());
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         Assertions.assertTrue(HttpStatus.OK.value() == response.getStatusCodeValue());
         Mockito.verify(userService, Mockito.times(1)).deleteUser(ArgumentMatchers.anyString());

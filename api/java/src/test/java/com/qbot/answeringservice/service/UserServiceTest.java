@@ -40,7 +40,9 @@ public class UserServiceTest {
                 .thenReturn(getTestLogin());
         Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
 
-        UserResponse createdUser = userService.createUser(getUserRequest());
+        UserRequest request = getUserRequest();
+        request.setId(null);
+        UserResponse createdUser = userService.createUser(request);
         Assertions.assertNotNull(createdUser);
         Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
                 ArgumentMatchers.anyString());
@@ -48,10 +50,65 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testCreateUserValidationFailure() {
-        UserResponse createdUser = userService.createUser(getUserRequest());
+    public void testCreateUserWithDifferentUsername() {
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
+
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = new LoginDetail(null, "testPassw0rd");
+        request.setLoginDetail(loginDetail);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNotNull(createdUser);
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullEmailAddress() {
+        UserRequest request = getUserRequest();
+        request.setEmailAddress(null);
+        UserResponse createdUser = userService.createUser(request);
         Assertions.assertNull(createdUser);
         Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureInvalidEmailAddress() {
+        UserRequest request = getUserRequest();
+        request.setEmailAddress("InvalidAddress.info");
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullLogin() {
+        UserRequest request = getUserRequest();
+        request.setLoginDetail(null);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullPassword() {
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = new LoginDetail(request.getEmailAddress(), null);
+        request.setLoginDetail(loginDetail);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
     }
 
     @Test
