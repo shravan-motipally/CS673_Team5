@@ -16,7 +16,7 @@ import lombok.Setter;
 public class UserResponse {
     private String id;
     private String photoUrl;
-    private Login login;
+    private String userName;
     private String firstName;
     private String lastName;
     private List<String> roleNames;
@@ -26,7 +26,7 @@ public class UserResponse {
         UserResponse dto = new UserResponse();
         dto.setId(userEntity.getId());
         dto.setPhotoUrl(userEntity.getPhotoUrl());
-        dto.setLogin(loginEntity);
+        dto.setUserName(loginEntity.getUserName());
         dto.setFirstName(userEntity.getFirstName());
         dto.setLastName(userEntity.getLastName());
         dto.setCourseIds(userEntity.getCourseIds());
