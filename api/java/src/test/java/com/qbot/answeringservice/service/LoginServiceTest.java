@@ -1,4 +1,4 @@
-package com.qbot.answeringservice.controller;
+package com.qbot.answeringservice.service;
 
 import java.util.UUID;
 
@@ -18,8 +18,6 @@ import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.LoginRepository;
 import com.qbot.answeringservice.repository.UserRepository;
-import com.qbot.answeringservice.service.LoginService;
-import com.qbot.answeringservice.service.PwService;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
@@ -93,7 +91,7 @@ public class LoginServiceTest {
                 .thenReturn(true);
 
         User testUser = generateTestUser();
-        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(testUser);
+        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.anyString())).thenReturn(testUser);
 
         LoginResponse response = loginService.retrieveUserInfo(new LoginDetail(testLogin.getUserName(), testPassword));
         Assertions.assertNotNull(response);
@@ -121,19 +119,19 @@ public class LoginServiceTest {
         Mockito.when(loginRepo.findLoginByUserName(ArgumentMatchers.anyString())).thenReturn(testLogin);
         Mockito.when(pwService.validatePassword(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
                 .thenReturn(true);
-        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(null);
+        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.anyString())).thenReturn(null);
 
         LoginResponse response = loginService.retrieveUserInfo(new LoginDetail(testLogin.getUserName(), testPassword));
         Assertions.assertNull(response);
     }
 
     private Login generateTestLogin() {
-        return new Login(UUID.randomUUID(), "testUsername", "testPasswordHash");
+        return new Login(UUID.randomUUID().toString(), "testUsername", "testPasswordHash");
     }
 
     private User generateTestUser() {
-        return new User(UUID.randomUUID(), "photo/url/null.png", UUID.randomUUID(), "test@email.biz", "firstName",
-                "lastName", null, null);
+        return new User(UUID.randomUUID().toString(), "photo/url/null.png", UUID.randomUUID().toString(),
+                "test@email.biz", "firstName", "lastName", null, null);
     }
 
 }
