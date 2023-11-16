@@ -2,7 +2,6 @@ package com.qbot.answeringservice.dto;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.qbot.answeringservice.model.Login;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserResponse {
-    private UUID id;
+    private String id;
     private String photoUrl;
     private Login login;
     private String firstName;

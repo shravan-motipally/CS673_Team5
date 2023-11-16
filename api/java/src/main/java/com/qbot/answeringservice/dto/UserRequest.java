@@ -1,7 +1,6 @@
 package com.qbot.answeringservice.dto;
 
 import java.util.List;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserRequest {
-    private UUID id;
+    private String id;
     private String photoUrl;
     private LoginDetail loginDetail;
     private String emailAddress;

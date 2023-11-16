@@ -73,26 +73,25 @@ public class UserServiceTest {
 
     @Test
     public void testFindUserByUserId() {
-        Mockito.when(userRepo.findById(ArgumentMatchers.any(UUID.class)))
-                .thenReturn(Optional.of(getAdminUsers().get(0)));
+        Mockito.when(userRepo.findById(ArgumentMatchers.anyString())).thenReturn(Optional.of(getAdminUsers().get(0)));
 
-        User foundUser = userService.findByUserId(UUID.randomUUID());
+        User foundUser = userService.findByUserId(UUID.randomUUID().toString());
         Assertions.assertNotNull(foundUser);
     }
 
     @Test
     public void testFindUserByUserIdNoResult() {
-        Mockito.when(userRepo.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.empty());
+        Mockito.when(userRepo.findById(ArgumentMatchers.anyString())).thenReturn(Optional.empty());
 
-        User foundUser = userService.findByUserId(UUID.randomUUID());
+        User foundUser = userService.findByUserId(UUID.randomUUID().toString());
         Assertions.assertNull(foundUser);
     }
 
     @Test
     public void testFindUserByLoginId() {
-        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(getAdminUsers().get(0));
+        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.anyString())).thenReturn(getAdminUsers().get(0));
 
-        User foundUser = userService.findByLoginId(UUID.randomUUID());
+        User foundUser = userService.findByLoginId(UUID.randomUUID().toString());
         Assertions.assertNotNull(foundUser);
     }
 
@@ -117,19 +116,20 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUser() {
-        userService.deleteUser(UUID.randomUUID());
-        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.any(UUID.class));
+        userService.deleteUser(UUID.randomUUID().toString());
+        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.anyString());
     }
 
     @Test
     public void testDeleteUserNullInput() {
         userService.deleteUser(null);
-        Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.any(UUID.class));
+        Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
     }
 
     private UserRequest getUserRequest() {
         LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
-        return new UserRequest(UUID.randomUUID(), null, loginDetail, "test@email.com", "Test", "User", null, null);
+        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User", null,
+                null);
     }
 
     private List<User> getAdminUsers() {
@@ -137,14 +137,14 @@ public class UserServiceTest {
         adminRoleIds.add(1);
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "test@email.com", "Test", "User",
-                adminRoleIds, null);
+        User testAdmin = new User(UUID.randomUUID().toString(), null, UUID.randomUUID().toString(), "test@email.com",
+                "Test", "User", adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;
     }
 
     private Login getTestLogin() {
-        return new Login(UUID.randomUUID(), "test@email.com", "testPasswordHash");
+        return new Login(UUID.randomUUID().toString(), "test@email.com", "testPasswordHash");
     }
 }

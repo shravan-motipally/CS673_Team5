@@ -1,7 +1,6 @@
 package com.qbot.answeringservice.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/login/{loginId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserByLoginId(@PathVariable("loginId") UUID loginId) {
+    public ResponseEntity<User> getUserByLoginId(@PathVariable("loginId") String loginId) {
         try {
             return ResponseEntity.ok(userService.findByLoginId(loginId));
         } catch (Exception e) {
@@ -85,7 +84,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> deleteUser(@PathVariable("userId") UUID userId) {
+    public ResponseEntity<User> deleteUser(@PathVariable("userId") String userId) {
         try {
             userService.deleteUser(userId);
             return ResponseEntity.status(HttpStatus.OK).build();

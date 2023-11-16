@@ -29,7 +29,7 @@ public class UserService {
 
     public UserResponse createUser(UserRequest userRequest) {
         if (userRequest.getId() == null) {
-            userRequest.setId(UUID.randomUUID());
+            userRequest.setId(UUID.randomUUID().toString());
         }
 
         String validationResults = validateUserRequest(userRequest);
@@ -57,11 +57,11 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public User findByLoginId(UUID loginId) {
+    public User findByLoginId(String loginId) {
         return userRepo.findUserByLoginId(loginId);
     }
 
-    public User findByUserId(UUID userId) {
+    public User findByUserId(String userId) {
         return userRepo.findById(userId).orElse(null);
     }
 
@@ -73,7 +73,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public void deleteUser(UUID userId) {
+    public void deleteUser(String userId) {
         if (userId != null) {
             userRepo.deleteById(userId);
         }

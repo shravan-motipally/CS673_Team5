@@ -34,7 +34,7 @@ public class LoginService {
     }
 
     public Login createLogin(@NonNull final String userName, @NonNull final String password) {
-        return loginRepository.save(new Login(UUID.randomUUID(), userName,
+        return loginRepository.save(new Login(UUID.randomUUID().toString().toString().toString(), userName,
                 pwService.generatePasswordFromHash(password, pwService.generateSalt())));
     }
 

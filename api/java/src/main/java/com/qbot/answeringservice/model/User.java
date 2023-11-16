@@ -1,7 +1,6 @@
 package com.qbot.answeringservice.model;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.mongojack.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,9 +18,9 @@ import lombok.Setter;
 public class User {
 
     @Id
-    private UUID id;
+    private String id;
     private String photoUrl;
-    private UUID loginId;
+    private String loginId;
     private String emailAddress;
     private String firstName;
     private String lastName;
