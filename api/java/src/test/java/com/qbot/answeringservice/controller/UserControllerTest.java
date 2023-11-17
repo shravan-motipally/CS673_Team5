@@ -15,6 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.qbot.answeringservice.dto.LoginDetail;
+import com.qbot.answeringservice.dto.UserRequest;
+import com.qbot.answeringservice.dto.UserResponse;
+import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.service.UserService;
 
@@ -27,21 +31,19 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() {
-        Mockito.when(userService.createUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+        Mockito.when(userService.createUser(ArgumentMatchers.any(UserRequest.class))).thenReturn(getUserResponse());
 
-        ResponseEntity<User> response = userController
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        ResponseEntity<UserResponse> response = userController.createUser(getUserRequest());
         Assertions.assertNotNull(response.getBody());
-        Mockito.verify(userService, Mockito.times(1)).createUser(ArgumentMatchers.any(User.class));
+        Mockito.verify(userService, Mockito.times(1)).createUser(ArgumentMatchers.any(UserRequest.class));
     }
 
     @Test
     public void testCreateUserThrowException() {
-        Mockito.when(userService.createUser(ArgumentMatchers.any(User.class)))
+        Mockito.when(userService.createUser(ArgumentMatchers.any(UserRequest.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<User> response = userController
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        ResponseEntity<UserResponse> response = userController.createUser(getUserRequest());
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -68,9 +70,9 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByLoginId() {
-        Mockito.when(userService.findByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(getAdminUsers().get(0));
+        Mockito.when(userService.findByLoginId(ArgumentMatchers.anyString())).thenReturn(getAdminUsers().get(0));
 
-        ResponseEntity<User> response = userController.getUserByLoginId(UUID.randomUUID());
+        ResponseEntity<User> response = userController.getUserByLoginId(UUID.randomUUID().toString());
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         User returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
@@ -78,10 +80,9 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByLoginIdThrowException() {
-        Mockito.when(userService.findByLoginId(ArgumentMatchers.any(UUID.class)))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(userService.findByLoginId(ArgumentMatchers.anyString())).thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<User> response = userController.getUserByLoginId(UUID.randomUUID());
+        ResponseEntity<User> response = userController.getUserByLoginId(UUID.randomUUID().toString());
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -110,8 +111,8 @@ public class UserControllerTest {
     public void testUpdateUser() {
         Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
 
-        ResponseEntity<User> response = userController
-                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        ResponseEntity<User> response = userController.updateUser(new User(UUID.randomUUID().toString(), null,
+                UUID.randomUUID().toString(), "test@email.com", "firstName", "lastName", null, null));
         Assertions.assertNotNull(response.getBody());
         Mockito.verify(userService, Mockito.times(1)).updateUser(ArgumentMatchers.any(User.class));
     }
@@ -121,18 +122,18 @@ public class UserControllerTest {
         Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<User> response = userController
-                .updateUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        ResponseEntity<User> response = userController.updateUser(new User(UUID.randomUUID().toString(), null,
+                UUID.randomUUID().toString(), "test@email.com", "firstName", "lastName", null, null));
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     public void testDeleteUser() {
-        ResponseEntity<User> response = userController.deleteUser(UUID.randomUUID());
+        ResponseEntity<Void> response = userController.deleteUser(UUID.randomUUID().toString());
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         Assertions.assertTrue(HttpStatus.OK.value() == response.getStatusCodeValue());
-        Mockito.verify(userService, Mockito.times(1)).deleteUser(ArgumentMatchers.any(UUID.class));
+        Mockito.verify(userService, Mockito.times(1)).deleteUser(ArgumentMatchers.anyString());
     }
 
     private List<User> getAdminUsers() {
@@ -140,9 +141,22 @@ public class UserControllerTest {
         adminRoleIds.add(1);
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);
+        User testAdmin = new User(UUID.randomUUID().toString(), null, UUID.randomUUID().toString(), "test@email.com",
+                "Test", "User", adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;
+    }
+
+    private UserRequest getUserRequest() {
+        LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
+        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User", null,
+                null);
+    }
+
+    private UserResponse getUserResponse() {
+        User testUser = getAdminUsers().get(0);
+        Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
+        return UserResponse.convertFromEntity(testUser, testLogin);
     }
 }

@@ -22,4 +22,11 @@ public class PwServiceTest {
         Assertions.assertNotNull(hashed);
         System.out.println(format("pw is: %s", hashed));
     }
+
+    @Test
+    public void testGenerateUnsaltedPassword() {
+        String pw1 = pwService.generateUnsaltedPassword();
+        String pw2 = pwService.generateUnsaltedPassword();
+        Assertions.assertNotEquals(pw1, pw2);
+    }
 }
