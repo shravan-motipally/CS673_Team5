@@ -38,8 +38,9 @@ public class LoginController {
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginDetail detail) {
-        if (detail != null && !isEmpty(detail.getUsername()) && !isEmpty(detail.getPassword())
-                && bucket.tryConsume(1)) {
+        if (!bucket.tryConsume(1)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+        } else if (detail != null && !isEmpty(detail.getUsername()) && !isEmpty(detail.getPassword())) {
             logger.info("User {} attempting login", detail.getUsername());
             try {
                 if (loginService.checkLogin(detail)) {
@@ -56,7 +57,7 @@ public class LoginController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         } else {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 }
