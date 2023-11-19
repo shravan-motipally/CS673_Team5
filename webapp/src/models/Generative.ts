@@ -3,7 +3,7 @@ import {apiToken} from "../utils/StringConstants";
 import {createLargeContextForQuestion} from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 
-import { loadQAStuffChain } from "langchain/chains";
+import { loadQAStuffChain} from "langchain/chains";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "langchain/document";

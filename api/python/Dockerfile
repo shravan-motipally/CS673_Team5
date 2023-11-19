@@ -14,6 +14,7 @@ WORKDIR $HOME/app
 COPY --chown=pi ./requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r ./requirements.txt
+
 RUN chown pi $HOME/app
 USER pi
 
