@@ -1,6 +1,7 @@
 // DO NOT EVER PUSH THE API KEY TO GIT.
 export const apiToken = process.env.REACT_APP_BLOOM_API_TOKEN;
 export const environment = process.env.REACT_APP_ENVIRONMENT;
+export const genApiToken = process.env.REACT_APP_QBOT_API_TOKEN;
 export const APPLICATION_JSON = 'application/json';
 export const HELLO_MSG = "Hi there! Welcome to QBot! I am designed to answer commonly asked questions " +
     "about your current class. Please feel free to ask me a question below and I'll do my best to " +

@@ -24,10 +24,8 @@ import {styled, useTheme} from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import {Exchange} from "../screens/Edit";
 import Button from "@mui/material/Button";
-import {AppBar, ButtonGroup, Drawer, Fab, FormHelperText, FormLabel, Tooltip} from "@mui/material";
+import {Drawer, Tooltip, useMediaQuery} from "@mui/material";
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
@@ -179,30 +177,13 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     setDisplayQuestions(false);
   }, [messages, screenState]);
 
-  const questionButtons = useMemo(() => {
-    return questions.map(question => (
-      <Grid sx={{ ml: 1, mr: 1 }} alignContent={"center"} justifyContent={"center"} >
-        <Button
-          fullWidth
-          sx={{ fontSize: "0.75rem", height: "4rem" }}
-          variant="outlined"
-          size="large"
-          key={"qb-" + question.exchangeId}
-          onClick={() => {
-            onButtonClick(question.question);
-          }}
-        >
-          {question.question}
-        </Button>
-      </Grid>
-    ));
-  }, [questions]);
+  const shouldDisplayFAQ = useMediaQuery('(min-width:1300px)')
 
   const onFabClick = useCallback(() => {
     setDisplayQuestions(!displayQuestions);
   }, [displayQuestions]);
 
-  const drawerWidth = 500;
+  const drawerWidth = 480;
 
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
@@ -230,20 +211,20 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         <CssBaseline/>
         <Grid container>
           <Grid sx={{
-            width: "calc(100% - 480px)"
+            width: shouldDisplayFAQ ? "calc(100% - 480px)" : "100%",
           }} className="chat-container">
             {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
             <span ref={dummyRef}></span>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} >
             <ReportGmailerrorredIcon sx={{position: 'fixed', bottom: 0, left: 0}}/>
             <Paper sx={{
               m: 2,
               position: 'fixed',
               bottom: 2,
               backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-              width: "55%"
+              width: "40%"
             }} elevation={3}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
@@ -295,13 +276,14 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
                       }
                     }}
                     inputProps={{
-                      maxLength: 250
+                      maxLength: 250,
+                      width: "calc(100% - 480px)"
                     }}/>
               </FormControl>
             </Paper>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ display: shouldDisplayFAQ ? '': 'none' }}>
             <Drawer
                 sx={{
                   m: 1,

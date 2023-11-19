@@ -1,9 +1,10 @@
 import os
-from typing import List, Dict
-
+from typing import List, Dict, Optional
+import base64
+import openai
 import pymongo
-from fastapi import FastAPI, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, status, HTTPException
+from starlette.middleware.cors import CORSMiddleware
 from langchain.chains import LLMChain, ConversationalRetrievalChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chat_models import ChatOpenAI
@@ -11,17 +12,22 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.vectorstores import MongoDBAtlasVectorSearch
 from pydantic import BaseModel
+from slowapi.errors import RateLimitExceeded
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from starlette.requests import Request
 
-origins = ["localhost:3000", "qbot-slak.onrender.com"]
+origins = ["http://localhost:3000", "https://qbot-slak.onrender.com"]
 
-import openai
-
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST", "GET", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -33,6 +39,7 @@ class Chat(BaseModel):
     course_name: str
     course_desc: str
     analyze_sentiment: bool
+    token: Optional[str] = None
 
 
 @app.get("/")
@@ -46,10 +53,15 @@ def default():
 
 
 @app.post("/chat")
-def chat(chat_message: Chat):
-    # validate if question is worth asking
-    answer = query(chat_message)
-    return answer
+@limiter.limit("5/minute", error_message="Unable to proceed with request.")
+def chat(request: Request, chat_message: Chat):
+    if validate_req(chat_message.token):
+        answer = query(chat_message)
+        return answer
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unable to authorize request")
 
 
 @app.on_event("startup")
@@ -74,14 +86,14 @@ def startup_event():
                     "question at the end." \
                     "If you don't know the answer, just say you don't know. DO NOT try to make up an answer." \
                     "If the question is not related to the context, politely respond that you are tuned to only " \
-                    "answer questions that are related to the context." \
-                    " " \
+                    "answer questions that are related to the context.  Please answer the question in html friendly " \
+                    "format.  Avoid newlines, instead use html tags such as <p>, <div>, <br> etc to format your answer. " \
                     "{context}" \
                     " " \
                     "Question: {question}"
     qa_prompt = PromptTemplate.from_template(qa_prompt_str)
     app.llm = ChatOpenAI(temperature=0, openai_api_key=openai_api_key,
-                         model_name="gpt-3.5-turbo")
+                         model_name="gpt-3.5-turbo", max_tokens=300)
 
     app.embeddings = OpenAIEmbeddings()
     app.vector_store = MongoDBAtlasVectorSearch.from_connection_string(connection_string=mongo_cluster_uri,
@@ -117,32 +129,41 @@ def insert_chat_history(session_id: str, chat_history: List[Dict[str, str]]):
             print("Exception occurred in saving chat history in chat history collection")
 
 
-def is_chat_about_course(chat_message: Chat) -> bool:
-    pre_prompt = 'Analyze the sentiment of the following statement/question and tell me, the professor, whether or ' \
-                 'not this ' \
-                 'statement/question has anything to do with my course on ' + chat_message.course_name + 'with ' \
-                                                                                                         'description ' + \
-                 chat_message.course_desc + '.  If it stays within the realm of computer science, it is relevant. Now ' \
-                                            'say Yes if relevant and No if irrelevant.  Statement/Question: '
-    completion = completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system",
-             "content": "You are a helpful AI assistant (QBot) to a professor at Boston University in the "
-                        "Computer Science department.  Use the following pieces of context to "
-                        "answer the question at the end.  If you don't know the answer, "
-                        "just say you don't know. DO NOT try to make up an answer.  If the question "
-                        "is not related to the context, politely respond that you are tuned to only "
-                        "answer questions that are related to the context."},
-            {"role": "user", "content": pre_prompt + chat_message.message}
-        ]
-    )
-    response = completion.choices[0].message
-    return "yes" in response.content.lower()
+def is_chat_about_course(chat_message: Chat, enabled: bool) -> bool:
+    if enabled:
+        pre_prompt = 'Analyze the sentiment of the following statement/question and tell me, the professor, whether or ' \
+                     'not this ' \
+                     'statement/question has anything to do with my course on ' + chat_message.course_name + 'with ' \
+                                                                                                             'description ' + \
+                     chat_message.course_desc + '.  If it stays within the realm of computer science, it is relevant. Now ' \
+                                                'say Yes if relevant and No if irrelevant.  Statement/Question: '
+        completion = completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system",
+                 "content": "You are a helpful AI assistant (QBot) to a professor at Boston University in the "
+                            "Computer Science department.  Use the following pieces of context to "
+                            "answer the question at the end.  If you don't know the answer, "
+                            "just say you don't know. DO NOT try to make up an answer.  If the question "
+                            "is not related to the context, politely respond that you are tuned to only "
+                            "answer questions that are related to the context."},
+                {"role": "user", "content": pre_prompt + chat_message.message}
+            ]
+        )
+        response = completion.choices[0].message
+        return "yes" in response.content.lower()
+    else:
+        return True
+
+
+def validate_req(token: str):
+    auth_token = os.environ.get("AUTH_TOKEN")
+    d_token = base64.b64decode(token) if token is not None else b""
+    return auth_token == d_token.decode('ascii')
 
 
 def query(chat_message: Chat):
-    if chat_message.analyze_sentiment and is_chat_about_course(chat_message=chat_message):
+    if is_chat_about_course(chat_message=chat_message, enabled=chat_message.analyze_sentiment):
         # chat_history = find_chat_history(chat_message.session_id)
         app.conversation_retrieval_chain = \
             ConversationalRetrievalChain(retriever=app.vector_store.as_retriever(
