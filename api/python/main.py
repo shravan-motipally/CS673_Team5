@@ -2,7 +2,7 @@ import os
 from typing import List, Dict
 
 import pymongo
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from langchain.chains import LLMChain, ConversationalRetrievalChain
 from langchain.chains.question_answering import load_qa_chain
@@ -38,6 +38,11 @@ class Chat(BaseModel):
 @app.get("/")
 def default():
     return "Welcome to QBot Generation using OpenAI"
+
+
+@app.get("/health", status_code=status.HTTP_200_OK)
+def default():
+    return {"status": "OK"}
 
 
 @app.post("/chat")
