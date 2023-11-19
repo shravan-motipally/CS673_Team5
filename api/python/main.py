@@ -159,5 +159,8 @@ def query(chat_message: Chat):
              "chat_history": []})  # chat_history if chat_history is not None else []})
         return response
     else:
-        return "Your message is not relevant to our course, please keep your message or question relevant to this " \
-               "course"
+        return {"question": chat_message.message,
+                "chat_history": [],
+                "answer": "Your message is not relevant to our course, please keep your message or question relevant "
+                          "to this course",
+                "source_documents": []}
