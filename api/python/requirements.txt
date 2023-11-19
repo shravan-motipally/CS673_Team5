@@ -7,5 +7,5 @@ jq==1.6.0
 pymongo~=4.5.0
 openai~=0.28.1
 pydantic~=1.10.13
-tiktoken
-pypdf
+tiktoken~==0.5.1
+pypdf~=3.17.1
