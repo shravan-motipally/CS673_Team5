@@ -54,6 +54,7 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping("/")
     public ResponseEntity<Void> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("courseId") String courseId) {
         try {
