@@ -97,6 +97,9 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const aiPhoto = useMemo(() => {return screenState.darkMode ? aiDark : aiLight}, [screenState.darkMode]);
+  const studentPhoto = useMemo(() => {return screenState.darkMode ? studentLight : student}, [screenState.darkMode]);
+
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -196,7 +199,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       text: questionClicked,
       createdAt: Date.now(),
       uid: "1",
-      photoURL: screenState.darkMode ? studentLight : student,
+      photoURL: studentPhoto,
       type: "sent"
     };
 
@@ -211,7 +214,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: screenState.darkMode ? aiDark : aiLight,
+        photoURL: aiPhoto,
         type: "received"
       }]);
     })();
@@ -252,7 +255,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                 height: "40px",
                 borderRadius: "20%",
                 margin: "2px 5px",
-                cursor: "pointer",
               }} src={ai} />
             </IconButton>
             <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>

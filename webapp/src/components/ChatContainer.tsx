@@ -34,6 +34,7 @@ import aiLight from '../screens/images/botTransparentBlack.png';
 import aiDark from '../screens/images/botTransparentWhite.png';
 import studentLight from '../screens/images/studentWhite.png';
 
+
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -56,6 +57,8 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const theme = useTheme();
   const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
+  const aiPhoto = useMemo(() => {return screenState.darkMode ? aiDark : aiLight}, [screenState.darkMode]);
+  const studentPhoto = useMemo(() => {return screenState.darkMode ? studentLight : student}, [screenState.darkMode]);
 
 
   React.useEffect(() => {
@@ -76,7 +79,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: HELLO_MSG,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: screenState.darkMode ? aiDark : aiLight,
+        photoURL: aiPhoto,
         type: "received"
       }
     ]
@@ -87,7 +90,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           text: SAMPLE_USER_INPUT,
           createdAt: Date.now(),
           uid: "2",
-          photoURL: screenState.darkMode ? studentLight : student,
+          photoURL: studentPhoto,
           type: "sent"
         });
         setMessages([...messages, ...initialMessages])
@@ -97,7 +100,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
             text: SAMPLE_ADVICE,
             createdAt: Date.now(),
             uid: "2",
-            photoURL: screenState.darkMode ? aiDark : aiLight,
+            photoURL: aiPhoto,
             type: "received"
           });
           setMessages([...messages, ...initialMessages]);
@@ -119,7 +122,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 		 text: question,
 		 createdAt: Date.now(),
 		 uid: "1",
-		 photoURL: screenState.darkMode ? studentLight : student,
+		 photoURL: studentPhoto,
 		 type: "sent"
 		};
     setMessages([...messages, currentMessage]);
@@ -134,7 +137,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: screenState.darkMode ? aiDark : aiLight,
+        photoURL: aiPhoto,
         type: "received"
       }]);
     })();
@@ -160,7 +163,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
       text: questionClicked,
       createdAt: Date.now(),
       uid: "1",
-      photoURL: screenState.darkMode ? studentLight : student,
+      photoURL: studentPhoto,
       type: "sent"
     };
     
@@ -175,7 +178,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: screenState.darkMode ? aiDark : aiLight,
+        photoURL: aiPhoto,
         type: "received"
       }]);
     })();
