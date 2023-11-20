@@ -9,12 +9,17 @@ import {
   getAllQnAUrl,
   loginUrl,
   SEMANTIC_SIMILARITY_URL,
+  addNewUserUrl,
+  getAllUsersUrl,
+  deleteUserUrl,
+  bulkUploadUsersUrl,
   updateQuestionsUrl, uploadDocumentsUrl
 } from "../utils/Urls";
-import {ExcelJsonCourses, ExcelJsonQuestions} from "../utils/ExcelUtils";
+import {ExcelJsonCourses, ExcelJsonQuestions, ExcelJsonUsers} from "../utils/ExcelUtils";
 import {CourseList} from "../components/onepirate/Home";
 import {CourseDoc} from "../screens/tabs/ClassesTable";
 import {DocumentList} from "../screens/tabs/DocumentsTable";
+import { UserDoc } from '../screens/tabs/UsersTable';
 
 export const getAllQnA = async () => {
   try {
@@ -61,6 +66,21 @@ export const getAllCoursesForAdministration = async (): Promise<Array<CourseDoc>
   }
 }
 
+export const getAllUsers = async (): Promise<Array<UserDoc>> => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllUsersUrl(),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return [];
+  }
+}
+
 export const getAllDocumentsForCourse = async (courseId: string): Promise<DocumentList> => {
   try {
     const res = await axios({
@@ -90,6 +110,24 @@ export const createNewCourse = async (course: Partial<CourseDoc>) => {
     return true;
   } catch (e) {
     console.error("Error creating course");
+    return false;
+  }
+}
+
+export const createNewUser = async (user: Partial<UserDoc>) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: addNewUserUrl(),
+      method: "POST",
+      data: user,
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error("Error creating user");
     return false;
   }
 }
@@ -128,6 +166,23 @@ export const deleteDocument = async (documentId: string) => {
   }
 }
 
+export const deleteUser = async (userId: string) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: deleteUserUrl(userId),
+      method: "DELETE",
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error("Error deleting user");
+    return false;
+  }
+}
+
 export const bulkUploadCourses = async (courses: ExcelJsonCourses) => {
   try {
     const res = await axios({
@@ -135,6 +190,27 @@ export const bulkUploadCourses = async (courses: ExcelJsonCourses) => {
       url: bulkUploadCoursesUrl(),
       method: "POST",
       data: courses,
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    if (res.status === 200) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error("Error bulk uploading courses");
+    return false;
+  }
+}
+
+export const bulkUploadUsers = async (users: ExcelJsonUsers) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: bulkUploadUsersUrl(),
+      method: "POST",
+      data: users,
       headers: {
         'Content-Type': APPLICATION_JSON
       }
