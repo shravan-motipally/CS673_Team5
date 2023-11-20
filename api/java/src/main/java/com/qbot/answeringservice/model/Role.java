@@ -1,10 +1,5 @@
 package com.qbot.answeringservice.model;
 
-import org.mongojack.Id;
-import org.mongojack.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

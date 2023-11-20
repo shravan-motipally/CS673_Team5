@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CourseDocumentRepository extends MongoRepository<CourseDocument, String> {
+public interface CourseDocumentRepository extends MongoRepository<CourseDocument, Long> {
 
     @Query("{ courseId: '?0', name: '?1' }")
     List<CourseDocument> findCourseDocumentByCourseIdAndName(String courseId, String fileName);

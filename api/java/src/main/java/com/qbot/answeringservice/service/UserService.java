@@ -1,5 +1,7 @@
 package com.qbot.answeringservice.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +17,8 @@ import com.qbot.answeringservice.dto.UserResponse;
 import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.UserRepository;
+
+import lombok.NonNull;
 
 @Service
 public class UserService {
@@ -71,12 +75,42 @@ public class UserService {
         return userRepo.findById(userId).orElse(null);
     }
 
-    public List<User> findByRoleId(String roleId) {
+    public List<User> findByRoleId(@NonNull Integer roleId) {
         return userRepo.findUsersByRole(roleId);
     }
 
     public User updateUser(User user) {
-        return userRepo.save(user);
+        return validateUser(user) ? userRepo.save(user) : null;
+    }
+
+    public List<User> bulkUpdateUsers(List<User> users) {
+        List<User> validatedUsers = new ArrayList<>();
+        for (User user : users) {
+            if (userRepo.existsById(user.getId()) && validateUser(user)) {
+                validatedUsers.add(user);
+            }
+        }
+
+        if (!validatedUsers.isEmpty()) {
+            return userRepo.saveAll(validatedUsers);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private boolean validateUser(User user) {
+        if (user.getLoginId() == null || user.getLoginId().isEmpty()) {
+            return false;
+        } else if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
+            return false;
+        } else if (user.getLastName() == null || user.getLastName().isEmpty()) {
+            return false;
+        } else if (user.getEmailAddress() == null || user.getEmailAddress().isEmpty()) {
+            return false;
+        } else if (user.getRoleIds() == null || user.getRoleIds().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public void deleteUser(String userId) {
