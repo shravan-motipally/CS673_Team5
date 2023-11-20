@@ -68,7 +68,7 @@ public class UserController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(path = "/role/{roleId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getUsersByRoleId(@PathVariable("roleId") String roleId) {
+    public ResponseEntity<List<User>> getUsersByRoleId(@PathVariable("roleId") Integer roleId) {
         try {
             return ResponseEntity.ok(userService.findByRoleId(roleId));
         } catch (Exception e) {

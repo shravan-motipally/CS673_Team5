@@ -90,9 +90,9 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByRoleId() {
-        Mockito.when(userService.findByRoleId(ArgumentMatchers.anyString())).thenReturn(getAdminUsers());
+        Mockito.when(userService.findByRoleId(ArgumentMatchers.anyInt())).thenReturn(getAdminUsers());
 
-        ResponseEntity<List<User>> response = userController.getUsersByRoleId(new String());
+        ResponseEntity<List<User>> response = userController.getUsersByRoleId(0);
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         List<User> returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
@@ -101,9 +101,9 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByRoleIdThrowException() {
-        Mockito.when(userService.findByRoleId(ArgumentMatchers.anyString())).thenThrow(new IllegalArgumentException());
+        Mockito.when(userService.findByRoleId(ArgumentMatchers.anyInt())).thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<List<User>> response = userController.getUsersByRoleId(new String());
+        ResponseEntity<List<User>> response = userController.getUsersByRoleId(0);
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }

@@ -154,8 +154,8 @@ public class UserServiceTest {
 
     @Test
     public void testFindUsersByRole() {
-        Mockito.when(userRepo.findUsersByRole(ArgumentMatchers.anyString())).thenReturn(getAdminUsers());
-        String roleIdValue = "6514b83d67e0b4d82e053ecb";
+        Mockito.when(userRepo.findUsersByRole(ArgumentMatchers.anyInt())).thenReturn(getAdminUsers());
+        Integer roleIdValue = 1;
         List<User> foundUsers = userService.findByRoleId(roleIdValue);
 
         Assertions.assertFalse(foundUsers.isEmpty());
@@ -163,9 +163,9 @@ public class UserServiceTest {
 
     @Test
     public void testFindUsersByRoleNoResults() {
-        Mockito.when(userRepo.findUsersByRole(ArgumentMatchers.anyString())).thenReturn(Collections.emptyList());
+        Mockito.when(userRepo.findUsersByRole(ArgumentMatchers.anyInt())).thenReturn(Collections.emptyList());
 
-        String roleIdValue = "6514b83d67e0b4d82e053ecb";
+        Integer roleIdValue = 1;
         List<User> foundUsers = userService.findByRoleId(roleIdValue);
 
         Assertions.assertTrue(foundUsers.isEmpty());

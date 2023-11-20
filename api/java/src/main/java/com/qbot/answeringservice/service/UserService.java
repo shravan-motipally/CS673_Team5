@@ -18,6 +18,8 @@ import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.UserRepository;
 
+import lombok.NonNull;
+
 @Service
 public class UserService {
 
@@ -73,7 +75,7 @@ public class UserService {
         return userRepo.findById(userId).orElse(null);
     }
 
-    public List<User> findByRoleId(String roleId) {
+    public List<User> findByRoleId(@NonNull Integer roleId) {
         return userRepo.findUsersByRole(roleId);
     }
 
