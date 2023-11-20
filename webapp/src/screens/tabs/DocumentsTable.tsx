@@ -8,12 +8,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Toolbar from "@mui/material/Toolbar";
-import {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+import {ChangeEvent, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {
   bulkUploadCourses,
   createNewCourse,
-  deleteCourse,
-  getAllCoursesForAdministration,
+  deleteCourse, deleteDocument,
+  getAllCoursesForAdministration, getAllDocumentsForCourse,
   updateQuestions
 } from "../../api/QuestionAnswerApi";
 import {
@@ -47,9 +47,20 @@ import {
 import xlsx from "json-as-xlsx";
 import DownloadIcon from '@mui/icons-material/Download';
 import {CourseDoc} from "./ClassesTable";
+import {ScreenContext} from "../../App";
+import {Course} from "../../components/onepirate/Home";
 
 export interface Item {
   id: string
+}
+
+export interface Document extends Item {
+  courseId: string,
+  name: string
+}
+
+export interface DocumentList {
+  documents: Array<Document>
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -84,6 +95,12 @@ const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
   },
 }));
 
+interface datum {
+  id: string,
+  courseId: string | number,
+  name: string | number,
+}
+
 function createData<T extends Item>(
   id: string,
   item: T
@@ -100,13 +117,25 @@ interface HeadCell<T extends Item> {
   numeric: boolean;
 }
 
-const headCells: readonly HeadCell<Item>[] = [
+const headCells: readonly HeadCell<Document>[] = [
   {
     id: 'id',
     numeric: false,
     disablePadding: true,
     label: 'Id',
-  }
+  },
+  {
+    id: 'courseId',
+    numeric: false,
+    disablePadding: true,
+    label: 'Course Id',
+  },
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'File Name',
+  },
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -121,7 +150,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 type Order = 'asc' | 'desc';
 
-function getComparator<Key extends keyof Item>(
+function getComparator<Key extends keyof datum>(
   order: Order,
   orderBy: Key,
 ): (
@@ -149,20 +178,20 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
   return stabilizedThis.map((el) => el[0]);
 }
 
-interface EnhancedTableProps<T extends Item> {
+interface EnhancedTableProps {
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof T) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof datum) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string | number | symbol;
   rowCount: number;
 }
 
-function EnhancedTableHead<T extends Item>(props: EnhancedTableProps<T>) {
+function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler =
-    (property: keyof T) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof datum) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
@@ -176,7 +205,7 @@ function EnhancedTableHead<T extends Item>(props: EnhancedTableProps<T>) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all desserts',
+              'aria-label': 'select all documents',
             }}
           />
         </TableCell>
@@ -207,243 +236,13 @@ function EnhancedTableHead<T extends Item>(props: EnhancedTableProps<T>) {
 }
 
 
-
 const isNullOrUndefined = (str: string | undefined) => {
   return str === undefined || str === null || str === "";
 }
 
-interface CourseDialogProps {
-  handleClose: () => void;
-  openNewCourseDialog: boolean;
-  course?: CourseDoc;
-}
-const CourseDialog = (props: CourseDialogProps) => {
-  const { handleClose, openNewCourseDialog, course } = props;
-  const [schoolId, setSchoolId] = useState<string>();
-  const [departmentId, setDepartmentId] = useState<string>();
-  const [catalogId, setCatalogId] = useState<string>();
-  const [name, setName] = useState<string>();
-  const [description, setDescription] = useState<string>();
-  const [semester, setSemester] = useState<string>();
-
-  const [schoolIdError, setSchoolIdError] = useState<boolean>(false);
-  const [departmentIdError, setDepartmentIdError] = useState<boolean>(false);
-  const [catalogIdError, setCatalogIdError] = useState<boolean>(false);
-  const [nameError, setNameError] = useState<boolean>(false);
-  const [descriptionError, setDescriptionError] = useState<boolean>(false);
-  const [semesterError, setSemesterError] = useState<boolean>(false);
-
-  const [newCourseCreationError, setNewCourseCreationError] = useState<boolean>(false);
-
-  const validateCourseFields = useCallback(() => {
-    let issueFound = false;
-    if (isNullOrUndefined(description)) {
-      issueFound = true;
-      setDescriptionError(true);
-    } else if (isNullOrUndefined(name)) {
-      issueFound = true;
-      setNameError(true);
-    } else if (isNullOrUndefined(schoolId)) {
-      issueFound = true;
-      setSchoolIdError(true);
-    } else if (isNullOrUndefined(semester)) {
-      issueFound = true;
-      setSemesterError(true);
-    } else if (isNullOrUndefined(departmentId)) {
-      issueFound = true;
-      setDepartmentIdError(true);
-    } else if (isNullOrUndefined(catalogId)) {
-      issueFound = true;
-      setCatalogIdError(true);
-    }
-    return !issueFound;
-  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError,
-    schoolId, departmentId, catalogId, name, description, semester]);
-
-  const resetErrorFields = useCallback(() => {
-    setDescriptionError(false);
-    setNameError(false);
-    setSchoolIdError(false);
-    setSemesterError(false);
-    setDepartmentIdError(false);
-    setCatalogIdError(false);
-  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError]);
-
-  const handleAddingCourse = useCallback(() => {
-    (async () => {
-      if (validateCourseFields()) {
-        resetErrorFields();
-        const coursePartial: Partial<CourseDoc> = {
-          id: course === undefined ? undefined : course.id,
-          schoolId: schoolId ? schoolId: "",
-          departmentId: departmentId ? departmentId: "",
-          catalogId: catalogId ? catalogId: "",
-          name: name ? name: "",
-          description: description ? description: "",
-          semester: semester ? semester : ""
-        }
-        try {
-          const successful = await createNewCourse(coursePartial);
-          if (!successful) {
-            setNewCourseCreationError(true);
-          }
-          handleClose();
-        } catch (e) {
-          setNewCourseCreationError(true);
-        }
-      }
-    })();
-  }, [course, semester, name, description, catalogId, schoolId, departmentId])
-
-  const openDialog = useMemo(() => openNewCourseDialog, [openNewCourseDialog]);
-
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setNameError(false);
-    setName(e.target.value);
-  }, [name, nameError]);
-
-  const handleSemesterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSemesterError(false);
-    setSemester(e.target.value);
-  }, [semester, semesterError]);
-
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescriptionError(false);
-    setDescription(e.target.value);
-  }, [catalogId, descriptionError]);
-
-  const handleCatalogIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCatalogIdError(false);
-    setCatalogId(e.target.value);
-  }, [catalogId, catalogIdError]);
-
-  const handleDepartmentIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDepartmentIdError(false);
-    setDepartmentId(e.target.value);
-  }, [departmentId, departmentIdError]);
-
-  const handleSchoolIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSchoolIdError(false);
-    setSchoolId(e.target.value);
-  }, [schoolId, schoolIdError]);
-
-  useEffect(() => {
-    if (course !== null && course !== undefined) {
-      setName(course.name);
-      setSemester(course.semester);
-      setDescription(course.description);
-      setCatalogId(course.catalogId);
-      setDepartmentId(course.departmentId);
-      setSchoolId(course.schoolId);
-    } else if (course === null || course === undefined) {
-      setName("");
-      setSemester("");
-      setDescription("");
-      setCatalogId("");
-      setDepartmentId("");
-      setSchoolId("");
-    }
-  }, [course]);
-
-  return (
-    <Dialog open={openDialog} onClose={handleClose}>
-      {newCourseCreationError ?
-        <Alert severity="error">
-          <AlertTitle>Error</AlertTitle>
-          There was an issue creating the course — <strong>Cancel</strong> for now please!
-        </Alert> : <div/>}
-      <DialogTitle>{course !== undefined ? "Update" : "Add"} New Course</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Please fill out the following fields to {course !== undefined ? "update the" : "create a new"} course.
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="semester"
-          // label="Semester"
-          fullWidth
-          variant="standard"
-          value={semester ?? ''}
-          onChange={handleSemesterChange}
-          error={semesterError}
-          helperText={"Enter a semester in (Fall|Spring|Summer) YYYY format, ex: Fall 2023"}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="schoolId"
-          // label="School"
-          fullWidth
-          variant="standard"
-          value={schoolId ?? ''}
-          onChange={handleSchoolIdChange}
-          error={schoolIdError}
-          helperText={"Enter school of the course. Ex: MET"}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="departmentId"
-          // label="Department"
-          fullWidth
-          variant="standard"
-          value={departmentId ?? ''}
-          onChange={handleDepartmentIdChange}
-          error={departmentIdError}
-          helperText={"Enter departmentId of the course. Ex: CS "}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="catalogId"
-          // label="Course Number"
-          fullWidth
-          variant="standard"
-          value={catalogId ?? ''}
-          onChange={handleCatalogIdChange}
-          error={catalogIdError}
-          helperText={"Enter the course number of the course. Ex: 633"}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="course"
-          // label="Course Name"
-          fullWidth
-          variant="standard"
-          value={name ?? ''}
-          onChange={handleNameChange}
-          error={nameError}
-          helperText={"Enter name of the course. Ex: Software Engineering"}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          // label="Course Description"
-          fullWidth
-          variant="standard"
-          value={description ?? ''}
-          onChange={handleDescriptionChange}
-          error={descriptionError}
-          helperText={"Enter a detailed description of the course."}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleAddingCourse}>{course !== undefined ? "Update" : "Add"}</Button>
-      </DialogActions>
-    </Dialog>
-  )
-}
-
-export interface TableProps<T extends Item> {
-  getAllItems: () => Promise<T[]>;
-}
-
-export default function SelectTable<T extends Item>({ getAllItems }: TableProps<T>) {
-  const [items, setItems] = useState<T[]>([]);
+export default function DocumentTable() {
+  const { screenState, setScreenState } = useContext(ScreenContext);
+  const [items, setItems] = useState<Document[]>([]);
   const [getItemsError, setGetItemsError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -454,7 +253,7 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
 
   const [openNewItemDialog, setOpenNewItemDialog] = useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<T | undefined>();
+  const [selectedItem, setSelectedItem] = useState<Document | undefined>();
   const [file, setFile] = useState<File>();
 
   const [error, setError] = useState<boolean>(false);
@@ -462,7 +261,7 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof T,
+    property: keyof datum,
   ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -482,7 +281,7 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
     (async () => {
       if (selected.length !== 0) {
         for (const index in selected) {
-          const success = await deleteCourse(selected[index]);
+          const success = await deleteDocument(selected[index]);
           if (!success) {
             setDeletionError(true);
           } else {
@@ -494,14 +293,6 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
       }
     })();
   }, [selected]);
-
-  const handleUpdation = useCallback(() => {
-    if (selected.length === 1) {
-      const item = items.find(itemP => itemP.id === selected[0]);
-      setSelectedItem(item);
-      setOpenNewItemDialog(true);
-    }
-  }, [selected])
 
   const handleCellSelection = useCallback((id: string) => {
     const selectedIndex = selected.indexOf(id);
@@ -529,7 +320,10 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
   useEffect(() => {
     (async () => {
       if (loading) {
-        const itemsReturned: T[] = await getAllItems();
+        const courseDoc: Course | null = screenState.currentClassObject;
+        const documentList: DocumentList = courseDoc != null && courseDoc?.courseId != null ?
+          await getAllDocumentsForCourse(courseDoc?.courseId) : { documents: [] };
+        const { documents: itemsReturned } = documentList;
         if (itemsReturned.length === 0) {
           setGetItemsError(true);
         } else {
@@ -538,12 +332,12 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
         setLoading(false);
       }
     })();
-  }, [loading]);
+  }, [loading, screenState]);
 
-  const rows: T[] = useMemo(() => {
+  const rows: datum[] = useMemo(() => {
     if (!loading) {
-      return items.map((course) => {
-        return createData(course.id, course)
+      return items.map((item) => {
+        return createData(item.id, item)
       })
     }
     return [];
@@ -593,72 +387,6 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
 
   }, [file]);
 
-  const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-
-    setError(false);
-    setErrorMsg("");
-    if (event !== null && event.target.files !== null && event.target.files[0] !== undefined) {
-      setFile(event.target.files[0]);
-    } else {
-      setError(true);
-      setErrorMsg("Invalid file chosen.  Please try again!")
-    }
-  }, [file, error, errorMsg]);
-
-  useEffect(() => {
-    if (file !== null && file !== undefined) {
-      if (file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-        setError(true);
-        setErrorMsg("Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now.");
-        return;
-      }
-
-      try {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target === null) {
-            throw Error("file reading error");
-          } else {
-            const data = e.target.result;
-            const readData = excel.read(data, { type: 'binary'});
-            const wsname = readData.SheetNames[0];
-            const ws = readData.Sheets[wsname];
-
-            const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
-            // @ts-ignore
-            const jsonData = { courses: [] } // TODO [];
-            (async () => {
-              const success = true // TODO;
-              if (!success) {
-                setError(true);
-                setErrorMsg("Unable to save courses at the moment, please try again later")
-              }
-              setItems(jsonData.courses);
-            })();
-          }
-        }
-        reader.onerror = (e) => {
-          console.error("Error reading excel file");
-          setErrorMsg("Error reading excel file");
-          setError(true);
-        }
-        reader.readAsBinaryString(file);
-      } catch (e) {
-        console.error("Error reading excel file");
-        setErrorMsg("Error reading excel file");
-        setError(true);
-      }
-    }
-  }, [file]);
-
-  const downloadExcel = useCallback(() => {
-    const data = coursesSpreadSheetData;
-    // @ts-ignore
-    data[0].content = items;
-    xlsx(data, courseExcelSettings);
-  }, [items]);
-
 
   return (
     <Box sx={{ width:"100% "}}>
@@ -673,7 +401,7 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
           {error ?
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
-              There was an issue uploading your classes — <strong>{errorMsg}</strong>
+              There was an issue uploading your documents — <strong>{errorMsg}</strong>
             </Alert> : <div/>
           }
           <Toolbar
@@ -702,17 +430,11 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
                 id="tableTitle"
                 component="div"
               >
-                Classes
+                Documents
               </Typography>
             )}
             {numSelected > 0 ? (
               <>
-                {numSelected === 1 ?
-                  <Tooltip title="Update">
-                    <IconButton onClick={handleUpdation}>
-                      <BuildIcon />
-                    </IconButton>
-                  </Tooltip>: <div/>}
                 <Tooltip title="Delete">
                   <IconButton onClick={handleDeletion}>
                     <DeleteIcon />
@@ -721,17 +443,10 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
               </>
             ) : (
               <>
-                <Stack direction="row" spacing={2}>
-                  <Button size="small" onClick={handleNewCourse} startIcon={<AddIcon />}>Course</Button>
-                  <Button size="small" component="label" onClick={handleBulkUpload} startIcon={<UploadFileIcon />}>
-                    <input type="file" hidden onChange={onFileChange}/>Upload
-                  </Button>
-                  <Button size="small" onClick={downloadExcel} startIcon={<DownloadIcon />}>Download</Button>
-                </Stack>
               </>
             )}
           </Toolbar>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <Table sx={{ minWidth: 700 }} aria-label="customized document table">
 
             <EnhancedTableHead orderBy={orderBy}
               numSelected={selected.length}
@@ -741,9 +456,9 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
               rowCount={rows.length}
             />
             <TableBody>
-              {visibleRows.map((row: T, index) => {
+              {visibleRows.map((row: datum, index) => {
                 const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+                const labelId = `enhanced-doctable-checkbox-${index}`;
 
                 return (
                   <TableRow
@@ -765,7 +480,16 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
                         }}
                       />
                     </StyledTableCell>
-
+                    <StyledTableCell align="right">{row.id}</StyledTableCell>
+                    <StyledTableCell align="right">{row.courseId}</StyledTableCell>
+                    <StyledTableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                      {row.name}
+                    </StyledTableCell>
                   </TableRow>
                 );
               })}
@@ -790,8 +514,6 @@ export default function SelectTable<T extends Item>({ getAllItems }: TableProps<
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <CourseDialog openNewCourseDialog={openNewItemDialog} handleClose={handleClose} course={undefined}/>
-
     </Box>
   );
 }

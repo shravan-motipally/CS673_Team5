@@ -17,6 +17,7 @@ import com.qbot.answeringservice.exception.StorageException;
 import com.qbot.answeringservice.exception.StorageFileNotFoundException;
 import com.qbot.answeringservice.model.CourseDocument;
 import com.qbot.answeringservice.repository.CourseDocumentRepository;
+import com.qbot.answeringservice.repository.DocumentMetadataRepository;
 import dev.langchain4j.data.document.*;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.embedding.Embedding;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,13 +50,17 @@ public class FileSystemStorageService implements StorageService {
 
     private final Logger logger = LoggerFactory.getLogger(FileSystemStorageService.class);
     private final Path rootLocation;
-    private final CourseDocumentRepository repository;
+    private final CourseDocumentRepository courseDocumentRepository;
+    private final DocumentMetadataService documentMetadataService;
     private final CourseService courseService;
 
     private final SequenceGeneratorService sequenceGeneratorService;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, CourseDocumentRepository repository, CourseService courseService, SequenceGeneratorService sequenceGeneratorService) {
+    public FileSystemStorageService(StorageProperties properties, CourseDocumentRepository courseDocumentRepository,
+                                    DocumentMetadataService documentMetadataService, CourseService courseService,
+                                    SequenceGeneratorService sequenceGeneratorService) {
+        this.documentMetadataService = documentMetadataService;
         this.courseService = courseService;
         this.sequenceGeneratorService = sequenceGeneratorService;
 
@@ -63,14 +69,16 @@ public class FileSystemStorageService implements StorageService {
         }
 
         this.rootLocation = Paths.get(properties.getLocation());
-        this.repository = repository;
+        this.courseDocumentRepository = courseDocumentRepository;
     }
 
     @Override
+    @Transactional
     public void store(MultipartFile file, String courseId) throws Exception {
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
         }
+        documentMetadataService.prepareReplacementDocumentForCourseId(courseId, file.getOriginalFilename());
         logger.info("Ingesting file..");
         Path destinationFile = this.rootLocation.resolve(
                         Paths.get(file.getOriginalFilename()))
@@ -99,7 +107,7 @@ public class FileSystemStorageService implements StorageService {
             logger.info(format("Ingestion of file %s successful.", file.getOriginalFilename()));
 
             Files.delete(destinationFile);
-
+            documentMetadataService.addDocumentForCourse(courseId, file.getOriginalFilename());
             logger.info("Deletion of temporary file successful.");
         } catch (IOException ioe) {
             logger.error("Issue with getting file text");
@@ -108,10 +116,10 @@ public class FileSystemStorageService implements StorageService {
             if (Files.exists(destinationFile)) {
                 Files.delete(destinationFile);
             }
-
         }
     }
 
+    @Transactional
     public void ingestText(String pdfText, String courseId, String fileName) throws IOException {
         EmbeddingModel embeddingModel = OpenAiEmbeddingModel.withApiKey(apiKey);
         DocumentSplitter documentSplitter = DocumentSplitters.recursive(1000, 150);
@@ -119,7 +127,7 @@ public class FileSystemStorageService implements StorageService {
         List<TextSegment> segments = documentSplitter.split(doc);
         Response<List<Embedding>> embeddings = embeddingModel.embedAll(segments);
 
-        List<CourseDocument> documents = new ArrayList<>();;
+        List<CourseDocument> documents = new ArrayList<>();
 
         if (embeddings.content() != null && !embeddings.content().isEmpty() && embeddings.content().size() == segments.size()) {
             for (int i = 0; i < segments.size(); i++) {
@@ -128,8 +136,7 @@ public class FileSystemStorageService implements StorageService {
                 documents.add(courseDoc);
             }
         }
-
-        repository.saveAll(documents);
+        courseDocumentRepository.saveAll(documents);
     }
 
     private String getPdfText(File file) throws IOException {

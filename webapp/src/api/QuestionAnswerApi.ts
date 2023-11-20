@@ -3,9 +3,9 @@ import {Exchange} from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna"
 import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
 import {
-  addNewCourseUrl, bulkUploadCoursesUrl, deleteCourseUrl,
+  addNewCourseUrl, bulkUploadCoursesUrl, deleteCourseUrl, deleteDocumentUrl,
   getAllCoursesForAdministrationUrl,
-  getAllCoursesUrl,
+  getAllCoursesUrl, getAllDocumentsForCourseId,
   getAllQnAUrl,
   loginUrl,
   SEMANTIC_SIMILARITY_URL,
@@ -14,6 +14,7 @@ import {
 import {ExcelJsonCourses, ExcelJsonQuestions} from "../utils/ExcelUtils";
 import {CourseList} from "../components/onepirate/Home";
 import {CourseDoc} from "../screens/tabs/ClassesTable";
+import {DocumentList} from "../screens/tabs/DocumentsTable";
 
 export const getAllQnA = async () => {
   try {
@@ -60,6 +61,23 @@ export const getAllCoursesForAdministration = async (): Promise<Array<CourseDoc>
   }
 }
 
+
+
+export const getAllDocumentsForCourse = async (courseId: string): Promise<DocumentList> => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllDocumentsForCourseId(courseId),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { documents: [] };
+  }
+}
+
 export const createNewCourse = async (course: Partial<CourseDoc>) => {
   try {
     const res = await axios({
@@ -83,6 +101,23 @@ export const deleteCourse = async (courseId: string) => {
     const res = await axios({
       timeout: 300000,
       url: deleteCourseUrl(courseId),
+      method: "DELETE",
+      headers: {
+        'Content-Type': APPLICATION_JSON
+      }
+    })
+    return true;
+  } catch (e) {
+    console.error("Error deleting course");
+    return false;
+  }
+}
+
+export const deleteDocument = async (documentId: string) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: deleteDocumentUrl(documentId),
       method: "DELETE",
       headers: {
         'Content-Type': APPLICATION_JSON

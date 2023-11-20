@@ -11,9 +11,11 @@ export const HUGGINGFACE_INFERENCE_API =
 export const getAllQnAUrl = () => ANSWERING_SVC_URL + "/exchanges/all";
 export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
 export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
+export const getAllDocumentsForCourseId = (courseId: string) => ANSWERING_SVC_URL + "/documents?courseId=" + courseId
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
+export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;
 export const bulkUploadCoursesUrl = ()  =>  ANSWERING_SVC_URL + "/courses/all"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";

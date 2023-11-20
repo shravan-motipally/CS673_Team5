@@ -21,6 +21,7 @@ import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Upload } from './tabs/Upload';
+import DocumentTable from "./tabs/DocumentsTable";
 
 export interface Exchange {
     exchangeId: string,
@@ -286,6 +287,7 @@ const Edit = () => {
       </div>
       <div key={"doc-upload"} style={{ display: tabValue === 1 ? '' : 'none' }} >
         <Upload />
+        <DocumentTable />
       </div>
     </ThemeProvider>
   );
