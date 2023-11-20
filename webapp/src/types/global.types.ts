@@ -1,4 +1,5 @@
 import {Exchange} from "../screens/Edit";
+import {Course} from "../components/onepirate/Home";
 
 export interface ScreenContextType {
 	screenState: ScreenState,
@@ -11,6 +12,7 @@ export type Role = 'Educator' | 'Account Administrator';
 
 export interface ScreenState {
 	screen: string,
+	sessionId: string,
 	isAuthed: boolean,
 	isError: boolean,
 	photoUrl: string,
@@ -22,5 +24,6 @@ export interface ScreenState {
 	exchanges: Array<Exchange>
 	currentClass: string | null
 	currentClassName: string | null
+	currentClassObject: Course | null,
 	roles: Array<Role>
 }

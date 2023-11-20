@@ -2,18 +2,21 @@ FROM python:3.11
 
 ARG CLUSTER_URI
 ARG OPENAI_KEY
+ARG TOKEN
 
 RUN useradd -m -u 1000 pi
 
 ENV HOME=/home/pi
 ENV MONGODB_ATLAS_CLUSTER_URI=$CLUSTER_URI
 ENV OPENAI_API_KEY=$OPENAI_KEY
+ENV AUTH_TOKEN=$TOKEN
 
 WORKDIR $HOME/app
 
 COPY --chown=pi ./requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r ./requirements.txt
+
 RUN chown pi $HOME/app
 USER pi
 

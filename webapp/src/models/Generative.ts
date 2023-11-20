@@ -1,9 +1,9 @@
 import { HuggingFaceInference } from "langchain/llms/hf";
-import {apiToken} from "../utils/StringConstants";
+import {apiToken, genApiToken} from "../utils/StringConstants";
 import {createLargeContextForQuestion} from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 
-import { loadQAStuffChain } from "langchain/chains";
+import { loadQAStuffChain} from "langchain/chains";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "langchain/document";
@@ -11,31 +11,41 @@ import { HuggingFaceInferenceEmbeddings } from "langchain/embeddings/hf";
 import {getOpenAIUrl, OPEN_AI} from "../utils/Urls";
 import axios from "axios";
 import {I_DONT_KNOW} from "./Chat";
+import {ScreenState} from "../types/global.types";
 
 const splitter = new RecursiveCharacterTextSplitter({
   chunkSize: 200,
   chunkOverlap: 10,
 });
 
-const qBotGenerationApiResponse = async (question: string) => {
+const qBotGenerationApiResponse = async (question: string, screenState: ScreenState) => {
   try {
     const res = await axios({
       timeout: 300000,
       url: getOpenAIUrl(),
       method: "POST",
       data: {
-        message: "What are student's common conclusion about this course?",
-        session_id: "4wg6a6g16w16aws246au3a5" // TODO: add current session_id
+        message: question,
+        session_id: screenState.sessionId,
+        course_id: screenState.currentClassObject?.courseId,
+        course_name: screenState.currentClassName,
+        course_desc: screenState.currentClassObject?.description,
+        analyze_sentiment: false,
+        token: genApiToken,
+      },
+      headers: {
+        "Access-Control-Request-Method": "POST"
       }
     });
     return res.data;
   } catch (err) {
     console.log("Backend is down or questions API returned an exception: " + err)
-    return { content: I_DONT_KNOW };
+    return { answer: I_DONT_KNOW };
   }
 }
 
-export const prepBot = async (exchanges: Array<Exchange>, question: string, generativeModel: string) => {
+export const prepBot = async (exchanges: Array<Exchange>, question: string, screenState: ScreenState) => {
+  const { generativeModel } = screenState;
   const model = new HuggingFaceInference({
     model: generativeModel,
     apiKey: apiToken,
@@ -45,8 +55,8 @@ export const prepBot = async (exchanges: Array<Exchange>, question: string, gene
   });
 
   if (generativeModel === OPEN_AI) {
-    const { content } = await qBotGenerationApiResponse(question);
-    return content;
+    const { answer } = await qBotGenerationApiResponse(question, screenState);
+    return answer;
   } else {
 
     let context = await createLargeContextForQuestion(exchanges);

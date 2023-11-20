@@ -34,7 +34,7 @@ export const answerQuestion = async (question: string, screenState: ScreenState)
           const genBloomAnswer = await askAScienceQuestion(question);
           res = processAnswerForBloom(genBloomAnswer);
         } else {
-          res = await prepBot(exchanges, question, screenState.generativeModel);
+          res = await prepBot(exchanges, question, screenState);
         }
       } else {
         res = I_DONT_KNOW;

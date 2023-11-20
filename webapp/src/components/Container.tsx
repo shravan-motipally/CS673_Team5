@@ -32,9 +32,6 @@ import {Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
-import {Message} from "./types/Chat.types";
-import student from "../screens/images/student.png";
-import {answerQuestion} from "../models/Chat";
 import {isAdministrator} from "../utils/RoleUtils";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -80,32 +77,11 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
   const [questionsDropDownAnchor, setQuestionsDropDownAnchor] = React.useState<null | HTMLElement>(null)
   const logoutIsOpen = Boolean(logoutAnchor);
-  const courseMenuOpen = Boolean(courseAnchor);
-  const questionIsOpen = Boolean(questionsDropDownAnchor);
-
-  const [messages, setMessages] = useState<Array<Message>>([]);
-  const [starting, setStarting] = useState<boolean>(true);
-  const [value, setValue] = React.useState(0);
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
-  const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
-  const [question, setQuestion] = useState<string>("");
-  const [answer, setAnswer] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const [switchCourseMenuOpen, setSwitchCourseMenuOpen] = useState<boolean>(false);
   const drawerWidth = 240;
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   const handleClose = () => {
     setLogoutAnchor(null);
@@ -182,58 +158,6 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       setAllQuestions(screenState.exchanges);
     }
   }, [screenState]);
-
-
-  const onButtonClick = useCallback((questionClicked: string) => {
-    setLoading(true);
-    const currentMessage: Message = {
-      id: Math.floor(Math.random() * 1000),
-      text: questionClicked,
-      createdAt: Date.now(),
-      uid: "1",
-      photoURL: student,
-      type: "sent"
-    };
-
-    setMessages([...messages, currentMessage]);
-    (async () => {
-      const res = await answerQuestion(questionClicked, screenState);
-      setLoading(false);
-      setAnswer(res);
-      const receiverId = Math.floor(Math.random() * 1000);
-      setMessages([...messages, currentMessage, {
-        id: receiverId,
-        text: res,
-        createdAt: Date.now(),
-        uid: "2",
-        photoURL: ai,
-        type: "received"
-      }]);
-    })();
-    setDisplayQuestions(false);
-  }, [messages, screenState]);
-
-
-  const questionMenuItems = useMemo(() => {
-    if (allQuestions.length !== 0) {
-      return allQuestions.map((question, index) => (
-        <Button
-            fullWidth
-            sx={{ fontSize: "0.75rem", height: "4rem" }}
-            variant="outlined"
-            size="large"
-            key={"qb-" + question.exchangeId}
-            onClick={() => {
-              onButtonClick(question.question);
-            }}
-        >
-          {question.question}
-        </Button>
-      ))
-    } else {
-      return []
-    }
-  }, [allQuestions])
 
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >

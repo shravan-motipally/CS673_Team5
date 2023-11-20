@@ -44,6 +44,10 @@ public class CourseService {
         return courseRepo.findCoursesByIds(courseIds);
     }
 
+    public boolean isValidCourseId(String courseId) {
+        return courseRepo.existsById(courseId);
+    }
+
     public CourseList getSpecificCourses(String[] courseIds) {
         return new CourseList(findByCourseIds(courseIds).stream().map(CourseDto::from).collect(Collectors.toList()));
     }
