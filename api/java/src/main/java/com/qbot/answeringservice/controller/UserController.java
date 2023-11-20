@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest user) {
         try {
@@ -42,6 +44,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> getAllUsers() {
         try {
@@ -52,6 +55,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(path = "/login/{loginId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserByLoginId(@PathVariable("loginId") String loginId) {
         try {
@@ -62,6 +66,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(path = "/role/{roleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> getUsersByRoleId(@PathVariable("roleId") String roleId) {
         try {
@@ -72,6 +77,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         try {
@@ -82,6 +88,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PutMapping(path = "/bulkupdate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> bulkUpdateUsers(@RequestBody List<User> users) {
         try {
@@ -99,6 +106,7 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @DeleteMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") String userId) {
         try {
