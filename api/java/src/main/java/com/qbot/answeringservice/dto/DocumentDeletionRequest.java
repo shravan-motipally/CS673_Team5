@@ -1,11 +1,9 @@
 package com.qbot.answeringservice.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
