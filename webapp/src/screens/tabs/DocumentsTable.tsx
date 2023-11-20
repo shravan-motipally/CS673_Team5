@@ -14,7 +14,6 @@ import {
   createNewCourse,
   deleteCourse, deleteDocument,
   getAllCoursesForAdministration, getAllDocumentsForCourse,
-  updateQuestions
 } from "../../api/QuestionAnswerApi";
 import {
   Alert,
@@ -33,22 +32,15 @@ import Typography from "@mui/material/Typography";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
-import Button from "@mui/material/Button";
-import BuildIcon from '@mui/icons-material/Build';
-import AddIcon from '@mui/icons-material/Add';
-import TextField from "@mui/material/TextField";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import * as excel from "xlsx";
-import {
-  courseExcelSettings,
-  coursesSpreadSheetData, transformCoursesToJson,
-  transformToJson
-} from "../../utils/ExcelUtils";
-import xlsx from "json-as-xlsx";
-import DownloadIcon from '@mui/icons-material/Download';
-import {CourseDoc} from "./ClassesTable";
 import {ScreenContext} from "../../App";
 import {Course} from "../../components/onepirate/Home";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import {useDropzone} from "react-dropzone";
+import LinearProgress from '@mui/material/LinearProgress';
+import axios, {AxiosProgressEvent} from "axios";
+import {uploadDocumentsUrl} from "../../utils/Urls";
+import Divider from "@mui/material/Divider";
 
 export interface Item {
   id: string
@@ -258,6 +250,8 @@ export default function DocumentTable() {
 
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [progress, setProgress] = useState<number>(0);
+
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -334,6 +328,7 @@ export default function DocumentTable() {
     })();
   }, [loading, screenState]);
 
+
   const rows: datum[] = useMemo(() => {
     if (!loading) {
       return items.map((item) => {
@@ -374,29 +369,124 @@ export default function DocumentTable() {
     return selected.length
   }, [selected]);
 
-  const handleClose = useCallback(() => {
-    setOpenNewItemDialog(false);
-    setLoading(true);
-  }, []);
+  const [uploadError, setUploadError] = useState<boolean>(false);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (screenState.currentClassObject === null || screenState.currentClassObject.courseId === null) {
+      setUploadError(true);
+    }
+    if (acceptedFiles.length === 1 && acceptedFiles[0].type === "application/pdf") {
+      (async () => {
 
-  const handleNewCourse = useCallback(() => {
-    setOpenNewItemDialog(true);
-  }, []);
+        const formData = new FormData()
+        formData.append('file', acceptedFiles[0]);
+        formData.append('courseId', screenState.currentClassObject?.courseId ?? "");
+        let isSuccessful = false;
+        try {
+          const res = await axios({
+            timeout: 300000,
+            url: uploadDocumentsUrl(),
+            method: "POST",
+            data: formData,
+            headers: {
+              'content-type': 'multipart/form-data'
+            },
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              const percent = progressEvent.total !== undefined ? Math.round(progressEvent.loaded * 100 / progressEvent.total) : 0;
+              if (percent >= 100) {
+                setProgress(100);
+              } else {
+                setProgress(percent);
+              }
+            }
+          });
+          isSuccessful = true;
+        } catch (err) {
+          console.log("Backend is down or questions API returned an exception: " + err);
+          setProgress(0);
+        }
 
-  const handleBulkUpload = useCallback(() => {
+        if (isSuccessful) {
+          setUploadError(false);
+          setLoading(true);
+        } else {
+          setUploadError(true);
+        }
+      })();
+    }
 
-  }, [file]);
+  }, [screenState]);
+
+  const {
+    getRootProps,
+    getInputProps
+  } = useDropzone({
+    accept: {
+      'application/pdf': []
+    },
+    onDrop,
+    maxFiles: 1
+  });
+
 
 
   return (
     <Box sx={{ width:"100% "}}>
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          pt: 0,
+          pb: 2,
+        }}
+      >
+
+
+        <div { ...getRootProps() } >
+          <Grid container direction="column" alignItems="center" >
+            <Grid item>
+              <Container maxWidth="md" sx={{
+                marginLeft: 0,
+                marginTop: "10px",
+                border: "black dotted 1px",
+                backgroundColor: "#d3d3d3",
+                width: "70vw"
+              }}>
+                <Typography
+                  variant="body1"
+                  align="center"
+                  color="text.secondary"
+                  maxWidth = "md"
+                >
+                  Drag 'n' drop some files here, or click to select files
+                </Typography>
+                <Typography
+                  variant="body1"
+                  align="center"
+                  color="text.secondary"
+                  maxWidth = "md"
+                >
+                  {'(Only small (<10kB) *.pdf\'s will be accepted)'}
+                </Typography>
+                <input {...getInputProps()} />
+              </Container>
+            </Grid>
+          </Grid>
+        </div>
+        <Divider />
+
+        {progress !== 0 ? <LinearProgress variant={"determinate"} value={progress} /> : <div/>}
+      </Box>
 
       <Paper sx={{ width: '100%', mb: 2 }}>
+
         <TableContainer>
+          {uploadError ? <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            There was an issue uploading your document — <strong>Refresh your page!</strong>
+          </Alert> : <div/>}
           {getItemsError || deletionError ?
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
-              There was an issue {getItemsError ? "pulling courses" : "deleting courses"} — <strong>Refresh your page!</strong>
+              There was an issue {getItemsError ? "pulling documents" : "deleting documents"} — <strong>Refresh your page!</strong>
             </Alert> : <div/>}
           {error ?
             <Alert severity="error">
@@ -480,8 +570,8 @@ export default function DocumentTable() {
                         }}
                       />
                     </StyledTableCell>
-                    <StyledTableCell align="right">{row.id}</StyledTableCell>
-                    <StyledTableCell align="right">{row.courseId}</StyledTableCell>
+                    <StyledTableCell align="left">{row.id}</StyledTableCell>
+                    <StyledTableCell align="center">{row.courseId}</StyledTableCell>
                     <StyledTableCell
                       component="th"
                       id={labelId}

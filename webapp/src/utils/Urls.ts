@@ -13,6 +13,7 @@ export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
 export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
 export const getAllDocumentsForCourseId = (courseId: string) => ANSWERING_SVC_URL + "/documents?courseId=" + courseId
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
+export const uploadDocumentsUrl = () => ANSWERING_SVC_URL + "/documents";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
 export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;

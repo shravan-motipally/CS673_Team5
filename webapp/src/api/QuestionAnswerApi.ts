@@ -9,7 +9,7 @@ import {
   getAllQnAUrl,
   loginUrl,
   SEMANTIC_SIMILARITY_URL,
-  updateQuestionsUrl
+  updateQuestionsUrl, uploadDocumentsUrl
 } from "../utils/Urls";
 import {ExcelJsonCourses, ExcelJsonQuestions} from "../utils/ExcelUtils";
 import {CourseList} from "../components/onepirate/Home";
@@ -60,8 +60,6 @@ export const getAllCoursesForAdministration = async (): Promise<Array<CourseDoc>
     return [];
   }
 }
-
-
 
 export const getAllDocumentsForCourse = async (courseId: string): Promise<DocumentList> => {
   try {

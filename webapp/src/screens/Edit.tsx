@@ -20,7 +20,6 @@ import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Upload } from './tabs/Upload';
 import DocumentTable from "./tabs/DocumentsTable";
 
 export interface Exchange {
@@ -286,7 +285,6 @@ const Edit = () => {
         </main>
       </div>
       <div key={"doc-upload"} style={{ display: tabValue === 1 ? '' : 'none' }} >
-        <Upload />
         <DocumentTable />
       </div>
     </ThemeProvider>
