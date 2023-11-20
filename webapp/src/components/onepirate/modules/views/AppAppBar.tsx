@@ -5,7 +5,8 @@ import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
 import {useContext} from "react";
 import {ScreenContext} from "../../../../App";
-import ai from "../../../../screens/images/bot32.png";
+import ai from "../../../../screens/images/botTransparentWhite.png";
+import Typography from "@mui/material/Typography";
 
 const rightLink = {
   fontSize: 16,
@@ -25,7 +26,7 @@ function AppAppBar() {
           <img style={{
               width: "40px",
               height: "40px",
-              borderRadius: "50%",
+              borderRadius: "20%",
               margin: "2px 5px",
               cursor: "pointer",
             }} src={ai}
@@ -33,6 +34,11 @@ function AppAppBar() {
                setScreenState({...screenState, screen: 'landing page'})
            }}
           />
+          <Typography onClick={() => {
+            setScreenState({...screenState, screen: 'landing page'})
+          }} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1, color: "#FFFFFF" }}>
+            QBot
+          </Typography>
           <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <Link
               color="inherit"

@@ -4,8 +4,7 @@ import {useRef, useState, useCallback, useEffect, useContext, useMemo} from 'rea
 import './styles/ChatContainer.css';
 import { Message } from './types/Chat.types';
 import ChatMessage from './ChatMessage';
-import ai from '../screens/images/bot32.png';
-import student from '../screens/images/student.png';
+import student from '../screens/images/studentBlack.png';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -29,6 +28,11 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
+import aiLight from '../screens/images/botTransparentBlack.png';
+import aiDark from '../screens/images/botTransparentWhite.png';
+import studentLight from '../screens/images/studentWhite.png';
+
+
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -51,6 +55,8 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const theme = useTheme();
   const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
   const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
+  const aiPhoto = useMemo(() => {return screenState.darkMode ? aiDark : aiLight}, [screenState.darkMode]);
+  const studentPhoto = useMemo(() => {return screenState.darkMode ? studentLight : student}, [screenState.darkMode]);
 
 
   React.useEffect(() => {
@@ -71,7 +77,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: HELLO_MSG,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: ai,
+        photoURL: aiPhoto,
         type: "received"
       }
     ]
@@ -82,7 +88,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           text: SAMPLE_USER_INPUT,
           createdAt: Date.now(),
           uid: "2",
-          photoURL: student,
+          photoURL: studentPhoto,
           type: "sent"
         });
         setMessages([...messages, ...initialMessages])
@@ -92,7 +98,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
             text: SAMPLE_ADVICE,
             createdAt: Date.now(),
             uid: "2",
-            photoURL: ai,
+            photoURL: aiPhoto,
             type: "received"
           });
           setMessages([...messages, ...initialMessages]);
@@ -114,7 +120,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
 		 text: question,
 		 createdAt: Date.now(),
 		 uid: "1",
-		 photoURL: student,
+		 photoURL: studentPhoto,
 		 type: "sent"
 		};
     setMessages([...messages, currentMessage]);
@@ -129,7 +135,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: ai,
+        photoURL: aiPhoto,
         type: "received"
       }]);
     })();
@@ -155,7 +161,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
       text: questionClicked,
       createdAt: Date.now(),
       uid: "1",
-      photoURL: student,
+      photoURL: studentPhoto,
       type: "sent"
     };
     
@@ -170,7 +176,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
         text: res,
         createdAt: Date.now(),
         uid: "2",
-        photoURL: ai,
+        photoURL: aiPhoto,
         type: "received"
       }]);
     })();
