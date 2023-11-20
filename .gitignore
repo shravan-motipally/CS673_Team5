@@ -4,3 +4,4 @@
 /webapp/.env
 /.vscode
 .DS_Store
+api/*/.DS_Store
