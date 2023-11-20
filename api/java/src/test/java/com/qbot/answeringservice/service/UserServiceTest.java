@@ -15,6 +15,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mongodb.assertions.Assertions;
+import com.qbot.answeringservice.dto.LoginDetail;
+import com.qbot.answeringservice.dto.UserRequest;
+import com.qbot.answeringservice.dto.UserResponse;
+import com.qbot.answeringservice.model.Login;
 import com.qbot.answeringservice.model.User;
 import com.qbot.answeringservice.repository.UserRepository;
 
@@ -23,17 +27,97 @@ public class UserServiceTest {
     @Mock
     UserRepository userRepo;
 
+    @Mock
+    LoginService loginService;
+
     @InjectMocks
     UserService userService = new UserService();
 
     @Test
     public void testCreateUser() {
-        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
 
-        User createdUser = userService
-                .createUser(new User(UUID.randomUUID(), null, UUID.randomUUID(), "firstName", "lastName", null, null));
+        UserRequest request = getUserRequest();
+        request.setId(null);
+        UserResponse createdUser = userService.createUser(request);
         Assertions.assertNotNull(createdUser);
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
         Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserWithDifferentUsername() {
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
+
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = new LoginDetail(null, "testPassw0rd");
+        request.setLoginDetail(loginDetail);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNotNull(createdUser);
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullEmailAddress() {
+        UserRequest request = getUserRequest();
+        request.setEmailAddress(null);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureInvalidEmailAddress() {
+        UserRequest request = getUserRequest();
+        request.setEmailAddress("InvalidAddress.info");
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullLogin() {
+        UserRequest request = getUserRequest();
+        request.setLoginDetail(null);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserValidationFailureNullPassword() {
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = new LoginDetail(request.getEmailAddress(), null);
+        request.setLoginDetail(loginDetail);
+        UserResponse createdUser = userService.createUser(request);
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
+        Mockito.verify(loginService, Mockito.never()).createLogin(ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString());
+    }
+
+    @Test
+    public void testCreateUserLoginServiceFailure() {
+        Mockito.when(loginService.createLogin(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(null);
+        UserResponse createdUser = userService.createUser(getUserRequest());
+        Assertions.assertNull(createdUser);
+        Mockito.verify(userRepo, Mockito.never()).save(ArgumentMatchers.any(User.class));
     }
 
     @Test
@@ -46,26 +130,25 @@ public class UserServiceTest {
 
     @Test
     public void testFindUserByUserId() {
-        Mockito.when(userRepo.findById(ArgumentMatchers.any(UUID.class)))
-                .thenReturn(Optional.of(getAdminUsers().get(0)));
+        Mockito.when(userRepo.findById(ArgumentMatchers.anyString())).thenReturn(Optional.of(getAdminUsers().get(0)));
 
-        User foundUser = userService.findByUserId(UUID.randomUUID());
+        User foundUser = userService.findByUserId(UUID.randomUUID().toString());
         Assertions.assertNotNull(foundUser);
     }
 
     @Test
     public void testFindUserByUserIdNoResult() {
-        Mockito.when(userRepo.findById(ArgumentMatchers.any(UUID.class))).thenReturn(Optional.empty());
+        Mockito.when(userRepo.findById(ArgumentMatchers.anyString())).thenReturn(Optional.empty());
 
-        User foundUser = userService.findByUserId(UUID.randomUUID());
+        User foundUser = userService.findByUserId(UUID.randomUUID().toString());
         Assertions.assertNull(foundUser);
     }
 
     @Test
     public void testFindUserByLoginId() {
-        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.any(UUID.class))).thenReturn(getAdminUsers().get(0));
+        Mockito.when(userRepo.findUserByLoginId(ArgumentMatchers.anyString())).thenReturn(getAdminUsers().get(0));
 
-        User foundUser = userService.findByLoginId(UUID.randomUUID());
+        User foundUser = userService.findByLoginId(UUID.randomUUID().toString());
         Assertions.assertNotNull(foundUser);
     }
 
@@ -90,14 +173,20 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUser() {
-        userService.deleteUser(UUID.randomUUID());
-        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.any(UUID.class));
+        userService.deleteUser(UUID.randomUUID().toString());
+        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.anyString());
     }
 
     @Test
     public void testDeleteUserNullInput() {
         userService.deleteUser(null);
-        Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.any(UUID.class));
+        Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
+    }
+
+    private UserRequest getUserRequest() {
+        LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
+        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User", null,
+                null);
     }
 
     private List<User> getAdminUsers() {
@@ -105,9 +194,14 @@ public class UserServiceTest {
         adminRoleIds.add(1);
 
         List<User> adminUsers = new ArrayList<>();
-        User testAdmin = new User(UUID.randomUUID(), null, UUID.randomUUID(), "Test", "User", adminRoleIds, null);
+        User testAdmin = new User(UUID.randomUUID().toString(), null, UUID.randomUUID().toString(), "test@email.com",
+                "Test", "User", adminRoleIds, null);
         adminUsers.add(testAdmin);
 
         return adminUsers;
+    }
+
+    private Login getTestLogin() {
+        return new Login(UUID.randomUUID().toString(), "test@email.com", "testPasswordHash");
     }
 }

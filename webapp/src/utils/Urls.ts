@@ -4,20 +4,31 @@ export const getAnsweringSvcUrl = () => {
     ? "https://answering-svc.onrender.com"
     : "http://localhost:8080";
 };
+
+export const getDocRetrievalSvc = () => {
+  return environment === "prod"
+    ? "https://document-retreival-svc.onrender.com"
+    : "http://localhost:7861";
+}
 export const ANSWERING_SVC_URL = getAnsweringSvcUrl();
+
+export const DOCUMENT_RETRIEVAL_SVC_URL = getDocRetrievalSvc();
 export const HUGGINGFACE_INFERENCE_API =
   "https://api-inference.huggingface.co/models";
 // ANSWERING SVC APIs
 export const getAllQnAUrl = () => ANSWERING_SVC_URL + "/exchanges/all";
 export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
 export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
+export const getAllDocumentsForCourseId = (courseId: string) => ANSWERING_SVC_URL + "/documents?courseId=" + courseId
 export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
+export const uploadDocumentsUrl = () => ANSWERING_SVC_URL + "/documents";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
+export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;
 export const bulkUploadCoursesUrl = ()  =>  ANSWERING_SVC_URL + "/courses/all"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
-export const getOpenAIUrl = () => "http://localhost:7861/chat";
+export const getOpenAIUrl = () => DOCUMENT_RETRIEVAL_SVC_URL + "/chat";
 // Generative models
 export const GPT2 = "gpt2";
 export const BLOOM = "bigscience/bloom";

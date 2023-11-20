@@ -59,10 +59,10 @@ function Index() {
     }
   }, [screenState]);
 
-  const getClassName = useCallback((courseId: string) => {
+  const getClass = useCallback((courseId: string) => {
     const course = classes.find(course => course.courseId === courseId)
     if (course !== undefined) {
-      return course.shortName;
+      return course;
     } else {
       return null;
     }
@@ -76,10 +76,12 @@ function Index() {
 
   const handleClassChange = useCallback((classSel: string) => {
     setClassSelected(classSel);
+    const curClass = getClass(classSel);
     setScreenState({
       ...screenState,
       currentClass: classSel,
-      currentClassName: getClassName(classSel),
+      currentClassName: curClass !== null ? curClass.shortName : classSel,
+      currentClassObject: getClass(classSel),
       screen: 'home'
     })
   }, [screenState, classSelected]);

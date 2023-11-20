@@ -18,9 +18,15 @@ import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
 import Home from "./components/onepirate/Home";
 import Admin from "./screens/Admin";
 
+
+function getRandomSessionId() {
+	return Math.random().toString(36).slice(2);
+}
+
 export const ScreenContext = createContext<ScreenContextType>({
 	screenState: {
 		screen: 'home',
+		sessionId: "",
 		isAuthed: false,
 		isError: false,
 		photoUrl: smotipally,
@@ -32,6 +38,7 @@ export const ScreenContext = createContext<ScreenContextType>({
 		exchanges: [],
 		currentClass: null,
 		currentClassName: null,
+		currentClassObject: null,
 		roles: [],
 	},
 	setScreenState: () => {}
@@ -104,6 +111,7 @@ export const App = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [screenState, setScreenState] = useState<ScreenState>({
 		screen: 'loading',
+		sessionId: getRandomSessionId(),
 		isAuthed: false,
 		isError: false,
 		photoUrl: smotipally,
@@ -115,6 +123,7 @@ export const App = () => {
 		exchanges: [],
 		currentClass: null,
 		currentClassName: null,
+		currentClassObject: null,
 		roles: [],
 	});
 

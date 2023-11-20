@@ -22,14 +22,14 @@ public enum Role {
         this.description = description;
     }
 
-    public static String getRoleNameById(int id) {
+    public static String getRoleNameById(Integer id) {
         switch (id) {
-            case 1:
-                return ACCOUNT_ADMINISTRATOR.name;
-            case 2:
-                return EDUCATOR.name;
-            default:
-                return "Unknown";
+        case 1:
+            return ACCOUNT_ADMINISTRATOR.name;
+        case 2:
+            return EDUCATOR.name;
+        default:
+            return "Unknown";
         }
     }
 
