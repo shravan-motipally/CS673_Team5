@@ -82,6 +82,23 @@ public class UserController {
         }
     }
 
+    @PutMapping(path = "/bulkupdate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<User>> bulkUpdateUsers(@RequestBody List<User> users) {
+        try {
+            List<User> updateResults = userService.bulkUpdateUsers(users);
+            if (updateResults == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } else if (updateResults.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            } else {
+                return ResponseEntity.ok(updateResults);
+            }
+        } catch (Exception e) {
+            logger.error("Server error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @DeleteMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") String userId) {
         try {

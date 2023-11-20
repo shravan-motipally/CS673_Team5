@@ -172,6 +172,53 @@ public class UserServiceTest {
     }
 
     @Test
+    public void testBulkUpdateUsers() {
+        Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(true);
+        Mockito.when(userRepo.saveAll(ArgumentMatchers.anyList())).thenReturn(getAdminUsers());
+        Assertions.assertFalse(userService.bulkUpdateUsers(getAdminUsers()).isEmpty());
+        Mockito.verify(userRepo, Mockito.times(1)).saveAll(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersNoExisting() {
+        Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(false);
+        Assertions.assertTrue(userService.bulkUpdateUsers(getAdminUsers()).isEmpty());
+        Mockito.verify(userRepo, Mockito.times(0)).saveAll(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersError() {
+        Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(true);
+        Mockito.when(userRepo.saveAll(ArgumentMatchers.anyList())).thenReturn(null);
+        Assertions.assertNull(userService.bulkUpdateUsers(getAdminUsers()));
+        Mockito.verify(userRepo, Mockito.times(1)).saveAll(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersValidationAllFail() {
+        List<User> userList = getAdminUsers();
+        for (User user : userList) {
+            user.setEmailAddress(null);
+        }
+
+        Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(true);
+        Assertions.assertTrue(userService.bulkUpdateUsers(userList).isEmpty());
+        Mockito.verify(userRepo, Mockito.times(0)).saveAll(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersValidationMixed() {
+        List<User> userList = getAdminUsers();
+        User invalidUser = new User("idString", null, "loginId", "test@email.com", "firstName", "lastName", null, null);
+        userList.add(invalidUser);
+
+        Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(true);
+        Mockito.when(userRepo.saveAll(ArgumentMatchers.anyList())).thenReturn(getAdminUsers());
+        Assertions.assertFalse(userService.bulkUpdateUsers(userList).isEmpty());
+        Mockito.verify(userRepo, Mockito.times(1)).saveAll(ArgumentMatchers.anyList());
+    }
+
+    @Test
     public void testDeleteUser() {
         userService.deleteUser(UUID.randomUUID().toString());
         Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.anyString());

@@ -1,6 +1,7 @@
 package com.qbot.answeringservice.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -126,6 +127,39 @@ public class UserControllerTest {
                 UUID.randomUUID().toString(), "test@email.com", "firstName", "lastName", null, null));
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    public void testBulkUpdateUsers() {
+        Mockito.when(userService.bulkUpdateUsers(ArgumentMatchers.anyList())).thenReturn(getAdminUsers());
+        ResponseEntity<List<User>> response = userController.bulkUpdateUsers(getAdminUsers());
+        Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
+        Mockito.verify(userService, Mockito.times(1)).bulkUpdateUsers(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersZeroUpdates() {
+        Mockito.when(userService.bulkUpdateUsers(ArgumentMatchers.anyList())).thenReturn(Collections.emptyList());
+        ResponseEntity<List<User>> response = userController.bulkUpdateUsers(getAdminUsers());
+        Assertions.assertTrue(response.getStatusCode().is4xxClientError());
+        Mockito.verify(userService, Mockito.times(1)).bulkUpdateUsers(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersNullResponse() {
+        Mockito.when(userService.bulkUpdateUsers(ArgumentMatchers.anyList())).thenReturn(null);
+        ResponseEntity<List<User>> response = userController.bulkUpdateUsers(getAdminUsers());
+        Assertions.assertTrue(response.getStatusCode().is5xxServerError());
+        Mockito.verify(userService, Mockito.times(1)).bulkUpdateUsers(ArgumentMatchers.anyList());
+    }
+
+    @Test
+    public void testBulkUpdateUsersThrowException() {
+        Mockito.when(userService.bulkUpdateUsers(ArgumentMatchers.anyList())).thenThrow(new IllegalArgumentException());
+        ResponseEntity<List<User>> response = userController.bulkUpdateUsers(getAdminUsers());
+        Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        Mockito.verify(userService, Mockito.times(1)).bulkUpdateUsers(ArgumentMatchers.anyList());
     }
 
     @Test

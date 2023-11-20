@@ -1,5 +1,7 @@
 package com.qbot.answeringservice.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,7 +78,37 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        return userRepo.save(user);
+        return validateUser(user) ? userRepo.save(user) : null;
+    }
+
+    public List<User> bulkUpdateUsers(List<User> users) {
+        List<User> validatedUsers = new ArrayList<>();
+        for (User user : users) {
+            if (userRepo.existsById(user.getId()) && validateUser(user)) {
+                validatedUsers.add(user);
+            }
+        }
+
+        if (!validatedUsers.isEmpty()) {
+            return userRepo.saveAll(validatedUsers);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private boolean validateUser(User user) {
+        if (user.getLoginId() == null || user.getLoginId().isEmpty()) {
+            return false;
+        } else if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
+            return false;
+        } else if (user.getLastName() == null || user.getLastName().isEmpty()) {
+            return false;
+        } else if (user.getEmailAddress() == null || user.getEmailAddress().isEmpty()) {
+            return false;
+        } else if (user.getRoleIds() == null || user.getRoleIds().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public void deleteUser(String userId) {
