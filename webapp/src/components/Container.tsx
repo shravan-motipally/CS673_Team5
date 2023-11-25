@@ -32,7 +32,7 @@ import {Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
-import {isAdministrator} from "../utils/RoleUtils";
+import {isAdministrator, isEducator} from "../utils/RoleUtils";
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -351,7 +351,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               </ListItemButton>
             </ListItem>
           </List>
-          { screenState.isAuthed ?
+          { screenState.isAuthed && isEducator(screenState.roles) ?
             <div>
               <Divider />
               <List>
