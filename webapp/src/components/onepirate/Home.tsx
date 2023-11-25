@@ -5,7 +5,7 @@ import ProductHowItWorks from './modules/views/ProductHowItWorks';
 import AppAppBar from './modules/views/AppAppBar';
 import withRoot from './modules/withRoot';
 import {useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {getAllCoursesForSelection, getAllQnA, getAllQnAForCourse} from "../../api/QuestionAnswerApi";
+import {getAllCoursesForSelection, getAllQnA, getAllExchangesForCourse} from "../../api/QuestionAnswerApi";
 import {ScreenContext} from "../../App";
 import {Alert, Box, FormHelperText, MenuItem, Select, ThemeProvider, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../../utils/Themes";
@@ -79,7 +79,7 @@ function Index() {
     setClassSelected(classSel);
     const curClass = getClass(classSel);
     if (curClass !== undefined && curClass?.courseId !== undefined && curClass.courseId !== null) {
-      const {exchanges} = await getAllQnAForCourse(curClass.courseId);
+      const {exchanges} = await getAllExchangesForCourse(curClass.courseId);
       setScreenState({
         ...screenState,
         currentClass: classSel,

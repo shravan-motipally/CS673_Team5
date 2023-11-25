@@ -31,7 +31,7 @@ export const getAllQnA = async () => {
   }
 }
 
-export const getAllQnAForCourse = async (courseId: string) => {
+export const getAllExchangesForCourse = async (courseId: string) => {
   try {
     const res = await axios({
       timeout: 300000,
