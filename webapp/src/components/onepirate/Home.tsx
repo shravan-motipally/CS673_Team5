@@ -100,7 +100,7 @@ function Index() {
       <LandingPage />
       <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 5 }}>
-          <FormControl variant={"filled"} sx={{m: 1, minWidth: 250}} size={"medium"} error={courseError}>
+          <FormControl variant={"outlined"} sx={{m: 1, minWidth: 250}} size={"medium"} error={courseError}>
             <InputLabel id="demo-simple-select-label">Select Your Class</InputLabel>
             <Select
               inputProps={{

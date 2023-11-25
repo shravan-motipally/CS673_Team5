@@ -59,6 +59,10 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const aiPhoto = useMemo(() => {return screenState.darkMode ? aiDark : aiLight}, [screenState.darkMode]);
   const studentPhoto = useMemo(() => {return screenState.darkMode ? studentLight : student}, [screenState.darkMode]);
 
+  const isMobileView =  useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumView =  useMediaQuery(theme.breakpoints.down('md'));
+
+
 
   React.useEffect(() => {
     (ref.current as HTMLDivElement).ownerDocument.body.scrollTop = 0;
@@ -238,7 +242,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
               position: 'fixed',
               bottom: 2,
               backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-              width: "40%"
+              width: !shouldDisplayFAQ ? `calc(100% - ${isMobileView ? "50px" : "480px"})` : "40%"
             }} elevation={3}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password">Ask your question here</InputLabel>
@@ -291,7 +295,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
                     }}
                     inputProps={{
                       maxLength: 250,
-                      width: "calc(100% - 480px)"
+                      width: isMobileView ? "calc(100% - 20px)" : "calc(100% - 480px)"
                     }}/>
               </FormControl>
             </Paper>

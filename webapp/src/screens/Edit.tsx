@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState, useEffect, useMemo, useCallback, ChangeEvent, useContext} from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {createTheme, ThemeProvider, useTheme} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -21,6 +21,8 @@ import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import DocumentTable from "./tabs/DocumentsTable";
+import {Alert, useMediaQuery} from "@mui/material";
+import {AlertTitle} from "@mui/lab";
 
 export interface Exchange {
     exchangeId: string,
@@ -36,6 +38,8 @@ const Edit = () => {
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [tabValue, setTabValue] = React.useState(0);
+  const theme = useTheme();
+  const isMobileView =  useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -139,6 +143,10 @@ const Edit = () => {
     return (
       <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
+      {isMobileView ? <Alert severity="warning">
+        <AlertTitle>Warning</AlertTitle>
+        <strong>Switch to desktop view for best results</strong>
+      </Alert> : <div/>}
       <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
           <Tab label="Manage Questions" />
