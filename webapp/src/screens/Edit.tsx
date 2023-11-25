@@ -23,7 +23,7 @@ import Tab from "@mui/material/Tab";
 import DocumentTable from "./tabs/DocumentsTable";
 
 export interface Exchange {
-    exchangeId: string,
+    id: string,
     question: string,
     answer: string
 }
@@ -41,7 +41,7 @@ const Edit = () => {
   };
 
   const [columnDefs, setColumnDefs] = useState([
-    {field: 'exchangeId', filter: true, type: 'numberColumn', maxWidth: 140, cellStyle: {wordBreak: "normal"}},
+    {field: 'id', filter: true, type: 'numberColumn', maxWidth: 140, cellStyle: {wordBreak: "normal"}},
     {field: 'question', filter: true, cellStyle: {wordBreak: "normal"}},
     {field: 'answer', filter: false, cellStyle: {wordBreak: "normal"}}
   ]);

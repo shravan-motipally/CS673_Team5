@@ -54,7 +54,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const [displayQuestions, setDisplayQuestions] = useState<boolean>(false);
   const theme = useTheme();
   const commonlyAskedQuestionsRef = useRef<HTMLDivElement>(null);
-  const [allQuestions, setAllQuestions] = useState<Array<Exchange>>([]);
+  const [allExchanges, setAllQuestions] = useState<Array<Exchange>>([]);
   const aiPhoto = useMemo(() => {return screenState.darkMode ? aiDark : aiLight}, [screenState.darkMode]);
   const studentPhoto = useMemo(() => {return screenState.darkMode ? studentLight : student}, [screenState.darkMode]);
 
@@ -192,25 +192,25 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const drawerWidth = 480;
 
   const questionMenuItems = useMemo(() => {
-    if (allQuestions.length !== 0) {
-      return allQuestions.map((question, index) => (
+    if (allExchanges.length !== 0) {
+      return allExchanges.map((exchange, index) => (
           <Button
               fullWidth
               sx={{ fontSize: "0.75rem", height: "4rem" }}
               variant="text"
               size="large"
-              key={"qb-" + question.exchangeId}
+              key={"qb-" + exchange.id}
               onClick={() => {
-                onButtonClick(question.question);
+                onButtonClick(exchange.question);
               }}
           >
-            {question.question}
+            {exchange.question}
           </Button>
       ))
     } else {
       return []
     }
-  }, [allQuestions])
+  }, [allExchanges])
 
   return (
       <Box sx={{ display: 'flex', pb: 7, alignContent: 'center', flexGrow: 1 }} ref={ref}>
