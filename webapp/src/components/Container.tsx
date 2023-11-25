@@ -174,13 +174,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
+            <Typography variant={"body1"} component={"div"} >{screenState.generativeMode ? "Disable" : "Enable"} Generative Mode</Typography>
             <Tooltip title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
               <Switch color="default" checked={screenState.generativeMode} onChange={toggleGenerativeMode} name="generativeMode" />
             </Tooltip>
             <Tooltip title={screenState.darkMode ? "Light Mode" : "Dark Mode"}>
-              <IconButton sx={{ mr: 1 }} onClick={toggleDarkMode}>
-                {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
+              <Button
+                onClick={toggleDarkMode}
+                aria-label="contained"
+                sx={{ mr: 1 }}
+                variant="contained"
+                color={"secondary"}
+                startIcon={theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />} >
+                {!screenState.darkMode ? "Dark Mode" : "Light Mode"}
+              </Button>
             </Tooltip>
             {!screenState.isAuthed ?
               <Button

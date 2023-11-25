@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 import { answerQuestion, isEmptyNullOrUndefined } from "../models/Chat";
-import {HELLO_MSG, SAMPLE_ADVICE, SAMPLE_USER_INPUT} from "../utils/StringConstants";
+import {HELLO_MSG, HELLO_MSG_COURSE_NOT_SET_UP, SAMPLE_ADVICE, SAMPLE_USER_INPUT} from "../utils/StringConstants";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Paper from "@mui/material/Paper";
@@ -29,6 +29,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
 styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -64,11 +65,15 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
     })();
   }, [screenState])
 
+  const helloMsg = useMemo(() => {
+    return allQuestions.length === 0 ? HELLO_MSG_COURSE_NOT_SET_UP : HELLO_MSG;
+  }, [allQuestions]);
+
   useEffect(() => {
     if (messages.length === 0 && starting) {
       const initialMessages: Message[] = [{
         id: Math.floor(Math.random() * 1000),
-        text: HELLO_MSG,
+        text: helloMsg,
         createdAt: Date.now(),
         uid: "2",
         photoURL: ai,
@@ -105,7 +110,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
       }, 500);
     }
 
-  }, [messages])
+  }, [messages, helloMsg])
 
   const askQuestion = useCallback((e: any) => {
     e.preventDefault();
@@ -188,6 +193,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
   const questionMenuItems = useMemo(() => {
     if (allQuestions.length !== 0) {
       return allQuestions.map((question, index) => (
+        <>
           <Button
               fullWidth
               sx={{ fontSize: "0.75rem", height: "4rem" }}
@@ -200,6 +206,8 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           >
             {question.question}
           </Button>
+          <Divider/>
+        </>
       ))
     } else {
       return []
@@ -213,7 +221,7 @@ const ChatContainer = ( { questions }: { questions: Array<Exchange> } ) => {
           <Grid sx={{
             width: shouldDisplayFAQ ? "calc(100% - 480px)" : "100%",
           }} className="chat-container">
-            {messages && messages.map(msg => <ChatMessage key={"cm-" + msg.id} message={msg}/>)}
+            {messages && messages.map(msg => <ChatMessage key={"cm-" + Math.random().toString(2).slice(2) + msg.id} message={msg}/>)}
             <span ref={dummyRef}></span>
           </Grid>
 

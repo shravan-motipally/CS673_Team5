@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
 import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
 import * as excel from "xlsx";
-import {updateQuestions} from "../api/QuestionAnswerApi";
+import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
 import {darkTheme, lightTheme} from "../utils/Themes";
 import {ScreenContext} from "../App";
 import Divider from "@mui/material/Divider";
@@ -25,7 +25,8 @@ import DocumentTable from "./tabs/DocumentsTable";
 export interface Exchange {
     exchangeId: string,
     question: string,
-    answer: string
+    answer: string,
+    courseId: string
 }
 
 const Edit = () => {
@@ -68,7 +69,7 @@ const Edit = () => {
       const exchanges = screenState.exchanges;
       setRowData(exchanges);
     })();
-  }, []);
+  }, [screenState]);
 
   useEffect(() => {
     if (file !== null && file !== undefined) {
@@ -88,18 +89,23 @@ const Edit = () => {
             const readData = excel.read(data, { type: 'binary'});
             const wsname = readData.SheetNames[0];
             const ws = readData.Sheets[wsname];
-
             const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
-            // @ts-ignore
-            const jsonData = transformToJson(dataParse);
-            (async () => {
-              const res = await updateQuestions(jsonData);
-              if (res.status !== 200) {
-                setError(true);
-                setErrorMsg("Unable to save questions/answers at the moment, please try again")
-              }
-              setRowData(jsonData.exchanges);
-            })();
+            if (screenState.currentClassObject !== null && screenState.currentClassObject.courseId) {
+              // @ts-ignore
+              const jsonData = transformToJson(dataParse, screenState.currentClassObject?.courseId);
+              (async () => {
+                const res = await updateQuestions(jsonData);
+                if (res.status !== 200) {
+                  setError(true);
+                  setErrorMsg("Unable to save questions/answers at the moment, please try again")
+                }
+                setRowData(jsonData.exchanges);
+              })();
+            } else {
+              setError(true);
+              setErrorMsg("Saving questions/answers at the moment is disabled, please contact numtheory@ymail.com for assistance")
+            }
+
           }
         }
         reader.onerror = (e) => {
@@ -114,7 +120,7 @@ const Edit = () => {
         setError(true);
       }
     }
-  }, [file]);
+  }, [file, screenState]);
 
   const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -252,7 +258,7 @@ const Edit = () => {
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><u>Important Reminders:</u></strong>
                       <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                        a.) Ensure the .xslx file has three columns labeled: “Id”, “Question”, and “Answer”.
+                        a.) Ensure the .xslx file has four columns labeled: “Id”, “Question”, “Answer” and "CourseId".
                       </div>
 
                       <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
