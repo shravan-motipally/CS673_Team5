@@ -14,7 +14,7 @@ import Backdrop from '@mui/material/Backdrop';
 
 import smotipally from './screens/images/smotipally.png';
 import Settings from './screens/Settings';
-import {GPT2, PARAPHRASE_MINILM} from "./utils/Urls";
+import { OPEN_AI, PARAPHRASE_MINILM} from "./utils/Urls";
 import Home from "./components/onepirate/Home";
 import Admin from "./screens/Admin";
 
@@ -32,7 +32,7 @@ export const ScreenContext = createContext<ScreenContextType>({
 		photoUrl: smotipally,
 		generativeMode: false,
 		darkMode: false,
-		generativeModel: GPT2,
+		generativeModel: OPEN_AI,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
 		semanticSimilarityThreshold: 0.7,
 		exchanges: [],
@@ -117,7 +117,7 @@ export const App = () => {
 		photoUrl: smotipally,
 		generativeMode: false,
 		darkMode: false,
-		generativeModel: GPT2,
+		generativeModel: OPEN_AI,
 		semanticSimilarityModel: PARAPHRASE_MINILM,
 		semanticSimilarityThreshold: 0.7,
 		exchanges: [],

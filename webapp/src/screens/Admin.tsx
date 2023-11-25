@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import {darkTheme, lightTheme} from "../utils/Themes";
 import CssBaseline from "@mui/material/CssBaseline";
-import {ThemeProvider} from "@mui/material/styles";
-import {Box} from "@mui/material";
+import {ThemeProvider, useTheme} from "@mui/material/styles";
+import {Alert, Box, useMediaQuery} from "@mui/material";
 import Container from "@mui/material/Container";
 import {ScreenContext} from "../App";
 import Typography from "@mui/material/Typography";
@@ -11,10 +11,12 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import ClassesTable from "./tabs/ClassesTable";
 import EducatorsTable from "./tabs/EducatorsTable";
+import {AlertTitle} from "@mui/lab";
 
 const Admin = () => {
   const { screenState } = useContext(ScreenContext);
-
+  const theme = useTheme();
+  const isMobileView =  useMediaQuery(theme.breakpoints.down('sm'));
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -23,6 +25,10 @@ const Admin = () => {
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
+      {isMobileView ? <Alert severity="warning">
+        <AlertTitle>Warning</AlertTitle>
+        <strong>Switch to desktop view for best results</strong>
+      </Alert> : <div/>}
       <main>
         {/* Hero unit */}
         <Box

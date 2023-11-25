@@ -52,7 +52,7 @@ export interface Document extends Item {
 }
 
 export interface DocumentList {
-  documents: Array<Document>
+  documents: Array<Document> | undefined
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -318,7 +318,7 @@ export default function DocumentTable() {
         const documentList: DocumentList = courseDoc != null && courseDoc?.courseId != null ?
           await getAllDocumentsForCourse(courseDoc?.courseId) : { documents: [] };
         const { documents: itemsReturned } = documentList;
-        if (itemsReturned.length === 0) {
+        if (itemsReturned === undefined) {
           setGetItemsError(true);
         } else {
           setItems(itemsReturned);
