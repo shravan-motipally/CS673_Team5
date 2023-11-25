@@ -1,6 +1,5 @@
 package com.qbot.answeringservice.model;
 
-import org.mongojack.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,7 +12,6 @@ public class Exchange {
     @Id
     private String exchangeId;
     @Setter
-    @ObjectId
     private String courseId;
     private String question;
     private String answer;

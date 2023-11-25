@@ -24,7 +24,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 import {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import { ScreenContext } from '../App';
-import ai from '../screens/images/bot.png';
+import ai from '../screens/images/botTransparentWhite.png';
 
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -165,12 +165,14 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         <CssBaseline />
         <AppBar position="fixed" open={open} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
           <Toolbar>
-            <img style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              margin: "2px 5px",
-            }} src={ai} />
+            <IconButton onClick={goToLandingPage} aria-label="QBOT HOME" size="large">
+              <img style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "20%",
+                margin: "2px 5px",
+              }} src={ai} />
+            </IconButton>
             <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
               QBot
             </Typography>
