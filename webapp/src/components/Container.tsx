@@ -33,6 +33,7 @@ import {darkTheme, lightTheme} from "../utils/Themes";
 import {Logout} from "@mui/icons-material";
 import {Exchange} from "../screens/Edit";
 import {isAdministrator, isEducator} from "../utils/RoleUtils";
+import { Role } from '../types/global.types';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -143,6 +144,20 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       generativeMode: !screenState.generativeMode
     });
   }, [screenState]);
+
+  const isAdministratorCallback = React.useCallback(
+    (roles: Role[]) => {
+      return isAdministrator(roles);
+    },
+    [screenState]
+  );
+
+  const isEducatorCallback = React.useCallback(
+    (roles: Role[]) => {
+      return isEducator(roles);
+    },
+    [screenState]
+  );
 
   const goToLandingPage = useCallback(() => {
     setScreenState({
@@ -351,7 +366,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
               </ListItemButton>
             </ListItem>
           </List>
-          { screenState.isAuthed && isEducator(screenState.roles) ?
+          { screenState.isAuthed && isEducatorCallback(screenState.roles) ?
             <div>
               <Divider />
               <List>
@@ -379,8 +394,8 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
             </div> :
             <div/>
           }
-          { screenState.isAuthed && isAdministrator(screenState.roles) ?
-            <>
+          { screenState.isAuthed && isAdministratorCallback(screenState.roles) ?
+            <div>
               <Divider />
               <List>
                 <ListItem key={"ContainerKey-Admin"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
@@ -404,7 +419,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   </ListItemButton>
                 </ListItem>
               </List>
-            </> :
+            </div> :
             <div/>
           }
         </Drawer>
