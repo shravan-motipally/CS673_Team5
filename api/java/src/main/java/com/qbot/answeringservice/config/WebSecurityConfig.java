@@ -13,7 +13,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/all", "/questions", "/actuator/**")
+                .antMatchers("/login", "/all", "/exchanges/**", "/actuator/**")
                 .permitAll()
                 .and()
                 .httpBasic().and()
