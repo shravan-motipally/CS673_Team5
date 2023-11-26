@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import AppBar from '../components/AppBar';
 import Toolbar from '../components/Toolbar';
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ScreenContext} from "../../../../App";
 import ai from "../../../../screens/images/botTransparentWhite.png";
 import Typography from "@mui/material/Typography";
@@ -15,14 +15,13 @@ const rightLink = {
   cursor: 'pointer'
 };
 
-function AppAppBar() {
+function AppAppBar({ loading }: { loading: boolean }) {
   const { screenState, setScreenState } = useContext(ScreenContext);
 
   return (
     <div>
       <AppBar position="fixed">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/*<Box sx={{ flex: 1 }} />*/}
           <img style={{
               width: "40px",
               height: "40px",
@@ -40,9 +39,9 @@ function AppAppBar() {
             QBot
           </Typography>
           <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            <Link
+            {!loading ? <Link
               color="inherit"
-              variant="h6"
+              variant="button"
               underline="none"
               sx={rightLink}
               onClick={() => {
@@ -50,7 +49,7 @@ function AppAppBar() {
               }}
             >
               {'Sign In'}
-            </Link>
+            </Link> : <div/>}
           </Box>
         </Toolbar>
       </AppBar>

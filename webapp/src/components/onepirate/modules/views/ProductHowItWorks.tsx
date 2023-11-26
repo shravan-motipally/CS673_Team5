@@ -4,10 +4,7 @@ import { SxProps } from '@mui/system';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import Button from '../components/Button';
 import Typography from '../components/Typography';
-import {useContext} from "react";
-import {ScreenContext} from "../../../../App";
 
 const item: SxProps<Theme> = {
   display: 'flex',
@@ -29,7 +26,6 @@ const image = {
 };
 
 function ProductHowItWorks() {
-  const { screenState, setScreenState } = useContext(ScreenContext);
 
   return (
     <Box
@@ -106,18 +102,6 @@ function ProductHowItWorks() {
             </Grid>
           </Grid>
         </div>
-        <Button
-          color="secondary"
-          size="large"
-          variant="contained"
-          component="a"
-          sx={{ mt: 8 }}
-          onClick={() => {
-            setScreenState({...screenState, screen: 'landing page'})
-          }}
-        >
-          Get started
-        </Button>
       </Container>
     </Box>
   );

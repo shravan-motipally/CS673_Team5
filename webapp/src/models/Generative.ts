@@ -3,12 +3,12 @@ import {apiToken, genApiToken} from "../utils/StringConstants";
 import {createLargeContextForQuestion} from "../api/QuestionAnswerApi";
 import {Exchange} from "../screens/Edit";
 
-import { loadQAStuffChain} from "langchain/chains";
+import { loadQAStuffChain } from "langchain/chains";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "langchain/document";
 import { HuggingFaceInferenceEmbeddings } from "langchain/embeddings/hf";
-import {getOpenAIUrl, OPEN_AI} from "../utils/Urls";
+import { getOpenAIUrl, OPEN_AI } from "../utils/Urls";
 import axios from "axios";
 import {I_DONT_KNOW} from "./Chat";
 import {ScreenState} from "../types/global.types";

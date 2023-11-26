@@ -1,20 +1,18 @@
 import * as React from 'react';
 import ProductCategories from './modules/views/ProductCategories';
-import ProductSmokingHero from './modules/views/ProductSmokingHero';
-import AppFooter from './modules/views/AppFooter';
 import LandingPage from './modules/views/LandingPage';
-import ProductValues from './modules/views/ProductValues';
 import ProductHowItWorks from './modules/views/ProductHowItWorks';
-import ProductCTA from './modules/views/ProductCTA';
 import AppAppBar from './modules/views/AppAppBar';
 import withRoot from './modules/withRoot';
 import {useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {getAllCoursesForSelection, getAllQnA} from "../../api/QuestionAnswerApi";
+import {getAllCoursesForSelection, getAllQnA, getAllExchangesForCourse} from "../../api/QuestionAnswerApi";
 import {ScreenContext} from "../../App";
 import {Alert, Box, FormHelperText, MenuItem, Select, ThemeProvider, Tooltip} from "@mui/material";
 import {darkTheme, lightTheme} from "../../utils/Themes";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import { getGenerationBackendHealth } from '../../api/HealthCheckApi';
+
 
 export interface Course {
   courseId: string,
@@ -25,7 +23,7 @@ export interface Course {
 }
 
 export interface CourseList {
-  courses: Array<Course>
+  courses: Array<Course> | undefined
 }
 
 function Index() {
@@ -34,24 +32,27 @@ function Index() {
   const [loading, setLoading] = useState<boolean>(true);
   const [classes, setClasses] = useState<Array<Course>>([]);
   const [courseError, setCourseError] = useState<boolean>(false);
+  const [docHealth, setDocHealth] = useState<boolean>(false);
   useEffect(() => {
     (async () => {
       if (loading) {
-        const { exchanges } = await getAllQnA();
         const { courses } = await getAllCoursesForSelection();
-        setClasses(courses);
-        if (courses.length === 0) {
+        const docSvcStatus = await getGenerationBackendHealth();
+        setDocHealth(docSvcStatus);
+
+        if (courses === undefined || courses.length === 0) {
           setCourseError(true);
         }
         setLoading(false);
-        if (exchanges != null && exchanges.length != 0) {
-          setScreenState({...screenState, exchanges: exchanges, screen: 'landing page'})
+        if (courses != undefined && courses.length != 0) {
+          setClasses(courses);
+          setScreenState({...screenState, screen: 'landing page'})
         } else {
-          setScreenState({...screenState, exchanges: [], screen: 'error', isError: true});
+          setScreenState({...screenState, screen: 'error', isError: true});
         }
       }
     })();
-  }, [loading])
+  }, [loading]);
 
   useEffect(() => {
     if (screenState.screen === "loading") {
@@ -74,26 +75,32 @@ function Index() {
     )
   }, [classes]);
 
-  const handleClassChange = useCallback((classSel: string) => {
+  const handleClassChange = useCallback(async (classSel: string) => {
     setClassSelected(classSel);
     const curClass = getClass(classSel);
-    setScreenState({
-      ...screenState,
-      currentClass: classSel,
-      currentClassName: curClass !== null ? curClass.shortName : classSel,
-      currentClassObject: getClass(classSel),
-      screen: 'home'
-    })
+    if (curClass !== undefined && curClass?.courseId !== undefined && curClass.courseId !== null) {
+      const {exchanges} = await getAllExchangesForCourse(curClass.courseId);
+      setScreenState({
+        ...screenState,
+        currentClass: classSel,
+        currentClassName: curClass !== null ? curClass.shortName : classSel,
+        currentClassObject: getClass(classSel),
+        screen: 'home',
+        exchanges: exchanges
+      })
+    }
   }, [screenState, classSelected]);
 
   return (
     <React.Fragment>
-      <AppAppBar />
-      { loading ? <Alert style={{ marginTop: "40px" }} variant="filled" severity="warning">Loading the backend, please wait!</Alert> : <div/>}
+      <AppAppBar loading={loading}/>
+      <Alert style={{ display: loading ? '' : 'none' }} variant="filled" severity="warning">
+        Generation Capabilities added! Loading times are extended, apologies!  Loading the backend now, please wait!
+      </Alert>
       <LandingPage />
       <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 5 }}>
-          <FormControl variant={"filled"} sx={{m: 1, minWidth: 250}} size={"medium"} error={courseError}>
+          <FormControl variant={"outlined"} sx={{m: 1, minWidth: 250}} size={"medium"} error={courseError}>
             <InputLabel id="demo-simple-select-label">Select Your Class</InputLabel>
             <Select
               inputProps={{
@@ -118,7 +125,6 @@ function Index() {
       </ThemeProvider>
       <ProductCategories />
       <ProductHowItWorks />
-      <ProductSmokingHero />
     </React.Fragment>
   );
 }
