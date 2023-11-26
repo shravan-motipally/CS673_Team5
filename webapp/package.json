@@ -10,6 +10,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.4",
+    "@mui/material-next": "^6.0.0-alpha.110",
     "@mui/system": "^5.14.17",
     "@tensorflow-models/qna": "1.0.1",
     "@tensorflow/tfjs-converter": "3.15.0",

@@ -16,6 +16,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from starlette.requests import Request
+import time
 
 origins = ["http://localhost:3000", "https://qbot-slak.onrender.com"]
 
@@ -86,8 +87,7 @@ def startup_event():
                     "question at the end." \
                     "If you don't know the answer, just say you don't know. DO NOT try to make up an answer." \
                     "If the question is not related to the context, politely respond that you are tuned to only " \
-                    "answer questions that are related to the context.  Please answer the question in html friendly " \
-                    "format.  Avoid newlines, instead use html tags such as <p>, <div>, <br> etc to format your answer. " \
+                    "answer questions that are related to the current course or the course material.  " \
                     "{context}" \
                     " " \
                     "Question: {question}"
@@ -132,11 +132,9 @@ def insert_chat_history(session_id: str, chat_history: List[Dict[str, str]]):
 def is_chat_about_course(chat_message: Chat, enabled: bool) -> bool:
     if enabled:
         pre_prompt = 'Analyze the sentiment of the following statement/question and tell me, the professor, whether or ' \
-                     'not this ' \
-                     'statement/question has anything to do with my course on ' + chat_message.course_name + 'with ' \
-                                                                                                             'description ' + \
-                     chat_message.course_desc + '.  If it stays within the realm of computer science, it is relevant. Now ' \
-                                                'say Yes if relevant and No if irrelevant.  Statement/Question: '
+                     'not this statement/question has anything to do with my course on ' + chat_message.course_name + \
+                     'with ' + chat_message.course_desc + '.  If it stays within the realm of computer science, it is ' \
+                     'relevant. Now say Yes if relevant and No if irrelevant.  Statement/Question: '
         completion = completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
