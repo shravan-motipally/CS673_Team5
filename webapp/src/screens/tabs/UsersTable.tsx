@@ -52,9 +52,9 @@ export interface UserDoc {
   loginId: string,
   firstName: string,
   lastName: string,
-  photoUrl: string,
   roleIds: string,
   courseIds: string
+  photoUrl: string,
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -94,9 +94,9 @@ interface datum {
   login: string | number,
   firstName: string | number,
   lastName: string | number,
-  photo: string | number,
   roleIds: string | number,
   courseIds: string | number,
+  photo: string | number,
 
 }
 
@@ -136,12 +136,6 @@ const headCells: readonly HeadCell[] = [
     label: 'Last Name',
   },
   {
-    id: 'photo',
-    numeric: false,
-    disablePadding: false,
-    label: 'Photo',
-  },
-  {
     id: 'roleIds',
     numeric: false,
     disablePadding: false,
@@ -152,6 +146,12 @@ const headCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Course Ids',
+  },
+  {
+    id: 'photo',
+    numeric: false,
+    disablePadding: false,
+    label: 'Photo',
   },
 ];
 
@@ -808,9 +808,9 @@ export default function UsersTable() {
                           {row.firstName}
                         </StyledTableCell>
                         <StyledTableCell align="right">{row.lastName}</StyledTableCell>
-                        <StyledTableCell align="right">{row.photo}</StyledTableCell>
                         <StyledTableCell align="right">{row.roleIds}</StyledTableCell>
                         <StyledTableCell align="right">{row.courseIds}</StyledTableCell>
+                        <StyledTableCell align="right">{row.photo}</StyledTableCell>
                       </TableRow>
                   );
                 })}

@@ -91,6 +91,19 @@ p {
   text-align: left;
 }
 
+@media (max-width: 500px) {
+  p {
+    margin-bottom: 12px;
+    line-height: 24px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    position: relative;
+    color: white;
+    text-align: left;
+    font-size: 12px;
+  }
+}
+
 .message {
   display: flex;
   align-items: center;

@@ -10,6 +10,7 @@ export const spreadSheetData = [
       { label: "Id", value: "exchangeId"},
       { label: "Question", value: "question" },
       { label: "Answer", value: "answer" },
+      { label: "CourseId", value: "courseId" }
     ],
     content: [],
   },
@@ -48,10 +49,11 @@ export const usersSpreadSheetData = [
 
 export interface ExcelJsonQuestions {
   numOfQuestions: number,
+  courseId: string,
   exchanges: Array<Exchange>
 }
 
-export const transformToJson: (stringArr: string[][]) => ExcelJsonQuestions = (stringArr: string[][]) => {
+export const transformToJson: (stringArr: string[][], courseId: string) => ExcelJsonQuestions = (stringArr: string[][], courseId) => {
   if (stringArr.length === 0 || stringArr.length === 1) {
     console.error("Invalid array given");
     throw Error("Invalid array given");
@@ -59,17 +61,19 @@ export const transformToJson: (stringArr: string[][]) => ExcelJsonQuestions = (s
   const numOfQuestions = stringArr.length -1;
   const exchanges: Array<Exchange> = [];
   stringArr.forEach((questionArray: string[], index) => {
-    if (index !== 0 && questionArray.length === 3) {
+    if (index !== 0 && questionArray.length === 4) {
       exchanges.push({
         exchangeId: questionArray[0],
         question: questionArray[1],
-        answer: questionArray[2]
+        answer: questionArray[2],
+        courseId: questionArray[3]
       })
     }
   });
   return {
     numOfQuestions: numOfQuestions,
-    exchanges: exchanges
+    exchanges: exchanges,
+    courseId
   }
 }
 

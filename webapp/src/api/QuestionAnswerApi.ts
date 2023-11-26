@@ -5,14 +5,14 @@ import {apiToken, APPLICATION_JSON} from "../utils/StringConstants";
 import {
   addNewCourseUrl, bulkUploadCoursesUrl, deleteCourseUrl, deleteDocumentUrl,
   getAllCoursesForAdministrationUrl,
-  getAllCoursesUrl, getAllDocumentsForCourseId,
+  getAllCoursesUrl, getAllDocumentsForCourseId, getAllQnAForCourseUrl,
   getAllQnAUrl,
   loginUrl,
-  SEMANTIC_SIMILARITY_URL,
   addNewUserUrl,
   getAllUsersUrl,
   deleteUserUrl,
   bulkUploadUsersUrl,
+  SEMANTIC_SIMILARITY_URL, updateQuestionsForCourseIdUrl,
   updateQuestionsUrl, uploadDocumentsUrl
 } from "../utils/Urls";
 import {ExcelJsonCourses, ExcelJsonQuestions, ExcelJsonUsers} from "../utils/ExcelUtils";
@@ -36,6 +36,21 @@ export const getAllQnA = async () => {
   }
 }
 
+export const getAllExchangesForCourse = async (courseId: string) => {
+  try {
+    const res = await axios({
+      timeout: 300000,
+      url: getAllQnAForCourseUrl(courseId),
+      method: "GET"
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log("Backend is down or questions API returned an exception: " + err)
+    return { exchanges: [] };
+  }
+}
+
 export const getAllCoursesForSelection = async (): Promise<CourseList> => {
   try {
     const res = await axios({
@@ -47,7 +62,7 @@ export const getAllCoursesForSelection = async (): Promise<CourseList> => {
     return res.data;
   } catch (err) {
     console.log("Backend is down or questions API returned an exception: " + err)
-    return { courses: [] };
+    return { courses: undefined };
   }
 }
 
@@ -92,7 +107,7 @@ export const getAllDocumentsForCourse = async (courseId: string): Promise<Docume
     return res.data;
   } catch (err) {
     console.log("Backend is down or questions API returned an exception: " + err)
-    return { documents: [] };
+    return { documents: undefined };
   }
 }
 
@@ -228,7 +243,7 @@ export const bulkUploadUsers = async (users: ExcelJsonUsers) => {
 export const updateQuestions = async (jsonData: ExcelJsonQuestions) => {
   const res = await axios({
     timeout: 300000,
-    url: updateQuestionsUrl(),
+    url: updateQuestionsForCourseIdUrl(jsonData.courseId),
     method: "POST",
     data: jsonData,
     headers: {

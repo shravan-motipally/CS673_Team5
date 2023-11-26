@@ -17,22 +17,24 @@ import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';  // for help page
 import InfoIcon from '@mui/icons-material/Info'; // for about page
+import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
-
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-
-import {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ScreenContext } from '../App';
 import ai from '../screens/images/botTransparentWhite.png';
 
 import Avatar from '@mui/material/Avatar';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import {Drawer, Menu, MenuItem, Switch, Tooltip} from "@mui/material";
-import {darkTheme, lightTheme} from "../utils/Themes";
-import {Logout} from "@mui/icons-material";
-import {Exchange} from "../screens/Edit";
-import {isAdministrator} from "../utils/RoleUtils";
+import { Drawer, Menu, MenuItem, Switch, Tooltip , useMediaQuery} from "@mui/material";
+import { darkTheme, lightTheme } from "../utils/Themes";
+import { Logout } from "@mui/icons-material";
+import { Exchange } from "../screens/Edit";
+import { isAdministrator, isEducator } from "../utils/RoleUtils";
+import { Role } from '../types/global.types';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -67,10 +69,10 @@ const AppBar = styled(MuiAppBar, {
 
 
 interface ContainerProps {
-	children: any
+  children: any
 }
 
-const Container: React.FC<ContainerProps> = ( { children } ) => {
+const Container: React.FC<ContainerProps> = ({ children }) => {
   const { screenState, setScreenState } = useContext(ScreenContext);
   const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(null);
   const [courseAnchor, setCourseAnchor] = React.useState<null | HTMLElement>(null);
@@ -79,6 +81,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
   const logoutIsOpen = Boolean(logoutAnchor);
 
   const theme = useTheme();
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = React.useState(false);
 
   const drawerWidth = 240;
@@ -106,6 +109,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     setQuestionsDropDownAnchor(null);
   };
 
+  const handleDrawerToggle = useCallback(() => {
+    setOpen(!open);
+  }, [open]);
+
   const onLogin = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setScreenState({
       ...screenState,
@@ -113,7 +120,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
       isAuthed: screenState.isAuthed,
     });
     setLogoutAnchor(null);
-  }, [screenState]);
+    if (open) {
+      handleDrawerToggle();
+    }
+  }, [screenState, open]);
 
   const onLogout = React.useCallback(() => {
     if (screenState.screen === 'manage' || screenState.screen === 'config') {
@@ -128,6 +138,7 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
         isAuthed: !screenState.isAuthed,
       });
     }
+    handleDrawerToggle();
   }, [screenState]);
 
   const toggleDarkMode = React.useCallback(() => {
@@ -144,6 +155,10 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     });
   }, [screenState]);
 
+  const userIsAdmin = useMemo(() => isAdministrator(screenState.roles), [screenState]);
+
+  const userIsEducator = useMemo(() => isEducator(screenState.roles), [screenState]);
+
   const goToLandingPage = useCallback(() => {
     setScreenState({
       ...screenState,
@@ -159,30 +174,48 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
     }
   }, [screenState]);
 
+  const handleToggles = useCallback((index: number) => {
+    if (index % 2 === 1) {
+      toggleDarkMode()
+    } else {
+      toggleGenerativeMode()
+    }
+    handleDrawerToggle();
+  }, [screenState, open]);
+
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
-      <Box sx={{ display: 'flex'}}>
+      <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} >
           <Toolbar>
+            {isMobileView ? <IconButton onClick={handleDrawerToggle}>{open ?<MenuOpenIcon/> :<MenuIcon/>}</IconButton> : <div/>}
             <IconButton onClick={goToLandingPage} aria-label="QBOT HOME" size="large">
               <img style={{
                 width: "40px",
                 height: "40px",
                 borderRadius: "20%",
-                margin: "2px 5px",
+                margin: isMobileView ? "" : "2px 5px",
+                display: isMobileView ? 'none' : ''
               }} src={ai} />
             </IconButton>
-            <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1 }}>
+            <Typography onClick={goToLandingPage} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: isMobileView ? "30vw" : "10px", flexGrow: 1 }}>
               QBot
             </Typography>
-            <Tooltip title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
+            <Typography sx={{display: isMobileView ? 'none' : ''}} variant={"body1"} component={"div"} >{screenState.generativeMode ? "Disable" : "Enable"} Generative Mode</Typography>
+            <Tooltip sx={{display: isMobileView ? 'none' : ''}} title={screenState.generativeMode ? "Generative Mode Enabled" : "Enable Generative Mode"}>
               <Switch color="default" checked={screenState.generativeMode} onChange={toggleGenerativeMode} name="generativeMode" />
             </Tooltip>
-            <Tooltip title={screenState.darkMode ? "Light Mode" : "Dark Mode"}>
-              <IconButton sx={{ mr: 1 }} onClick={toggleDarkMode}>
-                {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
+            <Tooltip sx={{display: isMobileView ? 'none' : ''}} title={screenState.darkMode ? "Light Mode" : "Dark Mode"}>
+              <Button
+                onClick={toggleDarkMode}
+                aria-label="contained"
+                sx={{ mr: 1, display: isMobileView ? 'none' : '' }}
+                variant="contained"
+                color={"secondary"}
+                startIcon={theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />} >
+                {!screenState.darkMode ? "Dark Mode" : "Light Mode"}
+              </Button>
             </Tooltip>
             {!screenState.isAuthed ?
               <Button
@@ -237,15 +270,17 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   <MenuItem onClick={() => {
-                    setScreenState( { ...screenState, screen: 'manage' })
+                    setScreenState({ ...screenState, screen: 'manage' })
+                    handleDrawerToggle();
                   }}>
                     <ListItemIcon>
-                      <StorageIcon fontSize="small" color={"primary"}/>
+                      <StorageIcon fontSize="small" color={"primary"} />
                     </ListItemIcon>
                     Manage
                   </MenuItem>
                   <MenuItem onClick={() => {
-                    setScreenState( { ...screenState, screen: 'config' })
+                    setScreenState({ ...screenState, screen: 'config' })
+                    handleDrawerToggle();
                   }}>
                     <ListItemIcon>
                       <SettingsIcon fontSize="small" />
@@ -263,51 +298,81 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open} sx={{
-          width: drawerWidth,
+          width: isMobileView ? '100vw' : drawerWidth,
+          display: isMobileView ? open ? '': 'none' : '',
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { width: isMobileView ? '100vw' : drawerWidth, boxSizing: 'border-box' },
         }} >
           <Divider />
           <Toolbar />
-          <List sx={{ paddingBottom:0, paddingTop: 0 }}>
-            { screenState.currentClass !== null ?  [screenState.currentClassName + ' Home'].map((text, index) => (
-                <ListItem
-                  key={"ContainerKey-" + text}
-                  disablePadding sx={{ display: 'block' }}
-                  onClick={() => {
-                    setScreenState( { ...screenState, screen: 'home' });
-                  }}>
-                  <ListItemButton
-                      sx={{
-                        minHeight: 48,
-                        justifyContent: open ? 'initial' : 'center',
-                        px: 2.5,
-                      }}
+          <List sx={{ paddingBottom: 0, paddingTop: 0 }}>
+            {screenState.currentClass !== null ? [screenState.currentClassName + ' Home'].map((text, index) => (
+              <ListItem
+                key={"ContainerKey-" + text}
+                disablePadding sx={{ display: 'block' }}
+                onClick={() => {
+                  setScreenState({ ...screenState, screen: 'home' });
+                handleDrawerToggle();}}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
                   >
-                    <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                        }}
-                    >
-                      <HomeIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={text} color={"secondary"} sx={{m:1}} />
-                  </ListItemButton>
-                </ListItem>
-            )) : <div/>}
+                    <HomeIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={text} color={"secondary"} sx={{ m: 1 }} />
+                </ListItemButton>
+              </ListItem>
+            )) : <div />}
           </List>
           <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
             {['Help', 'About'].map((text, index) => (
               <ListItem
                 key={"ContainerKey-" + text}
                 disablePadding sx={{ display: 'block' }}
-                onClick={ () => {
-                  setScreenState( {
+                onClick={() => {
+                  setScreenState({
                     ...screenState,
-                    screen: index % 2 === 0 ?  'help' : 'about' });
-                } }>
+                    screen: index % 2 === 0 ? 'help' : 'about'
+                  });
+                  handleDrawerToggle();
+                }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} color={"secondary"} sx={{ m: 1 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          {isMobileView ? <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
+            {['Enable Generative Mode', 'Dark/Light Mode'].map((text, index) => (
+              <ListItem
+                key={"ContainerKey-" + text}
+                disablePadding sx={{ display: 'block' }}
+                onClick={() => handleToggles(index)}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -322,15 +387,18 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                       justifyContent: 'center',
                     }}
                   >
-                    {index % 2 === 0 ? <HelpOutlineIcon /> : <InfoIcon />}
+                    {index % 2 === 0 ? <SmartToyIcon /> : theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                   </ListItemIcon>
                   <ListItemText primary={text} color={"secondary"} sx={{m:1}} />
                 </ListItemButton>
               </ListItem>
             ))}
-          </List>
+          </List> : <div/>}
           <List sx={{ paddingTop: 0}}>
-            <ListItem key={"ContainerKey-Settings"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'config'  }); } }>
+            <ListItem key={"ContainerKey-Settings"} disablePadding sx={{ display: 'block' }} onClick={ () => {
+              setScreenState( { ...screenState, screen: 'config'  });
+              handleDrawerToggle();
+            }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -347,15 +415,18 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                 >
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary={"Settings"} color={"secondary"} sx={{m:1}}/>
+                <ListItemText primary={"Settings"} color={"secondary"} sx={{ m: 1 }} />
               </ListItemButton>
             </ListItem>
           </List>
-          { screenState.isAuthed ?
+          {screenState.isAuthed && userIsEducator ?
             <div>
               <Divider />
               <List>
-                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'manage'  }); } }>
+                <ListItem key={"ContainerKey-Manage"} disablePadding sx={{ display: 'block' }} onClick={ () => {
+                  setScreenState( { ...screenState, screen: 'manage'  });
+                  handleDrawerToggle();
+                }}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -372,18 +443,21 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     >
                       <StorageIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Manage"} color={"secondary"} sx={{m:1}}/>
+                    <ListItemText primary={"Manage"} color={"secondary"} sx={{ m: 1 }} />
                   </ListItemButton>
                 </ListItem>
               </List>
             </div> :
-            <div/>
+            <div />
           }
-          { screenState.isAuthed && isAdministrator(screenState.roles) ?
-            <>
+          {screenState.isAuthed && userIsAdmin ?
+            <div>
               <Divider />
               <List>
-                <ListItem key={"ContainerKey-Admin"} disablePadding sx={{ display: 'block' }} onClick={ () => { setScreenState( { ...screenState, screen: 'admin'  }); } }>
+                <ListItem key={"ContainerKey-Admin"} disablePadding sx={{ display: 'block' }} onClick={ () => {
+                  setScreenState( { ...screenState, screen: 'admin'  });
+                  handleDrawerToggle();
+                }}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -400,18 +474,18 @@ const Container: React.FC<ContainerProps> = ( { children } ) => {
                     >
                       <StorageIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Administration"} color={"secondary"} sx={{m:1}}/>
+                    <ListItemText primary={"Administration"} color={"secondary"} sx={{ m: 1 }} />
                   </ListItemButton>
                 </ListItem>
               </List>
-            </> :
-            <div/>
+            </div> :
+            <div />
           }
         </Drawer>
 
 
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3}}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
           {children}
         </Box>
