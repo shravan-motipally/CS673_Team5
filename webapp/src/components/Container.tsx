@@ -145,19 +145,9 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     });
   }, [screenState]);
 
-  const isAdministratorCallback = React.useCallback(
-    (roles: Role[]) => {
-      return isAdministrator(roles);
-    },
-    [screenState]
-  );
+  const userIsAdmin = useMemo(() => isAdministrator(screenState.roles), [screenState]);
 
-  const isEducatorCallback = React.useCallback(
-    (roles: Role[]) => {
-      return isEducator(roles);
-    },
-    [screenState]
-  );
+  const userIsEducator = useMemo(() => isEducator(screenState.roles), [screenState]);
 
   const goToLandingPage = useCallback(() => {
     setScreenState({
@@ -367,7 +357,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
               </ListItemButton>
             </ListItem>
           </List>
-          {screenState.isAuthed && isEducatorCallback(screenState.roles) ?
+          {screenState.isAuthed && userIsEducator ?
             <div>
               <Divider />
               <List>
@@ -395,7 +385,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
             </div> :
             <div />
           }
-          {screenState.isAuthed && isAdministratorCallback(screenState.roles) ?
+          {screenState.isAuthed && userIsAdmin ?
             <div>
               <Divider />
               <List>
