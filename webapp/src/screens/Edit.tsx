@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useState, useEffect, useMemo, useCallback, ChangeEvent, useContext} from 'react';
-import {createTheme, ThemeProvider, useTheme} from '@mui/material/styles';
+import { useState, useEffect, useMemo, useCallback, ChangeEvent, useContext } from 'react';
+import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -11,24 +11,24 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
-import {spreadSheetData, settings, transformToJson} from "../utils/ExcelUtils";
+import { spreadSheetData, settings, transformToJson } from "../utils/ExcelUtils";
 import * as excel from "xlsx";
-import {getAllQnA, updateQuestions} from "../api/QuestionAnswerApi";
-import {darkTheme, lightTheme} from "../utils/Themes";
-import {ScreenContext} from "../App";
+import { getAllQnA, updateExchanges } from "../api/ExchangeApi";
+import { darkTheme, lightTheme } from "../utils/Themes";
+import { ScreenContext } from "../App";
 import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import DocumentTable from "./tabs/DocumentsTable";
-import {Alert, useMediaQuery} from "@mui/material";
-import {AlertTitle} from "@mui/lab";
+import { Alert, useMediaQuery } from "@mui/material";
+import { AlertTitle } from "@mui/lab";
 
 export interface Exchange {
-    id: string,
-    question: string,
-    answer: string,
-    courseId: string
+  id: string,
+  question: string,
+  answer: string,
+  courseId: string
 }
 
 const Edit = () => {
@@ -39,19 +39,19 @@ const Edit = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [tabValue, setTabValue] = React.useState(0);
   const theme = useTheme();
-  const isMobileView =  useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
   const [columnDefs, setColumnDefs] = useState([
-    {field: 'id', filter: true, type: 'numberColumn', maxWidth: 140, cellStyle: {wordBreak: "normal"}},
-    {field: 'question', filter: true, cellStyle: {wordBreak: "normal"}},
-    {field: 'answer', filter: false, cellStyle: {wordBreak: "normal"}}
+    { field: 'id', filter: true, type: 'numberColumn', maxWidth: 140, cellStyle: { wordBreak: "normal" } },
+    { field: 'question', filter: true, cellStyle: { wordBreak: "normal" } },
+    { field: 'answer', filter: false, cellStyle: { wordBreak: "normal" } }
   ]);
 
-  const defaultColDef = useMemo(()=> ({
+  const defaultColDef = useMemo(() => ({
     flex: 1,
     sortable: true,
     wrapText: true,
@@ -68,7 +68,7 @@ const Edit = () => {
     xlsx(data, settings);
   }, [rowData]);
 
-	useEffect(() => {
+  useEffect(() => {
     (async () => {
       const exchanges = screenState.exchanges;
       setRowData(exchanges);
@@ -90,7 +90,7 @@ const Edit = () => {
             throw Error("file reading error");
           } else {
             const data = e.target.result;
-            const readData = excel.read(data, { type: 'binary'});
+            const readData = excel.read(data, { type: 'binary' });
             const wsname = readData.SheetNames[0];
             const ws = readData.Sheets[wsname];
             const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
@@ -98,7 +98,7 @@ const Edit = () => {
               // @ts-ignore
               const jsonData = transformToJson(dataParse, screenState.currentClassObject?.courseId);
               (async () => {
-                const res = await updateQuestions(jsonData);
+                const res = await updateExchanges(jsonData);
                 if (res.status !== 200) {
                   setError(true);
                   setErrorMsg("Unable to save questions/answers at the moment, please try again")
@@ -140,13 +140,13 @@ const Edit = () => {
   }, [file, error, errorMsg]);
 
 
-    return (
-      <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
+  return (
+    <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme}>
       <CssBaseline />
       {isMobileView ? <Alert severity="warning">
         <AlertTitle>Warning</AlertTitle>
         <strong>Switch to desktop view for best results</strong>
-      </Alert> : <div/>}
+      </Alert> : <div />}
       <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
           <Tab label="Manage Questions" />
@@ -169,17 +169,17 @@ const Edit = () => {
                   marginLeft: 0
                 }}>
                   <Box
-                      sx={{
-                        pt: 0,
-                        pb: 2
-                      }}
+                    sx={{
+                      pt: 0,
+                      pb: 2
+                    }}
                   >
                     <Divider></Divider>
                     <Typography
-                        variant="body1"
-                        align="left"
-                        color="text.secondary"
-                        maxWidth = "md"
+                      variant="body1"
+                      align="left"
+                      color="text.secondary"
+                      maxWidth="md"
                     >
                       Thank you for choosing to use QBot to handle your frequently asked questions!
                       Here you will find the latest questions and answers uploaded into the database, which you can scroll through.
@@ -190,7 +190,7 @@ const Edit = () => {
               </Grid>
 
               <Grid item>
-                <div className="ag-theme-alpine" style={{width: 1000, height: 500, wordBreak:"keep-all"}}>
+                <div className="ag-theme-alpine" style={{ width: 1000, height: 500, wordBreak: "keep-all" }}>
                   <AgGridReact
                     rowData={rowData} // Row Data for Rows
                     // @ts-ignore
@@ -198,35 +198,35 @@ const Edit = () => {
                     defaultColDef={defaultColDef} // Default Column Properties
                     animateRows={true} // Optional - set to 'true' to have rows animate when sorted
                     rowSelection='multiple' // Options - allows click selection of rows
-                    />
+                  />
                 </div>
               </Grid>
             </Grid>
           </Box>
 
 
-            <Grid container direction="column" alignItems="center" >
-              <Grid item>
-                <Stack spacing={4} direction="row">
-                  <Button variant="contained" onClick={() => { downloadExcel(); }}>Download</Button>
-                  <Button variant="outlined" component="label"><input type="file" hidden onChange={onFileChange}/>Upload</Button>
-                </Stack>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6" align="center" color="red" paragraph>
-                  {errorMsg}
-                </Typography>
-              </Grid>
+          <Grid container direction="column" alignItems="center" >
+            <Grid item>
+              <Stack spacing={4} direction="row">
+                <Button variant="contained" onClick={() => { downloadExcel(); }}>Download</Button>
+                <Button variant="outlined" component="label"><input type="file" hidden onChange={onFileChange} />Upload</Button>
+              </Stack>
             </Grid>
+            <Grid item>
+              <Typography variant="h6" align="center" color="red" paragraph>
+                {errorMsg}
+              </Typography>
+            </Grid>
+          </Grid>
 
 
 
           <Box
-              sx={{
-                bgcolor: 'background.paper',
-                pt: 0,
-                pb: 2,
-              }}
+            sx={{
+              bgcolor: 'background.paper',
+              pt: 0,
+              pb: 2,
+            }}
           >
             <Grid container direction="column" alignItems="center" >
               <Grid item>
@@ -234,25 +234,25 @@ const Edit = () => {
                   marginLeft: 0
                 }}>
                   <Typography
-                      variant="h5"
-                      align="center"
-                      color="text.secondary"
+                    variant="h5"
+                    align="center"
+                    color="text.secondary"
                   >
                     Database Management Instructions:
                   </Typography>
                   <Divider></Divider>
 
                   <Box
-                      sx={{
-                        pt: 0,
-                        pb: 0
-                      }}
+                    sx={{
+                      pt: 0,
+                      pb: 0
+                    }}
                   >
                     <Typography
-                        variant="body1"
-                        align="left"
-                        color="text.secondary"
-                        maxWidth = "md"
+                      variant="body1"
+                      align="left"
+                      color="text.secondary"
+                      maxWidth="md"
                     >
                       In order to change the database of questions and answers please follow the steps below:
                       <div></div>

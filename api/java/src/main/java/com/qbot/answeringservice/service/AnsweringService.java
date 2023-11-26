@@ -42,7 +42,7 @@ public class AnsweringService {
             List<Exchange> resultExchanges = repository.findExchangesByCourseId(courseId);
             resultCollection.setCourseId(courseId);
             resultCollection.setExchanges(resultExchanges);
-            resultCollection.setNumOfQuestions(resultExchanges.size());
+            resultCollection.setNumOfExchanges(resultExchanges.size());
         } else {
             resultCollection.setExchanges(Collections.emptyList());
         }
@@ -51,7 +51,7 @@ public class AnsweringService {
 
     @Deprecated
     public boolean overwriteAllExchanges(ExchangeCollection exchanges) {
-        if (exchanges.getNumOfQuestions() == 0) {
+        if (exchanges.getNumOfExchanges() == 0) {
             return true;
         }
         try {
@@ -65,7 +65,7 @@ public class AnsweringService {
     }
 
     public boolean saveExchanges(ExchangeCollection exchanges) {
-        if (exchanges.getNumOfQuestions() == 0) {
+        if (exchanges.getNumOfExchanges() == 0) {
             return true;
         }
         try {

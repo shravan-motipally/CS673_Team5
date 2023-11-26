@@ -89,8 +89,8 @@ const ChatContainer = ({ questions }: { questions: Array<Exchange> }) => {
   }, [screenState]);
 
   const helloMsg = useMemo(() => {
-    return allQuestions.length === 0 ? HELLO_MSG_COURSE_NOT_SET_UP : HELLO_MSG;
-  }, [allQuestions]);
+    return allExchanges.length === 0 ? HELLO_MSG_COURSE_NOT_SET_UP : HELLO_MSG;
+  }, [allExchanges]);
 
   useEffect(() => {
     if (messages.length === 0 && starting) {
@@ -231,8 +231,8 @@ const ChatContainer = ({ questions }: { questions: Array<Exchange> }) => {
   const drawerWidth = 480;
 
   const questionMenuItems = useMemo(() => {
-    if (allQuestions.length !== 0) {
-      return allQuestions.map((question, index) => (
+    if (allExchanges.length !== 0) {
+      return allExchanges.map((exchange, index) => (
         <>
           <Button
             fullWidth
@@ -326,7 +326,7 @@ const ChatContainer = ({ questions }: { questions: Array<Exchange> }) => {
                             askQuestion(e);
                           }
                         }}
-                        onMouseDown={() => {}}
+                        onMouseDown={() => { }}
                         edge="end"
                       >
                         {!loading ? <SendIcon /> : <CircularProgress />}
