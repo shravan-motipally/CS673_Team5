@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo, useCallback, ChangeEvent, useContext } from 'react';
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
 import { spreadSheetData, settings, transformToJson } from "../utils/ExcelUtils";
 import * as excel from "xlsx";
-import { getAllQnA, updateExchanges } from "../api/ExchangeApi";
+import { updateExchanges } from "../api/ExchangeApi";
 import { darkTheme, lightTheme } from "../utils/Themes";
 import { ScreenContext } from "../App";
 import Divider from "@mui/material/Divider";

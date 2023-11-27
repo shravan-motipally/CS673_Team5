@@ -6,8 +6,6 @@ import AppAppBar from "./modules/views/AppAppBar";
 import withRoot from "./modules/withRoot";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
-  getAllCoursesForSelection,
-  getAllQnA,
   getAllExchangesForCourse,
 } from "../../api/ExchangeApi";
 import { ScreenContext } from "../../App";
@@ -24,6 +22,7 @@ import { darkTheme, lightTheme } from "../../utils/Themes";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { getGenerationBackendHealth } from "../../api/HealthCheckApi";
+import { getAllCoursesForSelection } from "../../api/CourseApi";
 
 export interface Course {
   courseId: string;

@@ -9,12 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  bulkUploadCourses,
-  createNewCourse,
-  deleteCourse,
-  getAllCoursesForAdministration,
-} from "../../api/ExchangeApi";
+import { bulkUploadCourses, createNewCourse, deleteCourse, getAllCoursesForAdministration,} from "../../api/CourseApi";
 import {
   Alert,
   alpha,

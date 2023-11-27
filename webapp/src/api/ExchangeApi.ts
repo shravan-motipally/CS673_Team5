@@ -3,30 +3,17 @@ import { Exchange } from "../screens/Edit";
 import * as qna from "@tensorflow-models/qna";
 import { apiToken, APPLICATION_JSON } from "../utils/StringConstants";
 import {
-  addNewCourseUrl,
-  addNewUserUrl,
-  bulkUploadCoursesUrl,
-  bulkUploadUsersUrl,
-  deleteCourseUrl,
   deleteDocumentUrl,
-  deleteUserUrl,
-  getAllCoursesForAdministrationUrl,
-  getAllCoursesUrl,
   getAllDocumentsForCourseId,
   getAllQnAForCourseUrl,
   getAllQnAUrl,
-  getAllUsersUrl,
-  loginUrl,
   SEMANTIC_SIMILARITY_URL,
   updateExchangesForCourseIdUrl,
 } from "../utils/Urls";
-import { ExcelJsonCourses, ExcelJsonExchanges, ExcelJsonUsers } from "../utils/ExcelUtils";
-import { CourseList } from "../components/onepirate/Home";
-import { CourseDoc } from "../screens/tabs/ClassesTable";
+import { ExcelJsonExchanges } from "../utils/ExcelUtils";
 import { DocumentList } from "../screens/tabs/DocumentsTable";
-import { UserDoc } from "../screens/tabs/UsersTable";
 
-export const getAllQnA = async () => {
+export const getAllExchanges = async () => {
   try {
     const res = await axios({
       timeout: 300000,
@@ -60,57 +47,6 @@ export const getAllExchangesForCourse = async (courseId: string) => {
   }
 };
 
-export const getAllCoursesForSelection = async (): Promise<CourseList> => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: getAllCoursesUrl(),
-      method: "GET",
-    });
-
-    return res.data;
-  } catch (err) {
-    console.log(
-      "Backend is down or questions API returned an exception: " + err
-    );
-    return { courses: undefined };
-  }
-};
-
-export const getAllCoursesForAdministration = async (): Promise<
-  Array<CourseDoc>
-> => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: getAllCoursesForAdministrationUrl(),
-      method: "GET",
-    });
-
-    return res.data;
-  } catch (err) {
-    console.log(
-      "Backend is down or questions API returned an exception: " + err
-    );
-    return [];
-  }
-};
-
-export const getAllUsers = async (): Promise<Array<UserDoc>> => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: getAllUsersUrl(),
-      method: "GET"
-    });
-
-    return res.data;
-  } catch (err) {
-    console.log("Backend is down or questions API returned an exception: " + err)
-    return [];
-  }
-}
-
 export const getAllDocumentsForCourse = async (courseId: string): Promise<DocumentList> => {
   try {
     const res = await axios({
@@ -125,59 +61,6 @@ export const getAllDocumentsForCourse = async (courseId: string): Promise<Docume
       "Backend is down or questions API returned an exception: " + err
     );
     return { documents: undefined };
-  }
-};
-
-export const createNewCourse = async (course: Partial<CourseDoc>) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: addNewCourseUrl(),
-      method: "POST",
-      data: course,
-      headers: {
-        "Content-Type": APPLICATION_JSON,
-      },
-    });
-    return true;
-  } catch (e) {
-    console.error("Error creating course");
-    return false;
-  }
-};
-
-export const createNewUser = async (user: Partial<UserDoc>) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: addNewUserUrl(),
-      method: "POST",
-      data: user,
-      headers: {
-        'Content-Type': APPLICATION_JSON
-      }
-    })
-    return true;
-  } catch (e) {
-    console.error("Error creating user");
-    return false;
-  }
-}
-
-export const deleteCourse = async (courseId: string) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: deleteCourseUrl(courseId),
-      method: "DELETE",
-      headers: {
-        "Content-Type": APPLICATION_JSON,
-      },
-    });
-    return true;
-  } catch (e) {
-    console.error("Error deleting course");
-    return false;
   }
 };
 
@@ -198,86 +81,10 @@ export const deleteDocument = async (documentId: string) => {
   }
 };
 
-export const deleteUser = async (userId: string) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: deleteUserUrl(userId),
-      method: "DELETE",
-      headers: {
-        'Content-Type': APPLICATION_JSON
-      }
-    })
-    return true;
-  } catch (e) {
-    console.error("Error deleting user");
-    return false;
-  }
-}
-
-export const bulkUploadCourses = async (courses: ExcelJsonCourses) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: bulkUploadCoursesUrl(),
-      method: "POST",
-      data: courses,
-      headers: {
-        "Content-Type": APPLICATION_JSON,
-      },
-    });
-    if (res.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.error("Error bulk uploading courses");
-    return false;
-  }
-};
-
-export const bulkUploadUsers = async (users: ExcelJsonUsers) => {
-  try {
-    const res = await axios({
-      timeout: 300000,
-      url: bulkUploadUsersUrl(),
-      method: "POST",
-      data: users,
-      headers: {
-        'Content-Type': APPLICATION_JSON
-      }
-    })
-    if (res.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.error("Error bulk uploading courses");
-    return false;
-  }
-}
-
 export const updateExchanges = async (jsonData: ExcelJsonExchanges) => {
   const res = await axios({
     timeout: 300000,
     url: updateExchangesForCourseIdUrl(jsonData.courseId),
-    method: "POST",
-    data: jsonData,
-    headers: {
-      "Content-Type": APPLICATION_JSON,
-    },
-  });
-
-  return res;
-};
-
-export const attemptLogin = async (jsonData: {
-  username: string;
-  password: string;
-}) => {
-  const res = await axios({
-    timeout: 300000,
-    url: loginUrl(),
     method: "POST",
     data: jsonData,
     headers: {
