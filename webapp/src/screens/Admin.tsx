@@ -53,7 +53,7 @@ const Admin = () => {
             <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
               <Tabs value={tabValue} onChange={handleTabChange} centered>
                 <Tab label="Manage Classes" />
-                <Tab label="Manage Educators" />
+                <Tab label="Manage Users" />
               </Tabs>
               { tabValue === 0 ? <ClassesTable /> : <UsersTable />}
             </Box>
