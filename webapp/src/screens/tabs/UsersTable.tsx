@@ -13,9 +13,7 @@ import {
   bulkUploadUsers,
   createNewUser,
   deleteUser,
-  getAllUsers,
-  updateQuestions
-} from "../../api/QuestionAnswerApi";
+  getAllUsers} from "../../api/ExchangeApi";
 import {
   Alert,
   alpha,

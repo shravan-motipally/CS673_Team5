@@ -1,60 +1,63 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
-import {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
   bulkUploadCourses,
   createNewCourse,
   deleteCourse,
   getAllCoursesForAdministration,
-  updateQuestions
-} from "../../api/QuestionAnswerApi";
+} from "../../api/ExchangeApi";
 import {
   Alert,
   alpha,
   Checkbox,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Stack,
   TablePagination,
   TableSortLabel,
-  Tooltip
-} from '@mui/material';
-import {AlertTitle} from "@mui/lab";
+  Tooltip,
+} from "@mui/material";
+import { AlertTitle } from "@mui/lab";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { visuallyHidden } from '@mui/utils';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { visuallyHidden } from "@mui/utils";
 import Button from "@mui/material/Button";
-import BuildIcon from '@mui/icons-material/Build';
-import AddIcon from '@mui/icons-material/Add';
+import BuildIcon from "@mui/icons-material/Build";
+import AddIcon from "@mui/icons-material/Add";
 import TextField from "@mui/material/TextField";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import * as excel from "xlsx";
 import {
   courseExcelSettings,
-  coursesSpreadSheetData, transformCoursesToJson,
-  transformToJson
+  coursesSpreadSheetData,
+  transformCoursesToJson,
 } from "../../utils/ExcelUtils";
 import xlsx from "json-as-xlsx";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 
 export interface CourseDoc {
-  id: string,
-  schoolId: string,
-  departmentId: string,
-  catalogId: string,
-  name: string,
-  description: string,
-  semester: string
+  id: string;
+  schoolId: string;
+  departmentId: string;
+  catalogId: string;
+  name: string;
+  description: string;
+  semester: string;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -63,53 +66,56 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
-    maxHeight: '100px',
+    maxHeight: "100px",
     fontSize: 14,
-    textOverflow: 'ellipsis',
+    textOverflow: "ellipsis",
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
+  "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
   // hide last border
-  '&:last-child td, &:last-child th': {
+  "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
 const StyledTablePagination = styled(TablePagination)(({ theme }) => ({
-  marginLeft: 'auto',
+  marginLeft: "auto",
   ".MuiTablePagination-displayedRows": {
-    color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
+    color:
+      theme.palette.mode === "dark"
+        ? theme.palette.common.white
+        : theme.palette.common.black,
   },
   ".MuiTablePagination-selectLabel": {
-    color: theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.common.black,
+    color:
+      theme.palette.mode === "dark"
+        ? theme.palette.common.white
+        : theme.palette.common.black,
   },
 }));
 
 interface datum {
-  id: string,
-  name: string | number,
-  school: string | number,
-  department: string | number,
-  course: string | number,
-  semester: string | number,
+  id: string;
+  name: string | number;
+  school: string | number;
+  department: string | number;
+  course: string | number;
+  semester: string | number;
 }
 
-function createData(
-  id: string,
-  course: CourseDoc
-): datum {
+function createData(id: string, course: CourseDoc): datum {
   return {
     id,
     name: course.name,
     school: course.schoolId,
     department: course.departmentId,
     course: course.catalogId,
-    semester: course.semester
-  }
+    semester: course.semester,
+  };
 }
 
 interface HeadCell {
@@ -121,34 +127,34 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: 'name',
+    id: "name",
     numeric: false,
     disablePadding: true,
-    label: 'Name',
+    label: "Name",
   },
   {
-    id: 'school',
+    id: "school",
     numeric: false,
     disablePadding: false,
-    label: 'School',
+    label: "School",
   },
   {
-    id: 'department',
+    id: "department",
     numeric: false,
     disablePadding: false,
-    label: 'Department',
+    label: "Department",
   },
   {
-    id: 'course',
+    id: "course",
     numeric: true,
     disablePadding: false,
-    label: 'Course',
+    label: "Course",
   },
   {
-    id: 'semester',
+    id: "semester",
     numeric: false,
     disablePadding: false,
-    label: 'Semester',
+    label: "Semester",
   },
 ];
 
@@ -162,16 +168,16 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = 'asc' | 'desc';
+type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof datum>(
   order: Order,
-  orderBy: Key,
+  orderBy: Key
 ): (
   a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+  b: { [key in Key]: number | string }
 ) => number {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -180,7 +186,10 @@ function getComparator<Key extends keyof datum>(
 // stableSort() brings sort stability to non-modern browsers (notably IE11). If you
 // only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
 // with exampleArray.slice().sort(exampleComparator)
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+function stableSort<T>(
+  array: readonly T[],
+  comparator: (a: T, b: T) => number
+) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -194,7 +203,10 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 
 interface EnhancedTableProps {
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof datum) => void;
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: keyof datum
+  ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
@@ -202,8 +214,14 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
   const createSortHandler =
     (property: keyof datum) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
@@ -219,26 +237,26 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all classes',
+              "aria-label": "select all classes",
             }}
           />
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -257,7 +275,7 @@ interface CourseDialogProps {
 
 const isNullOrUndefined = (str: string | undefined) => {
   return str === undefined || str === null || str === "";
-}
+};
 
 const CourseDialog = (props: CourseDialogProps) => {
   const { handleClose, openNewCourseDialog, course } = props;
@@ -275,7 +293,8 @@ const CourseDialog = (props: CourseDialogProps) => {
   const [descriptionError, setDescriptionError] = useState<boolean>(false);
   const [semesterError, setSemesterError] = useState<boolean>(false);
 
-  const [newCourseCreationError, setNewCourseCreationError] = useState<boolean>(false);
+  const [newCourseCreationError, setNewCourseCreationError] =
+    useState<boolean>(false);
 
   const validateCourseFields = useCallback(() => {
     let issueFound = false;
@@ -299,17 +318,36 @@ const CourseDialog = (props: CourseDialogProps) => {
       setCatalogIdError(true);
     }
     return !issueFound;
-  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError,
-            schoolId, departmentId, catalogId, name, description, semester]);
+  }, [
+    schoolIdError,
+    departmentIdError,
+    catalogIdError,
+    nameError,
+    descriptionError,
+    semesterError,
+    schoolId,
+    departmentId,
+    catalogId,
+    name,
+    description,
+    semester,
+  ]);
 
   const resetErrorFields = useCallback(() => {
-   setDescriptionError(false);
-   setNameError(false);
-   setSchoolIdError(false);
-   setSemesterError(false);
-   setDepartmentIdError(false);
-   setCatalogIdError(false);
-  }, [schoolIdError, departmentIdError, catalogIdError, nameError, descriptionError, semesterError]);
+    setDescriptionError(false);
+    setNameError(false);
+    setSchoolIdError(false);
+    setSemesterError(false);
+    setDepartmentIdError(false);
+    setCatalogIdError(false);
+  }, [
+    schoolIdError,
+    departmentIdError,
+    catalogIdError,
+    nameError,
+    descriptionError,
+    semesterError,
+  ]);
 
   const handleAddingCourse = useCallback(() => {
     (async () => {
@@ -317,13 +355,13 @@ const CourseDialog = (props: CourseDialogProps) => {
         resetErrorFields();
         const coursePartial: Partial<CourseDoc> = {
           id: course === undefined ? undefined : course.id,
-          schoolId: schoolId ? schoolId: "",
-          departmentId: departmentId ? departmentId: "",
-          catalogId: catalogId ? catalogId: "",
-          name: name ? name: "",
-          description: description ? description: "",
-          semester: semester ? semester : ""
-        }
+          schoolId: schoolId ? schoolId : "",
+          departmentId: departmentId ? departmentId : "",
+          catalogId: catalogId ? catalogId : "",
+          name: name ? name : "",
+          description: description ? description : "",
+          semester: semester ? semester : "",
+        };
         try {
           const successful = await createNewCourse(coursePartial);
           if (!successful) {
@@ -335,39 +373,57 @@ const CourseDialog = (props: CourseDialogProps) => {
         }
       }
     })();
-  }, [course, semester, name, description, catalogId, schoolId, departmentId])
+  }, [course, semester, name, description, catalogId, schoolId, departmentId]);
 
   const openDialog = useMemo(() => openNewCourseDialog, [openNewCourseDialog]);
 
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setNameError(false);
-    setName(e.target.value);
-  }, [name, nameError]);
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNameError(false);
+      setName(e.target.value);
+    },
+    [name, nameError]
+  );
 
-  const handleSemesterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSemesterError(false);
-    setSemester(e.target.value);
-  }, [semester, semesterError]);
+  const handleSemesterChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSemesterError(false);
+      setSemester(e.target.value);
+    },
+    [semester, semesterError]
+  );
 
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescriptionError(false);
-    setDescription(e.target.value);
-  }, [catalogId, descriptionError]);
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescriptionError(false);
+      setDescription(e.target.value);
+    },
+    [catalogId, descriptionError]
+  );
 
-  const handleCatalogIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCatalogIdError(false);
-    setCatalogId(e.target.value);
-  }, [catalogId, catalogIdError]);
+  const handleCatalogIdChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCatalogIdError(false);
+      setCatalogId(e.target.value);
+    },
+    [catalogId, catalogIdError]
+  );
 
-  const handleDepartmentIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDepartmentIdError(false);
-    setDepartmentId(e.target.value);
-  }, [departmentId, departmentIdError]);
+  const handleDepartmentIdChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDepartmentIdError(false);
+      setDepartmentId(e.target.value);
+    },
+    [departmentId, departmentIdError]
+  );
 
-  const handleSchoolIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSchoolIdError(false);
-    setSchoolId(e.target.value);
-  }, [schoolId, schoolIdError]);
+  const handleSchoolIdChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSchoolIdError(false);
+      setSchoolId(e.target.value);
+    },
+    [schoolId, schoolIdError]
+  );
 
   useEffect(() => {
     if (course !== null && course !== undefined) {
@@ -389,15 +445,22 @@ const CourseDialog = (props: CourseDialogProps) => {
 
   return (
     <Dialog open={openDialog} onClose={handleClose}>
-      {newCourseCreationError ?
+      {newCourseCreationError ? (
         <Alert severity="error">
           <AlertTitle>Error</AlertTitle>
-          There was an issue creating the course — <strong>Cancel</strong> for now please!
-        </Alert> : <div/>}
-      <DialogTitle>{course !== undefined ? "Update" : "Add"} New Course</DialogTitle>
+          There was an issue creating the course — <strong>Cancel</strong> for
+          now please!
+        </Alert>
+      ) : (
+        <div />
+      )}
+      <DialogTitle>
+        {course !== undefined ? "Update" : "Add"} New Course
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Please fill out the following fields to {course !== undefined ? "update the" : "create a new"} course.
+          Please fill out the following fields to{" "}
+          {course !== undefined ? "update the" : "create a new"} course.
         </DialogContentText>
         <TextField
           autoFocus
@@ -406,10 +469,12 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="Semester"
           fullWidth
           variant="standard"
-          value={semester ?? ''}
+          value={semester ?? ""}
           onChange={handleSemesterChange}
           error={semesterError}
-          helperText={"Enter a semester in (Fall|Spring|Summer) YYYY format, ex: Fall 2023"}
+          helperText={
+            "Enter a semester in (Fall|Spring|Summer) YYYY format, ex: Fall 2023"
+          }
         />
         <TextField
           autoFocus
@@ -418,7 +483,7 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="School"
           fullWidth
           variant="standard"
-          value={schoolId ?? ''}
+          value={schoolId ?? ""}
           onChange={handleSchoolIdChange}
           error={schoolIdError}
           helperText={"Enter school of the course. Ex: MET"}
@@ -430,7 +495,7 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="Department"
           fullWidth
           variant="standard"
-          value={departmentId ?? ''}
+          value={departmentId ?? ""}
           onChange={handleDepartmentIdChange}
           error={departmentIdError}
           helperText={"Enter departmentId of the course. Ex: CS "}
@@ -442,7 +507,7 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="Course Number"
           fullWidth
           variant="standard"
-          value={catalogId ?? ''}
+          value={catalogId ?? ""}
           onChange={handleCatalogIdChange}
           error={catalogIdError}
           helperText={"Enter the course number of the course. Ex: 633"}
@@ -454,7 +519,7 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="Course Name"
           fullWidth
           variant="standard"
-          value={name ?? ''}
+          value={name ?? ""}
           onChange={handleNameChange}
           error={nameError}
           helperText={"Enter name of the course. Ex: Software Engineering"}
@@ -466,7 +531,7 @@ const CourseDialog = (props: CourseDialogProps) => {
           // label="Course Description"
           fullWidth
           variant="standard"
-          value={description ?? ''}
+          value={description ?? ""}
           onChange={handleDescriptionChange}
           error={descriptionError}
           helperText={"Enter a detailed description of the course."}
@@ -474,11 +539,13 @@ const CourseDialog = (props: CourseDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleAddingCourse}>{course !== undefined ? "Update" : "Add"}</Button>
+        <Button onClick={handleAddingCourse}>
+          {course !== undefined ? "Update" : "Add"}
+        </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default function ClassesTable() {
   const [classes, setClasses] = useState<CourseDoc[]>([]);
@@ -487,10 +554,11 @@ export default function ClassesTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof datum>('name');
+  const [order, setOrder] = React.useState<Order>("asc");
+  const [orderBy, setOrderBy] = React.useState<keyof datum>("name");
 
-  const [openNewCourseDialog, setOpenNewCourseDialog] = useState<boolean>(false);
+  const [openNewCourseDialog, setOpenNewCourseDialog] =
+    useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<CourseDoc | undefined>();
   const [file, setFile] = useState<File>();
@@ -500,10 +568,10 @@ export default function ClassesTable() {
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof datum,
+    property: keyof datum
   ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -535,34 +603,37 @@ export default function ClassesTable() {
 
   const handleUpdation = useCallback(() => {
     if (selected.length === 1) {
-      const course = classes.find(course => course.id === selected[0]);
+      const course = classes.find((course) => course.id === selected[0]);
       setSelectedCourse(course);
       setOpenNewCourseDialog(true);
     }
-  }, [selected])
-
-  const handleCellSelection = useCallback((id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    setSelected(newSelected);
-    if (newSelected.length === 0) {
-      // none selected
-      setSelectedCourse(undefined);
-    }
   }, [selected]);
+
+  const handleCellSelection = useCallback(
+    (id: string) => {
+      const selectedIndex = selected.indexOf(id);
+      let newSelected: readonly string[] = [];
+
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, id);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1)
+        );
+      }
+      setSelected(newSelected);
+      if (newSelected.length === 0) {
+        // none selected
+        setSelectedCourse(undefined);
+      }
+    },
+    [selected]
+  );
 
   useEffect(() => {
     (async () => {
@@ -581,22 +652,31 @@ export default function ClassesTable() {
   const rows: datum[] = useMemo(() => {
     if (!loading) {
       return classes.map((course) => {
-        return createData(course.id, course)
-      })
+        return createData(course.id, course);
+      });
     }
     return [];
   }, [classes, loading]);
 
-  const handleChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, [page]);
+  const handleChangePage = useCallback(
+    (event: unknown, newPage: number) => {
+      setPage(newPage);
+    },
+    [page]
+  );
 
-  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  }, [classes]);
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    },
+    [classes]
+  );
 
-  const isSelected = useCallback((id: string) => selected.indexOf(id) !== -1, [selected]);
+  const isSelected = useCallback(
+    (id: string) => selected.indexOf(id) !== -1,
+    [selected]
+  );
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = useMemo(() => {
@@ -607,13 +687,13 @@ export default function ClassesTable() {
     () =>
       stableSort<datum>(rows, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
+        page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage, rows],
+    [order, orderBy, page, rowsPerPage, rows]
   );
 
   const numSelected = useMemo(() => {
-    return selected.length
+    return selected.length;
   }, [selected]);
 
   const handleClose = useCallback(() => {
@@ -625,28 +705,38 @@ export default function ClassesTable() {
     setOpenNewCourseDialog(true);
   }, []);
 
-  const handleBulkUpload = useCallback(() => {
+  const handleBulkUpload = useCallback(() => {}, [file]);
 
-  }, [file]);
+  const onFileChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      event.preventDefault();
 
-  const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-
-    setError(false);
-    setErrorMsg("");
-    if (event !== null && event.target.files !== null && event.target.files[0] !== undefined) {
-      setFile(event.target.files[0]);
-    } else {
-      setError(true);
-      setErrorMsg("Invalid file chosen.  Please try again!")
-    }
-  }, [file, error, errorMsg]);
+      setError(false);
+      setErrorMsg("");
+      if (
+        event !== null &&
+        event.target.files !== null &&
+        event.target.files[0] !== undefined
+      ) {
+        setFile(event.target.files[0]);
+      } else {
+        setError(true);
+        setErrorMsg("Invalid file chosen.  Please try again!");
+      }
+    },
+    [file, error, errorMsg]
+  );
 
   useEffect(() => {
     if (file !== null && file !== undefined) {
-      if (file.type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      if (
+        file.type !==
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      ) {
         setError(true);
-        setErrorMsg("Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now.");
+        setErrorMsg(
+          "Invalid file type given to upload.  Excel files with .xlsx are only accepted as of now."
+        );
         return;
       }
 
@@ -657,7 +747,7 @@ export default function ClassesTable() {
             throw Error("file reading error");
           } else {
             const data = e.target.result;
-            const readData = excel.read(data, { type: 'binary'});
+            const readData = excel.read(data, { type: "binary" });
             const wsname = readData.SheetNames[0];
             const ws = readData.Sheets[wsname];
 
@@ -668,17 +758,19 @@ export default function ClassesTable() {
               const success = await bulkUploadCourses(jsonData);
               if (!success) {
                 setError(true);
-                setErrorMsg("Unable to save courses at the moment, please try again later")
+                setErrorMsg(
+                  "Unable to save courses at the moment, please try again later"
+                );
               }
               setClasses(jsonData.courses);
             })();
           }
-        }
+        };
         reader.onerror = (e) => {
           console.error("Error reading excel file");
           setErrorMsg("Error reading excel file");
           setError(true);
-        }
+        };
         reader.readAsBinaryString(file);
       } catch (e) {
         console.error("Error reading excel file");
@@ -696,34 +788,44 @@ export default function ClassesTable() {
   }, [classes]);
 
   return (
-    <Box sx={{ width:"100% "}}>
-
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: "100% " }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
-          {getClassesError || deletionError ?
+          {getClassesError || deletionError ? (
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
-              There was an issue {getClassesError ? "pulling courses" : "deleting courses"} — <strong>Refresh your page!</strong>
-            </Alert> : <div/>}
-          {error ?
+              There was an issue{" "}
+              {getClassesError ? "pulling courses" : "deleting courses"} —{" "}
+              <strong>Refresh your page!</strong>
+            </Alert>
+          ) : (
+            <div />
+          )}
+          {error ? (
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
-              There was an issue uploading your classes — <strong>{errorMsg}</strong>
-            </Alert> : <div/>
-          }
+              There was an issue uploading your classes —{" "}
+              <strong>{errorMsg}</strong>
+            </Alert>
+          ) : (
+            <div />
+          )}
           <Toolbar
             sx={{
               pl: { sm: 2 },
               pr: { xs: 1, sm: 1 },
               ...(numSelected > 0 && {
                 bgcolor: (theme) =>
-                  alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                  alpha(
+                    theme.palette.primary.main,
+                    theme.palette.action.activatedOpacity
+                  ),
               }),
             }}
           >
             {numSelected > 0 ? (
               <Typography
-                sx={{ flex: '1 1 100%' }}
+                sx={{ flex: "1 1 100%" }}
                 color="inherit"
                 variant="subtitle1"
                 component="div"
@@ -732,7 +834,7 @@ export default function ClassesTable() {
               </Typography>
             ) : (
               <Typography
-                sx={{ flex: '1 1 100%' }}
+                sx={{ flex: "1 1 100%" }}
                 variant="h6"
                 id="tableTitle"
                 component="div"
@@ -742,12 +844,15 @@ export default function ClassesTable() {
             )}
             {numSelected > 0 ? (
               <>
-               {numSelected === 1 ?
-                 <Tooltip title="Update">
-                  <IconButton onClick={handleUpdation}>
-                    <BuildIcon />
-                  </IconButton>
-                </Tooltip>: <div/>}
+                {numSelected === 1 ? (
+                  <Tooltip title="Update">
+                    <IconButton onClick={handleUpdation}>
+                      <BuildIcon />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <div />
+                )}
                 <Tooltip title="Delete">
                   <IconButton onClick={handleDeletion}>
                     <DeleteIcon />
@@ -757,11 +862,29 @@ export default function ClassesTable() {
             ) : (
               <>
                 <Stack direction="row" spacing={2}>
-                  <Button size="small" onClick={handleNewCourse} startIcon={<AddIcon />}>Course</Button>
-                  <Button size="small" component="label" onClick={handleBulkUpload} startIcon={<UploadFileIcon />}>
-                    <input type="file" hidden onChange={onFileChange}/>Upload
+                  <Button
+                    size="small"
+                    onClick={handleNewCourse}
+                    startIcon={<AddIcon />}
+                  >
+                    Course
                   </Button>
-                  <Button size="small" onClick={downloadExcel} startIcon={<DownloadIcon />}>Download</Button>
+                  <Button
+                    size="small"
+                    component="label"
+                    onClick={handleBulkUpload}
+                    startIcon={<UploadFileIcon />}
+                  >
+                    <input type="file" hidden onChange={onFileChange} />
+                    Upload
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={downloadExcel}
+                    startIcon={<DownloadIcon />}
+                  >
+                    Download
+                  </Button>
                 </Stack>
               </>
             )}
@@ -789,14 +912,14 @@ export default function ClassesTable() {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
+                    sx={{ cursor: "pointer" }}
                   >
                     <StyledTableCell padding="checkbox">
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
-                          'aria-labelledby': labelId,
+                          "aria-labelledby": labelId,
                         }}
                       />
                     </StyledTableCell>
@@ -808,10 +931,18 @@ export default function ClassesTable() {
                     >
                       {row.name}
                     </StyledTableCell>
-                    <StyledTableCell align="right">{row.school}</StyledTableCell>
-                    <StyledTableCell align="right">{row.department}</StyledTableCell>
-                    <StyledTableCell align="right">{row.course}</StyledTableCell>
-                    <StyledTableCell align="right">{row.semester}</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.school}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.department}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.course}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.semester}
+                    </StyledTableCell>
                   </TableRow>
                 );
               })}
@@ -836,8 +967,11 @@ export default function ClassesTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <CourseDialog openNewCourseDialog={openNewCourseDialog} handleClose={handleClose} course={selectedCourse}/>
-
+      <CourseDialog
+        openNewCourseDialog={openNewCourseDialog}
+        handleClose={handleClose}
+        course={selectedCourse}
+      />
     </Box>
   );
 }

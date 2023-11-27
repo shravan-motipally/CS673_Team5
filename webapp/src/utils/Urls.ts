@@ -22,8 +22,8 @@ export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
 export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
 export const getAllDocumentsForCourseId = (courseId: string) => ANSWERING_SVC_URL + "/documents?courseId=" + courseId
 export const getAllUsersUrl = () => ANSWERING_SVC_URL + "/users";
-export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
-export const updateQuestionsForCourseIdUrl = (courseId: string) => ANSWERING_SVC_URL + "/exchanges/" + courseId;
+export const updateExchangesUrl = () => ANSWERING_SVC_URL + "/exchanges";
+export const updateExchangesForCourseIdUrl = (courseId: string) => ANSWERING_SVC_URL + "/exchanges/" + courseId;
 export const uploadDocumentsUrl = () => ANSWERING_SVC_URL + "/documents";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const addNewUserUrl = () => ANSWERING_SVC_URL + "/courses";
