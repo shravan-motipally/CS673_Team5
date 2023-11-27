@@ -21,13 +21,13 @@ export const getAllQnAForCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "
 export const getAllCoursesUrl = () => ANSWERING_SVC_URL + "/courses";
 export const getAllCoursesForAdministrationUrl = () => ANSWERING_SVC_URL + "/courses/all";
 export const getAllDocumentsForCourseId = (courseId: string) => ANSWERING_SVC_URL + "/documents?courseId=" + courseId
-export const updateQuestionsUrl = () => ANSWERING_SVC_URL + "/exchanges";
-export const updateQuestionsForCourseIdUrl = (courseId: string) => ANSWERING_SVC_URL + "/exchanges/" + courseId;
+export const updateExchangesUrl = () => ANSWERING_SVC_URL + "/exchanges";
+export const updateExchangesForCourseIdUrl = (courseId: string) => ANSWERING_SVC_URL + "/exchanges/" + courseId;
 export const uploadDocumentsUrl = () => ANSWERING_SVC_URL + "/documents";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
 export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;
-export const bulkUploadCoursesUrl = ()  =>  ANSWERING_SVC_URL + "/courses/all"
+export const bulkUploadCoursesUrl = () => ANSWERING_SVC_URL + "/courses/all"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
 export const generationHealthUrl = () => DOCUMENT_RETRIEVAL_SVC_URL + "/health";

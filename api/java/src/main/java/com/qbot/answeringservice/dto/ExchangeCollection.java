@@ -14,12 +14,12 @@ import java.util.List;
 public class ExchangeCollection {
 
     private String courseId;
-    private long numOfQuestions;
+    private long numOfExchanges;
     private List<Exchange> exchanges;
 
-    public ExchangeCollection(String courseId, long numOfQuestions, List<Exchange> exchanges) {
+    public ExchangeCollection(String courseId, long numOfExchanges, List<Exchange> exchanges) {
         this.courseId = courseId;
-        this.numOfQuestions = numOfQuestions;
+        this.numOfExchanges = numOfExchanges;
         this.exchanges = exchanges;
     }
 }
