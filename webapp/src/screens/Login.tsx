@@ -52,7 +52,7 @@ export default function Login() {
       if (isNotNullOrUndefined(details)) {
         setScreenState({
           ...screenState,
-          screen: details.roles.includes("Account Administrator") ? 'admin' : 'manage',
+          screen: details.roles.includes("Administrator") ? 'admin' : 'manage',
           isAuthed: true,
           photoUrl: details.photoUrl,
           roles: details.roles,
@@ -67,7 +67,7 @@ export default function Login() {
 
   useEffect(() => {
     if (screenState.isAuthed) {
-      if (screenState.roles.includes('Account Administrator')) {
+      if (screenState.roles.includes('Administrator')) {
         setScreenState({
           ...screenState,
           screen: 'admin',

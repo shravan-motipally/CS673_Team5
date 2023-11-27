@@ -63,8 +63,13 @@ public class UserService {
         }
     }
 
-    public List<User> findAllUsers() {
-        return userRepo.findAll();
+    public List<UserResponse> findAllUsers() {
+        List<UserResponse> responseList = new ArrayList<>();
+        for (User user : userRepo.findAll()) {
+            Login userLogin = loginService.getLoginById(user.getLoginId());
+            responseList.add(UserResponse.convertFromEntity(user, userLogin));
+        }
+        return responseList;
     }
 
     public User findByLoginId(String loginId) {

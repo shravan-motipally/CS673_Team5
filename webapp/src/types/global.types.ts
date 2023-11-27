@@ -1,5 +1,5 @@
-import {Exchange} from "../screens/Edit";
-import {Course} from "../components/onepirate/Home";
+import { Exchange } from "../screens/Edit";
+import { Course } from "../components/onepirate/Home";
 
 export interface ScreenContextType {
 	screenState: ScreenState,
@@ -8,7 +8,7 @@ export interface ScreenContextType {
 
 type GenerativeModel = string;
 
-export type Role = 'Educator' | 'Account Administrator';
+export type Role = 'Educator' | 'Administrator';
 
 export interface ScreenState {
 	screen: string,

@@ -1,7 +1,6 @@
-import {Exchange} from "../screens/Edit";
-import {Course} from "../components/onepirate/Home";
-import {CourseDoc} from "../screens/tabs/ClassesTable";
-import {UserDoc} from "../screens/tabs/UsersTable";
+import { Exchange } from "../screens/Edit";
+import { CourseDoc } from "../screens/tabs/ClassesTable";
+import { UserDoc } from "../screens/tabs/UsersTable";
 
 export const spreadSheetData = [
   {
@@ -52,7 +51,7 @@ export interface ExcelJsonExchanges {
   exchanges: Array<Exchange>;
 }
 
-export const transformToJson: (
+export const transformExchangesToJson: (
   stringArr: string[][],
   courseId: string
 ) => ExcelJsonExchanges = (stringArr: string[][], courseId) => {
@@ -123,15 +122,15 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
     console.error("Invalid array given");
     throw Error("Invalid array given");
   }
-  const numUsers = stringArr.length -1;
+  const numUsers = stringArr.length - 1;
   const user: Array<UserDoc> = [];
   stringArr.forEach((questionArray: string[], index) => {
     if (index !== 0 && questionArray.length === 5) {
       user.push({
         firstName: questionArray[0],
         lastName: questionArray[1],
-        roleIds: questionArray[2],
-        courseIds: questionArray[3],
+        roleNames: questionArray[2].split(','),
+        courseIds: questionArray[3].split(','),
         photoUrl: questionArray[4],
         id: "",
         loginId: ""

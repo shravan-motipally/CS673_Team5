@@ -46,7 +46,7 @@ public class UserController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         try {
             return ResponseEntity.ok(userService.findAllUsers());
         } catch (Exception e) {

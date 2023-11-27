@@ -26,12 +26,12 @@ export const updateExchangesUrl = () => ANSWERING_SVC_URL + "/exchanges";
 export const updateExchangesForCourseIdUrl = (courseId: string) => ANSWERING_SVC_URL + "/exchanges/" + courseId;
 export const uploadDocumentsUrl = () => ANSWERING_SVC_URL + "/documents";
 export const addNewCourseUrl = () => ANSWERING_SVC_URL + "/courses";
-export const addNewUserUrl = () => ANSWERING_SVC_URL + "/courses";
+export const addNewUserUrl = () => ANSWERING_SVC_URL + "/users";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
 export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;
 export const deleteUserUrl = (educatorId: string) => ANSWERING_SVC_URL + "/users/" + educatorId;
-export const bulkUploadCoursesUrl = ()  =>  ANSWERING_SVC_URL + "/courses/all"
-export const bulkUploadUsersUrl = ()  =>  ANSWERING_SVC_URL + "/users"
+export const bulkUploadCoursesUrl = () => ANSWERING_SVC_URL + "/courses/all"
+export const bulkUpdateUsersUrl = () => ANSWERING_SVC_URL + "/users/bulkupdate"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";
 export const generationHealthUrl = () => DOCUMENT_RETRIEVAL_SVC_URL + "/health";

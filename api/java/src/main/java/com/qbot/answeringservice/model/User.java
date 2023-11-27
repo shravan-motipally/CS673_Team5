@@ -1,6 +1,8 @@
 package com.qbot.answeringservice.model;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.mongojack.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,6 +31,8 @@ public class User {
 
     public static User fromUserRequest(UserRequest request) {
         return new User(request.getId(), request.getPhotoUrl(), null, request.getEmailAddress(), request.getFirstName(),
-                request.getLastName(), request.getRoleIds(), request.getCourseIds());
+                request.getLastName(),
+                request.getRoleNames().stream().map(Role::getRoleIdByName).collect(Collectors.toList()),
+                request.getCourseIds());
     }
 }

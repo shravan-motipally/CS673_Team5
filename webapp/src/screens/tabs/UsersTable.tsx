@@ -46,10 +46,22 @@ export interface UserDoc {
   loginId: string,
   firstName: string,
   lastName: string,
-  roleIds: string,
-  courseIds: string
+  roleNames: string[],
+  courseIds: string[],
   photoUrl: string,
 }
+
+export interface UserRequest {
+  id: string,
+  loginId: string,
+  firstName: string,
+  lastName: string,
+  roleNames: string[],
+  courseIds: string[],
+  photoUrl: string,
+}
+
+// export interface LoginRequest 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -88,7 +100,7 @@ interface datum {
   login: string | number,
   firstName: string | number,
   lastName: string | number,
-  roleIds: string | number,
+  roleNames: string | number,
   courseIds: string | number,
   photo: string | number,
 
@@ -103,8 +115,8 @@ function createData(
     login: user.loginId,
     firstName: user.firstName,
     lastName: user.lastName,
-    roleIds: user.roleIds,
-    courseIds: user.courseIds,
+    roleNames: user.roleNames ? user.roleNames.join(',') : "",
+    courseIds: user.courseIds ? user.courseIds.join(',') : "",
     photo: user.photoUrl
   }
 }
@@ -130,10 +142,10 @@ const headCells: readonly HeadCell[] = [
     label: 'Last Name',
   },
   {
-    id: 'roleIds',
+    id: 'roleNames',
     numeric: false,
     disablePadding: false,
-    label: 'Role Ids',
+    label: 'Roles',
   },
   {
     id: 'courseIds',
@@ -262,33 +274,35 @@ const UserDialog = (props: UserDialogProps) => {
   const [loginId, setLoginId] = useState<string>();
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastLastName] = useState<string>();
-  const [roleIds, setRoleIds] = useState<string>();
+  const [roleNames, setRoleNames] = useState<string>();
   const [courseIds, setCourseIds] = useState<string>();
 
   const [photoIdError, setPhotoIdError] = useState<boolean>(false);
   const [loginIdError, setLoginIdError] = useState<boolean>(false);
   const [firstNameError, setFirstNameError] = useState<boolean>(false);
   const [lastNameError, setLastNameError] = useState<boolean>(false);
-  const [roleIdsError, setRoleIdsError] = useState<boolean>(false);
+  const [roleNamesError, setRoleNamesError] = useState<boolean>(false);
   const [courseIdsError, setCourseIdsError] = useState<boolean>(false);
 
   const [newUserCreationError, setNewUserCreationError] = useState<boolean>(false);
 
-  const validateUsersFields = useCallback(() => {
+  const validateUserFields = useCallback(() => {
     let issueFound = false;
-    if (isNullOrUndefined(roleIds)) {
+    if (isNullOrUndefined(roleNames)) {
       issueFound = true;
-      setRoleIdsError(true);
+      setRoleNamesError(true);
     } else if (isNullOrUndefined(lastName)) {
       issueFound = true;
       setLastNameError(true);
-    } else if (isNullOrUndefined(photoId)) {
-      issueFound = true;
-      setPhotoIdError(true);
-    } else if (isNullOrUndefined(courseIds)) {
-      issueFound = true;
-      setCourseIdsError(true);
-    } else if (isNullOrUndefined(loginId)) {
+    } 
+    // else if (isNullOrUndefined(photoId)) {
+    //   issueFound = true;
+    //   setPhotoIdError(true);
+    // } else if (isNullOrUndefined(courseIds)) {
+    //   issueFound = true;
+    //   setCourseIdsError(true);
+    // } 
+    else if (isNullOrUndefined(loginId)) {
       issueFound = true;
       setLoginIdError(true);
     } else if (isNullOrUndefined(firstName)) {
@@ -296,21 +310,21 @@ const UserDialog = (props: UserDialogProps) => {
       setFirstNameError(true);
     }
     return !issueFound;
-  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleIdsError, courseIdsError,
-    photoId, loginId, firstName, lastName, roleIds, courseIds]);
+  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleNamesError, courseIdsError,
+    photoId, loginId, firstName, lastName, roleNames, courseIds]);
 
   const resetErrorFields = useCallback(() => {
-    setRoleIdsError(false);
+    setRoleNamesError(false);
     setLastNameError(false);
     setPhotoIdError(false);
     setCourseIdsError(false);
     setLoginIdError(false);
     setFirstNameError(false);
-  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleIdsError, courseIdsError]);
+  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleNamesError, courseIdsError]);
 
   const handleAddingUser = useCallback(() => {
     (async () => {
-      if (validateUsersFields()) {
+      if (validateUserFields()) {
         resetErrorFields();
         const userPartial: Partial<UserDoc> = {
           id: user === undefined ? undefined : user.id,
@@ -318,8 +332,8 @@ const UserDialog = (props: UserDialogProps) => {
           loginId: loginId ? loginId: "",
           firstName: firstName ? firstName: "",
           lastName: lastName ? lastName: "",
-          roleIds: roleIds ? roleIds: "",
-          courseIds: courseIds ? courseIds : ""
+          roleNames: roleNames ? roleNames.split(","): [],
+          courseIds: courseIds ? courseIds.split(",") : []
         }
         try {
           const successful = await createNewUser(userPartial);
@@ -332,7 +346,7 @@ const UserDialog = (props: UserDialogProps) => {
         }
       }
     })();
-  }, [user, courseIds, lastName, roleIds, firstName, photoId, loginId])
+  }, [user, courseIds, lastName, roleNames, firstName, photoId, loginId])
 
   const openDialog = useMemo(() => openNewUserDialog, [openNewUserDialog]);
 
@@ -347,9 +361,9 @@ const UserDialog = (props: UserDialogProps) => {
   }, [courseIds, courseIdsError]);
 
   const handleRoleIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setRoleIdsError(false);
-    setRoleIds(e.target.value);
-  }, [firstName, roleIdsError]);
+    setRoleNamesError(false);
+    setRoleNames(e.target.value);
+  }, [firstName, roleNamesError]);
 
   const handleFirstNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstNameError(false);
@@ -369,15 +383,15 @@ const UserDialog = (props: UserDialogProps) => {
   useEffect(() => {
     if (user !== null && user !== undefined) {
       setLastLastName(user.lastName);
-      setCourseIds(user.courseIds);
-      setRoleIds(user.roleIds);
+      setCourseIds(user.courseIds ? user.courseIds.join(',') : "");
+      setRoleNames(user.roleNames.join(','));
       setFirstName(user.firstName);
       setLoginId(user.loginId);
       setPhotoUrl(user.photoUrl);
     } else if (user === null || user === undefined) {
       setLastLastName("");
       setCourseIds("");
-      setRoleIds("");
+      setRoleNames("");
       setFirstName("");
       setLoginId("");
       setPhotoUrl("");
@@ -391,7 +405,7 @@ const UserDialog = (props: UserDialogProps) => {
               <AlertTitle>Error</AlertTitle>
               There was an issue creating the user — <strong>Cancel</strong> for now please!
             </Alert> : <div/>}
-        <DialogTitle>{user !== undefined ? "Update" : "Add"} New User</DialogTitle>
+        <DialogTitle>{user !== undefined ? "Update" : "Add New"} User</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please fill out the following fields to {user !== undefined ? "update the" : "create a new"} user.
@@ -435,9 +449,9 @@ const UserDialog = (props: UserDialogProps) => {
               id="roleIds"
               fullWidth
               variant="standard"
-              value={roleIds ?? ''}
+              value={roleNames ?? ''}
               onChange={handleRoleIdChange}
-              error={roleIdsError}
+              error={roleNamesError}
               helperText={"Enter the user's role Ids all separated by commas."}
           />
           <TextField
@@ -802,7 +816,7 @@ export default function UsersTable() {
                           {row.firstName}
                         </StyledTableCell>
                         <StyledTableCell align="right">{row.lastName}</StyledTableCell>
-                        <StyledTableCell align="right">{row.roleIds}</StyledTableCell>
+                        <StyledTableCell align="right">{row.roleNames}</StyledTableCell>
                         <StyledTableCell align="right">{row.courseIds}</StyledTableCell>
                         <StyledTableCell align="right">{row.photo}</StyledTableCell>
                       </TableRow>

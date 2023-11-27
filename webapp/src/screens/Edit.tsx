@@ -11,7 +11,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
-import { spreadSheetData, settings, transformToJson } from "../utils/ExcelUtils";
+import { spreadSheetData, settings, transformExchangesToJson } from "../utils/ExcelUtils";
 import * as excel from "xlsx";
 import { updateExchanges } from "../api/ExchangeApi";
 import { darkTheme, lightTheme } from "../utils/Themes";
@@ -96,7 +96,7 @@ const Edit = () => {
             const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
             if (screenState.currentClassObject !== null && screenState.currentClassObject.courseId) {
               // @ts-ignore
-              const jsonData = transformToJson(dataParse, screenState.currentClassObject?.courseId);
+              const jsonData = transformExchangesToJson(dataParse, screenState.currentClassObject?.courseId);
               (async () => {
                 const res = await updateExchanges(jsonData);
                 if (res.status !== 200) {

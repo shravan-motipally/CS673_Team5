@@ -42,6 +42,10 @@ public class LoginService {
         return createLogin(userName, pwService.generateUnsaltedPassword());
     }
 
+    public Login getLoginById(String loginId) {
+        return loginRepository.findById(loginId).orElse(null);
+    }
+
     public boolean checkLogin(LoginDetail detail) {
         if (detail != null) {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());

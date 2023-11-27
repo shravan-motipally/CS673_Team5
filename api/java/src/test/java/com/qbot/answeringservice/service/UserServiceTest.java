@@ -123,7 +123,9 @@ public class UserServiceTest {
     @Test
     public void testFindAll() {
         Mockito.when(userRepo.findAll()).thenReturn(getAdminUsers());
-        List<User> foundUsers = userService.findAllUsers();
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString()))
+                .thenReturn(new Login(null, "testUser", "testPW"));
+        List<UserResponse> foundUsers = userService.findAllUsers();
 
         Assertions.assertFalse(foundUsers.isEmpty());
     }
@@ -231,9 +233,11 @@ public class UserServiceTest {
     }
 
     private UserRequest getUserRequest() {
+        List<String> roleNames = new ArrayList<>();
+        roleNames.add("Educator");
         LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
-        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User", null,
-                null);
+        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User",
+                roleNames, null);
     }
 
     private List<User> getAdminUsers() {
@@ -246,6 +250,16 @@ public class UserServiceTest {
         adminUsers.add(testAdmin);
 
         return adminUsers;
+    }
+
+    private List<UserResponse> getUserResponses() {
+        List<UserResponse> responses = new ArrayList<>();
+        List<User> testUsers = getAdminUsers();
+        for (User user : testUsers) {
+            Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
+            responses.add(UserResponse.convertFromEntity(user, testLogin));
+        }
+        return responses;
     }
 
     private Login getTestLogin() {

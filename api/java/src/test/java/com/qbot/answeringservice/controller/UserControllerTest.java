@@ -32,7 +32,8 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() {
-        Mockito.when(userService.createUser(ArgumentMatchers.any(UserRequest.class))).thenReturn(getUserResponse());
+        Mockito.when(userService.createUser(ArgumentMatchers.any(UserRequest.class)))
+                .thenReturn(getUserResponses().get(0));
 
         ResponseEntity<UserResponse> response = userController.createUser(getUserRequest());
         Assertions.assertNotNull(response.getBody());
@@ -51,11 +52,11 @@ public class UserControllerTest {
 
     @Test
     public void testGetAllUsers() {
-        Mockito.when(userService.findAllUsers()).thenReturn(getAdminUsers());
+        Mockito.when(userService.findAllUsers()).thenReturn(getUserResponses());
 
-        ResponseEntity<List<User>> response = userController.getAllUsers();
+        ResponseEntity<List<UserResponse>> response = userController.getAllUsers();
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
-        List<User> returnedUsers = response.getBody();
+        List<UserResponse> returnedUsers = response.getBody();
         Assertions.assertNotNull(returnedUsers);
         Assertions.assertFalse(returnedUsers.isEmpty());
     }
@@ -64,7 +65,7 @@ public class UserControllerTest {
     public void testGetAllUsersThrowException() {
         Mockito.when(userService.findAllUsers()).thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<List<User>> response = userController.getAllUsers();
+        ResponseEntity<List<UserResponse>> response = userController.getAllUsers();
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -188,9 +189,13 @@ public class UserControllerTest {
                 null);
     }
 
-    private UserResponse getUserResponse() {
-        User testUser = getAdminUsers().get(0);
-        Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
-        return UserResponse.convertFromEntity(testUser, testLogin);
+    private List<UserResponse> getUserResponses() {
+        List<UserResponse> responses = new ArrayList<>();
+        List<User> testUsers = getAdminUsers();
+        for (User user : testUsers) {
+            Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
+            responses.add(UserResponse.convertFromEntity(user, testLogin));
+        }
+        return responses;
     }
 }
