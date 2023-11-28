@@ -45,7 +45,8 @@ public class UserService {
         String validationResults = validateUserRequest(userRequest, false);
         if (validationResults == null || validationResults.length() == 0) {
             LoginDetail userLoginDetail = userRequest.getLoginDetail();
-            String usernameValue = userLoginDetail.getUsername() != null ? userRequest.getLoginDetail().getUsername()
+            String usernameValue = userLoginDetail.getUsername() != null && !userLoginDetail.getUsername().isBlank()
+                    ? userRequest.getLoginDetail().getUsername()
                     : userRequest.getEmailAddress();
             Login login = loginService.createLogin(usernameValue, userLoginDetail.getPassword());
             if (login != null) {

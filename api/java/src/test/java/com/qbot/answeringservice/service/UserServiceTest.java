@@ -57,12 +57,12 @@ public class UserServiceTest {
         Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
 
         UserRequest request = getUserRequest();
-        LoginDetail loginDetail = new LoginDetail(null, "testPassw0rd");
+        LoginDetail loginDetail = new LoginDetail("", "testPassw0rd");
         request.setLoginDetail(loginDetail);
         UserResponse createdUser = userService.createUser(request);
         Assertions.assertNotNull(createdUser);
-        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString());
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.eq(request.getEmailAddress()),
+                ArgumentMatchers.eq(loginDetail.getPassword()));
         Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
     }
 
