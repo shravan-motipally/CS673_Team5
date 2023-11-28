@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Buffer } from "buffer";
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -39,7 +40,7 @@ import {
 } from "../../utils/ExcelUtils";
 import xlsx from "json-as-xlsx";
 import DownloadIcon from '@mui/icons-material/Download';
-import { bulkUploadUsers, createNewUser, deleteUser, getAllUsers } from '../../api/UserApi';
+import { bulkUploadUsers, createNewUser, deleteUser, getAllUsers, updateUser } from '../../api/UserApi';
 
 export interface UserDoc {
   id: string,
@@ -47,6 +48,7 @@ export interface UserDoc {
   firstName: string,
   lastName: string,
   username: string,
+  password: string;
   emailAddress: string,
   roleNames: string[],
   courseIds: string[],
@@ -107,6 +109,7 @@ interface datum {
   firstName: string | number,
   lastName: string | number,
   username: string | number,
+  password: string | number,
   emailAddress: string | number,
   roleNames: string | number,
   courseIds: string | number,
@@ -124,6 +127,7 @@ function createData(
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
+    password: "",
     emailAddress: user.emailAddress,
     roleNames: user.roleNames ? user.roleNames.join(',') : "",
     courseIds: user.courseIds ? user.courseIds.join(',') : "",
@@ -173,13 +177,13 @@ const headCells: readonly HeadCell[] = [
     id: 'courseIds',
     numeric: false,
     disablePadding: false,
-    label: 'Course Ids',
+    label: 'Course IDs',
   },
   {
     id: 'photo',
     numeric: false,
     disablePadding: false,
-    label: 'Photo',
+    label: 'Photo URL',
   },
 ];
 
@@ -290,12 +294,17 @@ const isNullOrUndefined = (str: string | undefined) => {
   return str === undefined || str === null || str === "";
 }
 
+const isWhitespace = (str: string | undefined) => {
+  return str != undefined && str != null && str.trim().length === 0;
+}
+
 const UserDialog = (props: UserDialogProps) => {
   const { handleClose, openNewUserDialog, user } = props;
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastName] = useState<string>();
   const [emailAddress, setEmailAddress] = useState<string>();
   const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
   const [roleNames, setRoleNames] = useState<string>();
   const [courseIds, setCourseIds] = useState<string>();
   const [photoUrl, setPhotoUrl] = useState<string>();
@@ -304,6 +313,7 @@ const UserDialog = (props: UserDialogProps) => {
   const [lastNameError, setLastNameError] = useState<boolean>(false);
   const [emailAddressError, setEmailAddressError] = useState<boolean>(false);
   const [usernameError, setUsernameError] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<boolean>(false);
   const [roleNamesError, setRoleNamesError] = useState<boolean>(false);
   const [courseIdsError, setCourseIdsError] = useState<boolean>(false);
   const [photoUrlError, setPhotoUrlError] = useState<boolean>(false);
@@ -318,25 +328,26 @@ const UserDialog = (props: UserDialogProps) => {
     } else if (isNullOrUndefined(lastName)) {
       issueFound = true;
       setLastNameError(true);
-    }else if (isNullOrUndefined(emailAddress)) {
+    } else if (isNullOrUndefined(emailAddress)) {
       issueFound = true;
       setEmailAddressError(true);
-    } else if (isNullOrUndefined(username)) {
+    } else if (isWhitespace(password)) {
       issueFound = true;
-      setUsernameError(true);
+      setPasswordError(true);
     } else if (isNullOrUndefined(roleNames)) {
       issueFound = true;
       setRoleNamesError(true);
     }
     return !issueFound;
-  }, [photoUrlError, emailAddressError, usernameError, firstNameError, lastNameError, roleNamesError, courseIdsError,
-    photoUrl, emailAddress, username, firstName, lastName, roleNames, courseIds]);
+  }, [photoUrlError, emailAddressError, passwordError, firstNameError, lastNameError, roleNamesError, courseIdsError,
+    photoUrl, emailAddress, password, firstName, lastName, roleNames, courseIds]);
 
   const resetErrorFields = useCallback(() => {
     setFirstNameError(false);
     setLastNameError(false);
     setEmailAddressError(false);
     setUsernameError(false);
+    setPasswordError(false);
     setRoleNamesError(false);
     setCourseIdsError(false);
     setPhotoUrlError(false);
@@ -347,28 +358,32 @@ const UserDialog = (props: UserDialogProps) => {
     (async () => {
       if (validateUserFields()) {
         resetErrorFields();
-        const userPartial: Partial<UserDoc> = {
+        const userPartial: Partial<UserRequest> = {
           id: user === undefined ? undefined : user.id,
-          firstName: firstName ? firstName: "",
-          lastName: lastName ? lastName: "",
+          firstName: firstName ? firstName : "",
+          lastName: lastName ? lastName : "",
           emailAddress: emailAddress ? emailAddress : "",
-          username: username ? username: "",
-          roleNames: roleNames ? roleNames.split(","): [],
+          loginDetail: {
+            username: username ? username : "",
+            password: password ? Buffer.from(password, "ascii").toString("base64") : ""
+          },
+          roleNames: roleNames ? roleNames.split(",") : [],
           courseIds: courseIds ? courseIds.split(",") : [],
-          photoUrl: photoUrl ? photoUrl: "",
+          photoUrl: photoUrl ? photoUrl : "",
         }
         try {
-          const successful = await createNewUser(userPartial);
+          const successful = await user === undefined ? createNewUser(userPartial) : updateUser(userPartial);
           if (!successful) {
             setNewUserCreationError(true);
           }
+          setPassword('');
           handleClose();
         } catch (e) {
           setNewUserCreationError(true);
         }
       }
     })();
-  }, [user, courseIds, lastName, roleNames, firstName, photoUrl, emailAddress, username])
+  }, [user, courseIds, lastName, roleNames, firstName, photoUrl, emailAddress, username, password])
 
   const openDialog = useMemo(() => openNewUserDialog, [openNewUserDialog]);
 
@@ -391,6 +406,11 @@ const UserDialog = (props: UserDialogProps) => {
     setUsernameError(false);
     setUsername(e.target.value);
   }, [username, usernameError]);
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordError(false);
+    setPassword(e.target.value);
+  }, [password, passwordError]);
 
   const handleRoleNamesChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRoleNamesError(false);
@@ -486,7 +506,18 @@ const UserDialog = (props: UserDialogProps) => {
           <TextField
               autoFocus
               margin="dense"
-              id="roleIds"
+              id="password"
+              fullWidth
+              variant="standard"
+              value={password ?? ''}
+              onChange={handlePasswordChange}
+              error={passwordError}
+              helperText={"Password"}
+          />
+          <TextField
+              autoFocus
+              margin="dense"
+              id="roleNames"
               fullWidth
               variant="standard"
               value={roleNames ?? ''}
@@ -503,7 +534,7 @@ const UserDialog = (props: UserDialogProps) => {
               value={courseIds ?? ''}
               onChange={handleCourseIdChange}
               error={courseIdsError}
-              helperText={"Course Ids (comma-separated)"}
+              helperText={"Course IDs (comma-separated)"}
           />
           <TextField
               autoFocus

@@ -183,7 +183,8 @@ public class UserServiceTest {
         Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
                 .thenReturn(Optional.of(returnedUser));
         Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
-        Mockito.when(loginService.validateLoginDetail(ArgumentMatchers.eq(request.getLoginDetail()))).thenReturn(true);
+        Mockito.when(loginService.validateLoginDetailForUpdate(ArgumentMatchers.eq(request.getLoginDetail())))
+                .thenReturn(true);
         Mockito.when(loginService.updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
                 ArgumentMatchers.eq(loginDetail.getUsername()), ArgumentMatchers.eq(loginDetail.getPassword())))
                 .thenReturn(getTestLogin());
@@ -206,7 +207,8 @@ public class UserServiceTest {
         Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
                 .thenReturn(Optional.of(returnedUser));
         Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
-        Mockito.when(loginService.validateLoginDetail(ArgumentMatchers.eq(request.getLoginDetail()))).thenReturn(false);
+        Mockito.when(loginService.validateLoginDetailForUpdate(ArgumentMatchers.eq(request.getLoginDetail())))
+                .thenReturn(false);
         Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(returnedUser);
 
         UserResponse updatedUser = userService.updateUser(request);

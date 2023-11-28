@@ -1,14 +1,14 @@
 import axios from "axios";
 import { ExcelJsonUsers } from "../utils/ExcelUtils";
 import { APPLICATION_JSON } from "../utils/StringConstants";
-import { addNewUserUrl, bulkUpdateUsersUrl, deleteUserUrl, getAllUsersUrl } from "../utils/Urls";
-import { UserDoc } from "../screens/tabs/UsersTable";
+import { createUpdateUserUrl, bulkUpdateUsersUrl, deleteUserUrl, getAllUsersUrl } from "../utils/Urls";
+import { UserDoc, UserRequest } from "../screens/tabs/UsersTable";
 
-export const createNewUser = async (user: Partial<UserDoc>) => {
+export const createNewUser = async (user: Partial<UserRequest>) => {
     try {
         const res = await axios({
             timeout: 300000,
-            url: addNewUserUrl(),
+            url: createUpdateUserUrl(),
             method: "POST",
             data: user,
             headers: {
@@ -18,6 +18,24 @@ export const createNewUser = async (user: Partial<UserDoc>) => {
         return true;
     } catch (e) {
         console.error("Error creating user");
+        return false;
+    }
+}
+
+export const updateUser = async (user: Partial<UserRequest>) => {
+    try {
+        const res = await axios({
+            timeout: 300000,
+            url: createUpdateUserUrl(),
+            method: "PUT",
+            data: user,
+            headers: {
+                'Content-Type': APPLICATION_JSON
+            }
+        })
+        return true;
+    } catch (e) {
+        console.error("Error updating user");
         return false;
     }
 }

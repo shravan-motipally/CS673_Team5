@@ -47,11 +47,13 @@ public class LoginService {
         return loginRepository.findById(loginId).orElse(null);
     }
 
-    public boolean checkLogin(LoginDetail detail) {
+    public boolean checkLogin(@NonNull LoginDetail detail) {
         if (validateLoginDetail(detail)) {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
-            return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())),
-                    login.getSaltedHash());
+            if (login != null) {
+                return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())),
+                        login.getSaltedHash());
+            }
         }
         return false;
     }
@@ -59,14 +61,22 @@ public class LoginService {
     public Login updateLoginById(@NonNull final String loginId, @NonNull final String username,
             @NonNull final String encodedPasswordValue) {
         Login existingLogin = this.getLoginById(loginId);
-        if (existingLogin != null && !username.isBlank() && !encodedPasswordValue.isBlank()) {
-            existingLogin.setUserName(username);
+        if (existingLogin != null) {
+            boolean changesDetected = false;
+            if (!username.isBlank() && !username.equals(existingLogin.getUserName())) {
+                existingLogin.setUserName(username);
+                changesDetected = true;
+            }
 
-            String decodedPasswordValue = new String(Base64.getDecoder().decode(encodedPasswordValue));
-            String hashedPasswordValue = pwService.generateHashFromPassword(decodedPasswordValue,
-                    pwService.generateSalt());
-            existingLogin.setSaltedHash(hashedPasswordValue);
-            return loginRepository.save(existingLogin);
+            if (!encodedPasswordValue.isBlank()) {
+                String decodedPasswordValue = new String(Base64.getDecoder().decode(encodedPasswordValue));
+                String hashedPasswordValue = pwService.generateHashFromPassword(decodedPasswordValue,
+                        pwService.generateSalt());
+                existingLogin.setSaltedHash(hashedPasswordValue);
+                changesDetected = true;
+            }
+
+            return changesDetected ? loginRepository.save(existingLogin) : existingLogin;
         } else {
             logger.info("No login found with ID: {}", loginId);
             return null;
@@ -87,8 +97,27 @@ public class LoginService {
         }
     }
 
+    /**
+     * Validation method for checking login credentials. Username AND Password value
+     * must be present
+     * 
+     * @param loginDetail
+     * @return boolean validation outcome
+     */
     public boolean validateLoginDetail(final LoginDetail loginDetail) {
         return loginDetail != null && !(loginDetail.getUsername() == null || loginDetail.getUsername().isBlank())
                 && !(loginDetail.getPassword() == null || loginDetail.getPassword().isBlank());
+    }
+
+    /**
+     * Validation method for updating user login credentials. Username OR Password
+     * value must be present
+     * 
+     * @param loginDetail
+     * @return boolean validation outcome
+     */
+    public boolean validateLoginDetailForUpdate(final LoginDetail loginDetail) {
+        return loginDetail != null && (!(loginDetail.getUsername() == null || loginDetail.getUsername().isBlank())
+                || !(loginDetail.getPassword() == null || loginDetail.getPassword().isBlank()));
     }
 }

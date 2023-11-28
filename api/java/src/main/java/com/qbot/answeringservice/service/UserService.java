@@ -88,19 +88,27 @@ public class UserService {
         if (validationResults == null || validationResults.length() == 0) {
             User existingUserEntity = userRepo.findById(userRequest.getId()).get();
             String loginId = existingUserEntity.getLoginId();
-            String username = loginService.getLoginById(loginId).getUserName();
+            Login existingLoginEntity = loginService.getLoginById(loginId);
+            if (existingLoginEntity != null) {
+                String username = existingLoginEntity.getUserName();
 
-            LoginDetail requestLoginDetail = userRequest.getLoginDetail();
-            if (loginService.validateLoginDetail(requestLoginDetail)) {
-                // update username & password
-                Login updatedLogin = loginService.updateLoginById(existingUserEntity.getLoginId(),
-                        requestLoginDetail.getUsername(), requestLoginDetail.getPassword());
-                username = updatedLogin.getUserName();
+                LoginDetail requestLoginDetail = userRequest.getLoginDetail();
+                if (requestLoginDetail.getUsername() == null || requestLoginDetail.getUsername().isBlank()) {
+                    requestLoginDetail.setUsername(userRequest.getEmailAddress());
+                }
+                if (loginService.validateLoginDetailForUpdate(requestLoginDetail)) {
+                    // update username & password
+                    Login updatedLogin = loginService.updateLoginById(existingUserEntity.getLoginId(),
+                            requestLoginDetail.getUsername(), requestLoginDetail.getPassword());
+                    username = updatedLogin.getUserName();
+                }
+                // update user entity
+                User updatedUser = userRepo.save(User.fromUserRequest(userRequest, loginId));
+                return UserResponse.convertFromEntity(updatedUser, username);
+            } else {
+                logger.error("Login record not found when updating user {}", existingUserEntity.getId());
+                return null;
             }
-            // update user entity
-            User updatedUser = userRepo.save(User.fromUserRequest(userRequest, loginId));
-            return UserResponse.convertFromEntity(updatedUser, username);
-
         } else {
             logger.info("Validation failure(s) when updating user:\n {}", validationResults);
             return null;
