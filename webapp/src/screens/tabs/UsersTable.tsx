@@ -152,16 +152,16 @@ const headCells: readonly HeadCell[] = [
     label: 'Last Name',
   },
   {
-    id: 'username',
-    numeric: false,
-    disablePadding: false,
-    label: 'Username',
-  },
-  {
     id: 'emailAddress',
     numeric: false,
     disablePadding: false,
     label: 'Email Address',
+  },
+  {
+    id: 'username',
+    numeric: false,
+    disablePadding: false,
+    label: 'Username',
   },
   {
     id: 'roleNames',
@@ -292,57 +292,56 @@ const isNullOrUndefined = (str: string | undefined) => {
 
 const UserDialog = (props: UserDialogProps) => {
   const { handleClose, openNewUserDialog, user } = props;
-  const [photoId, setPhotoUrl] = useState<string>();
-  const [loginId, setLoginId] = useState<string>();
   const [firstName, setFirstName] = useState<string>();
-  const [lastName, setLastLastName] = useState<string>();
+  const [lastName, setLastName] = useState<string>();
+  const [emailAddress, setEmailAddress] = useState<string>();
+  const [username, setUsername] = useState<string>();
   const [roleNames, setRoleNames] = useState<string>();
   const [courseIds, setCourseIds] = useState<string>();
+  const [photoUrl, setPhotoUrl] = useState<string>();
 
-  const [photoIdError, setPhotoIdError] = useState<boolean>(false);
-  const [loginIdError, setLoginIdError] = useState<boolean>(false);
   const [firstNameError, setFirstNameError] = useState<boolean>(false);
   const [lastNameError, setLastNameError] = useState<boolean>(false);
+  const [emailAddressError, setEmailAddressError] = useState<boolean>(false);
+  const [usernameError, setUsernameError] = useState<boolean>(false);
   const [roleNamesError, setRoleNamesError] = useState<boolean>(false);
   const [courseIdsError, setCourseIdsError] = useState<boolean>(false);
+  const [photoUrlError, setPhotoUrlError] = useState<boolean>(false);
 
   const [newUserCreationError, setNewUserCreationError] = useState<boolean>(false);
 
   const validateUserFields = useCallback(() => {
     let issueFound = false;
-    if (isNullOrUndefined(roleNames)) {
+    if (isNullOrUndefined(firstName)) {
       issueFound = true;
-      setRoleNamesError(true);
+      setFirstNameError(true);
     } else if (isNullOrUndefined(lastName)) {
       issueFound = true;
       setLastNameError(true);
-    } 
-    // else if (isNullOrUndefined(photoId)) {
-    //   issueFound = true;
-    //   setPhotoIdError(true);
-    // } else if (isNullOrUndefined(courseIds)) {
-    //   issueFound = true;
-    //   setCourseIdsError(true);
-    // } 
-    else if (isNullOrUndefined(loginId)) {
+    }else if (isNullOrUndefined(emailAddress)) {
       issueFound = true;
-      setLoginIdError(true);
-    } else if (isNullOrUndefined(firstName)) {
+      setEmailAddressError(true);
+    } else if (isNullOrUndefined(username)) {
       issueFound = true;
-      setFirstNameError(true);
+      setUsernameError(true);
+    } else if (isNullOrUndefined(roleNames)) {
+      issueFound = true;
+      setRoleNamesError(true);
     }
     return !issueFound;
-  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleNamesError, courseIdsError,
-    photoId, loginId, firstName, lastName, roleNames, courseIds]);
+  }, [photoUrlError, emailAddressError, usernameError, firstNameError, lastNameError, roleNamesError, courseIdsError,
+    photoUrl, emailAddress, username, firstName, lastName, roleNames, courseIds]);
 
   const resetErrorFields = useCallback(() => {
-    setRoleNamesError(false);
-    setLastNameError(false);
-    setPhotoIdError(false);
-    setCourseIdsError(false);
-    setLoginIdError(false);
     setFirstNameError(false);
-  }, [photoIdError, loginIdError, firstNameError, lastNameError, roleNamesError, courseIdsError]);
+    setLastNameError(false);
+    setEmailAddressError(false);
+    setUsernameError(false);
+    setRoleNamesError(false);
+    setCourseIdsError(false);
+    setPhotoUrlError(false);
+    
+  }, [photoUrlError, usernameError, firstNameError, lastNameError, roleNamesError, courseIdsError]);
 
   const handleAddingUser = useCallback(() => {
     (async () => {
@@ -350,12 +349,13 @@ const UserDialog = (props: UserDialogProps) => {
         resetErrorFields();
         const userPartial: Partial<UserDoc> = {
           id: user === undefined ? undefined : user.id,
-          photoUrl: photoId ? photoId: "",
-          loginId: loginId ? loginId: "",
           firstName: firstName ? firstName: "",
           lastName: lastName ? lastName: "",
+          emailAddress: emailAddress ? emailAddress : "",
+          username: username ? username: "",
           roleNames: roleNames ? roleNames.split(","): [],
-          courseIds: courseIds ? courseIds.split(",") : []
+          courseIds: courseIds ? courseIds.split(",") : [],
+          photoUrl: photoUrl ? photoUrl: "",
         }
         try {
           const successful = await createNewUser(userPartial);
@@ -368,54 +368,61 @@ const UserDialog = (props: UserDialogProps) => {
         }
       }
     })();
-  }, [user, courseIds, lastName, roleNames, firstName, photoId, loginId])
+  }, [user, courseIds, lastName, roleNames, firstName, photoUrl, emailAddress, username])
 
   const openDialog = useMemo(() => openNewUserDialog, [openNewUserDialog]);
-
-  const handleLastNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setLastNameError(false);
-    setLastLastName(e.target.value);
-  }, [lastName, lastNameError]);
-
-  const handleCourseIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCourseIdsError(false);
-    setCourseIds(e.target.value);
-  }, [courseIds, courseIdsError]);
-
-  const handleRoleIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setRoleNamesError(false);
-    setRoleNames(e.target.value);
-  }, [firstName, roleNamesError]);
 
   const handleFirstNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstNameError(false);
     setFirstName(e.target.value);
   }, [firstName, firstNameError]);
 
-  const handleLoginIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginIdError(false);
-    setLoginId(e.target.value);
-  }, [loginId, loginIdError]);
+  const handleLastNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastNameError(false);
+    setLastName(e.target.value);
+  }, [lastName, lastNameError]);
 
-  const handlePhotoIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhotoIdError(false);
+  const handleEmailAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailAddressError(false);
+    setEmailAddress(e.target.value);
+  }, [emailAddress, emailAddressError]);
+
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsernameError(false);
+    setUsername(e.target.value);
+  }, [username, usernameError]);
+
+  const handleRoleNamesChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setRoleNamesError(false);
+    setRoleNames(e.target.value);
+  }, [roleNames, roleNamesError]);
+
+  const handleCourseIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCourseIdsError(false);
+    setCourseIds(e.target.value);
+  }, [courseIds, courseIdsError]);
+
+  const handlePhotoUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhotoUrlError(false);
     setPhotoUrl(e.target.value);
-  }, [photoId, photoIdError]);
+  }, [photoUrl, photoUrlError]);
 
   useEffect(() => {
     if (user !== null && user !== undefined) {
-      setLastLastName(user.lastName);
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      setEmailAddress(user.emailAddress);
+      setUsername(user.username);
       setCourseIds(user.courseIds ? user.courseIds.join(',') : "");
       setRoleNames(user.roleNames.join(','));
-      setFirstName(user.firstName);
-      setLoginId(user.loginId);
       setPhotoUrl(user.photoUrl);
     } else if (user === null || user === undefined) {
-      setLastLastName("");
+      setFirstName("");
+      setLastName("");
+      setEmailAddress("");
+      setUsername("");
       setCourseIds("");
       setRoleNames("");
-      setFirstName("");
-      setLoginId("");
       setPhotoUrl("");
     }
   }, [user]);
@@ -435,24 +442,13 @@ const UserDialog = (props: UserDialogProps) => {
           <TextField
               autoFocus
               margin="dense"
-              id="loginId"
-              fullWidth
-              variant="standard"
-              value={loginId ?? ''}
-              onChange={handleLoginIdChange}
-              error={loginIdError}
-              helperText={"Enter the user's login ID here."}
-          />
-          <TextField
-              autoFocus
-              margin="dense"
               id="firstName"
               fullWidth
               variant="standard"
               value={firstName ?? ''}
               onChange={handleFirstNameChange}
               error={firstNameError}
-              helperText={"Enter the user's first name."}
+              helperText={"First name"}
           />
           <TextField
               autoFocus
@@ -463,7 +459,29 @@ const UserDialog = (props: UserDialogProps) => {
               value={lastName ?? ''}
               onChange={handleLastNameChange}
               error={lastNameError}
-              helperText={"Enter the user's last name."}
+              helperText={"Last Name"}
+          />
+          <TextField
+              autoFocus
+              margin="dense"
+              id="emailAddress"
+              fullWidth
+              variant="standard"
+              value={emailAddress ?? ''}
+              onChange={handleEmailAddressChange}
+              error={emailAddressError}
+              helperText={"Email Address"}
+          />
+          <TextField
+              autoFocus
+              margin="dense"
+              id="username"
+              fullWidth
+              variant="standard"
+              value={username ?? ''}
+              onChange={handleUsernameChange}
+              error={usernameError}
+              helperText={"Username (if different from Email Address)"}
           />
           <TextField
               autoFocus
@@ -472,9 +490,9 @@ const UserDialog = (props: UserDialogProps) => {
               fullWidth
               variant="standard"
               value={roleNames ?? ''}
-              onChange={handleRoleIdChange}
+              onChange={handleRoleNamesChange}
               error={roleNamesError}
-              helperText={"Enter the user's role Ids all separated by commas."}
+              helperText={"User Roles (comma-separated)"}
           />
           <TextField
               autoFocus
@@ -485,7 +503,7 @@ const UserDialog = (props: UserDialogProps) => {
               value={courseIds ?? ''}
               onChange={handleCourseIdChange}
               error={courseIdsError}
-              helperText={"Enter the user's course Ids all separated by commas."}
+              helperText={"Course Ids (comma-separated)"}
           />
           <TextField
               autoFocus
@@ -493,10 +511,10 @@ const UserDialog = (props: UserDialogProps) => {
               id="photoId"
               fullWidth
               variant="standard"
-              value={photoId ?? ''}
-              onChange={handlePhotoIdChange}
-              error={photoIdError}
-              helperText={"Enter photo url here."}
+              value={photoUrl ?? ''}
+              onChange={handlePhotoUrlChange}
+              error={photoUrlError}
+              helperText={"Profile Picture URL"}
           />
         </DialogContent>
         <DialogActions>
@@ -838,8 +856,8 @@ export default function UsersTable() {
                           {row.firstName}
                         </StyledTableCell>
                         <StyledTableCell align="right">{row.lastName}</StyledTableCell>
-                        <StyledTableCell align="right">{row.username}</StyledTableCell>
                         <StyledTableCell align="right">{row.emailAddress}</StyledTableCell>
+                        <StyledTableCell align="right">{row.username}</StyledTableCell>
                         <StyledTableCell align="right">{row.roleNames}</StyledTableCell>
                         <StyledTableCell align="right">{row.courseIds}</StyledTableCell>
                         <StyledTableCell align="right">{row.photo}</StyledTableCell>
