@@ -286,14 +286,18 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUser() {
-        userService.deleteUser(UUID.randomUUID().toString());
-        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.anyString());
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(testUser.getId()))).thenReturn(Optional.of(testUser));
+        userService.deleteUser(testUser.getId());
+        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.eq(testUser.getId()));
+        Mockito.verify(loginService, Mockito.times(1)).deleteById(ArgumentMatchers.eq(testUser.getLoginId()));
     }
 
     @Test
     public void testDeleteUserNullInput() {
         userService.deleteUser(null);
         Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
+        Mockito.verify(loginService, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
     }
 
     private UserRequest getUserRequest() {
@@ -314,15 +318,6 @@ public class UserServiceTest {
         adminUsers.add(testAdmin);
 
         return adminUsers;
-    }
-
-    private List<UserResponse> getUserResponses() {
-        List<UserResponse> responses = new ArrayList<>();
-        List<User> testUsers = getAdminUsers();
-        for (User user : testUsers) {
-            responses.add(UserResponse.convertFromEntity(user, "testUser"));
-        }
-        return responses;
     }
 
     private Login getTestLogin() {

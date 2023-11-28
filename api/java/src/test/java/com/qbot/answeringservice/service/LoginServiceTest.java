@@ -201,6 +201,19 @@ public class LoginServiceTest {
     }
 
     @Test
+    public void testDeleteById() {
+        String loginId = UUID.randomUUID().toString();
+        loginService.deleteById(loginId);
+        Mockito.verify(loginRepo, Mockito.times(1)).deleteById(ArgumentMatchers.eq(loginId));
+    }
+
+    @Test
+    public void testDeleteByIdNull() {
+        loginService.deleteById(null);
+        Mockito.verify(loginRepo, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
+    }
+
+    @Test
     public void testValidateLoginDetail() {
         LoginDetail loginDetail = new LoginDetail("testUsername", "testPassword");
         Assertions.assertTrue(loginService.validateLoginDetailForUpdate(loginDetail));

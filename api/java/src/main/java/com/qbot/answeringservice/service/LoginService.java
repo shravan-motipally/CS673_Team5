@@ -97,6 +97,12 @@ public class LoginService {
         }
     }
 
+    public void deleteById(String loginId) {
+        if (loginId != null) {
+            loginRepository.deleteById(loginId);
+        }
+    }
+
     /**
      * Validation method for checking login credentials. Username AND Password value
      * must be present

@@ -147,6 +147,8 @@ public class UserService {
 
     public void deleteUser(String userId) {
         if (userId != null) {
+            User existingUser = findByUserId(userId);
+            loginService.deleteById(existingUser.getLoginId());
             userRepo.deleteById(userId);
         }
     }
