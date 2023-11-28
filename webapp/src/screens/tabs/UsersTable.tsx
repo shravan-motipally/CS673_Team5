@@ -886,12 +886,12 @@ export default function UsersTable() {
                         >
                           {row.firstName}
                         </StyledTableCell>
-                        <StyledTableCell align="right">{row.lastName}</StyledTableCell>
-                        <StyledTableCell align="right">{row.emailAddress}</StyledTableCell>
-                        <StyledTableCell align="right">{row.username}</StyledTableCell>
-                        <StyledTableCell align="right">{row.roleNames}</StyledTableCell>
-                        <StyledTableCell align="right">{row.courseIds}</StyledTableCell>
-                        <StyledTableCell align="right">{row.photo}</StyledTableCell>
+                        <StyledTableCell align="left">{row.lastName}</StyledTableCell>
+                        <StyledTableCell align="left">{row.emailAddress}</StyledTableCell>
+                        <StyledTableCell align="left">{row.username}</StyledTableCell>
+                        <StyledTableCell align="left">{row.roleNames}</StyledTableCell>
+                        <StyledTableCell align="left">{row.courseIds}</StyledTableCell>
+                        <StyledTableCell align="left">{row.photo}</StyledTableCell>
                       </TableRow>
                   );
                 })}
