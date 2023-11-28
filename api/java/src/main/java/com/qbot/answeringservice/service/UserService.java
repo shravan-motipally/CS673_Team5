@@ -42,17 +42,16 @@ public class UserService {
             userRequest.setId(UUID.randomUUID().toString());
         }
 
-        String validationResults = validateUserRequest(userRequest);
+        String validationResults = validateUserRequest(userRequest, false);
         if (validationResults == null || validationResults.length() == 0) {
             LoginDetail userLoginDetail = userRequest.getLoginDetail();
             String usernameValue = userLoginDetail.getUsername() != null ? userRequest.getLoginDetail().getUsername()
                     : userRequest.getEmailAddress();
             Login login = loginService.createLogin(usernameValue, userLoginDetail.getPassword());
             if (login != null) {
-                User userEntity = User.fromUserRequest(userRequest);
-                userEntity.setLoginId(login.getId());
+                User userEntity = User.fromUserRequest(userRequest, login.getId());
                 User createdUser = userRepo.save(userEntity);
-                return UserResponse.convertFromEntity(createdUser, login);
+                return UserResponse.convertFromEntity(createdUser, login.getUserName());
             } else {
                 logger.error("Login service error when creating new user credentials");
                 return null;
@@ -67,7 +66,7 @@ public class UserService {
         List<UserResponse> responseList = new ArrayList<>();
         for (User user : userRepo.findAll()) {
             Login userLogin = loginService.getLoginById(user.getLoginId());
-            responseList.add(UserResponse.convertFromEntity(user, userLogin));
+            responseList.add(UserResponse.convertFromEntity(user, userLogin.getUserName()));
         }
         return responseList;
     }
@@ -84,8 +83,28 @@ public class UserService {
         return userRepo.findUsersByRole(roleId);
     }
 
-    public User updateUser(User user) {
-        return validateUser(user) ? userRepo.save(user) : null;
+    public UserResponse updateUser(UserRequest userRequest) {
+        String validationResults = validateUserRequest(userRequest, true);
+        if (validationResults == null || validationResults.length() == 0) {
+            User existingUserEntity = userRepo.findById(userRequest.getId()).get();
+            String loginId = existingUserEntity.getLoginId();
+            String username = loginService.getLoginById(loginId).getUserName();
+
+            LoginDetail requestLoginDetail = userRequest.getLoginDetail();
+            if (loginService.validateLoginDetail(requestLoginDetail)) {
+                // update username & password
+                Login updatedLogin = loginService.updateLoginById(existingUserEntity.getLoginId(),
+                        requestLoginDetail.getUsername(), requestLoginDetail.getPassword());
+                username = updatedLogin.getUserName();
+            }
+            // update user entity
+            User updatedUser = userRepo.save(User.fromUserRequest(userRequest, loginId));
+            return UserResponse.convertFromEntity(updatedUser, username);
+
+        } else {
+            logger.info("Validation failure(s) when updating user:\n {}", validationResults);
+            return null;
+        }
     }
 
     public List<User> bulkUpdateUsers(List<User> users) {
@@ -124,8 +143,25 @@ public class UserService {
         }
     }
 
-    private String validateUserRequest(UserRequest userRequest) {
+    private String validateUserRequest(UserRequest userRequest, boolean isUpdate) {
         StringBuilder builder = new StringBuilder();
+
+        if (isUpdate) {
+            if (userRequest.getId() == null || userRequest.getId().isEmpty()) {
+                builder.append("User ID is missing");
+            } else if (findByUserId(userRequest.getId()) == null) {
+                builder.append("Provided User ID not found");
+            }
+        }
+        if (userRequest.getFirstName() == null || userRequest.getFirstName().isEmpty()) {
+            builder.append("First name is invalid/missing\n");
+        }
+        if (userRequest.getLastName() == null || userRequest.getLastName().isEmpty()) {
+            builder.append("Last name is invalid/missing\n");
+        }
+        if (userRequest.getRoleNames() == null || userRequest.getRoleNames().isEmpty()) {
+            builder.append("User roles are missing\n");
+        }
 
         if (this.emailValidator == null) {
             builder.append("Email validation service is missing");
@@ -136,7 +172,7 @@ public class UserService {
         }
 
         LoginDetail loginDetail = userRequest.getLoginDetail();
-        if (loginDetail == null || loginDetail.getPassword() == null) {
+        if (loginDetail == null || (!isUpdate && loginDetail.getPassword() == null)) {
             builder.append("Login Credentials are invalid/missing\n");
         }
 

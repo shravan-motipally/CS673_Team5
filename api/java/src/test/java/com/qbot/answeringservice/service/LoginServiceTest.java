@@ -1,5 +1,7 @@
 package com.qbot.answeringservice.service;
 
+import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
@@ -36,34 +38,17 @@ public class LoginServiceTest {
         String testUsername = "testUsername";
         String testPassword = "testPassword";
         String testSalt = "testSaltValue";
+        String testEncodedPassword = Base64.getEncoder().encodeToString(testPassword.getBytes());
         Mockito.when(loginRepo.save(ArgumentMatchers.any(Login.class))).thenReturn(generateTestLogin());
         Mockito.when(pwService.generateSalt()).thenReturn(testSalt);
 
-        Login response = loginService.createLogin(testUsername, testPassword);
+        Login response = loginService.createLogin(testUsername, testEncodedPassword);
         Assertions.assertNotNull(response);
 
         Mockito.verify(pwService, Mockito.times(1)).generateSalt();
-        Mockito.verify(pwService, Mockito.times(1)).generatePasswordFromHash(ArgumentMatchers.eq(testPassword),
+        Mockito.verify(pwService, Mockito.times(1)).generateHashFromPassword(ArgumentMatchers.anyString(),
                 ArgumentMatchers.eq(testSalt));
         Mockito.verify(loginRepo, Mockito.times(1)).save(ArgumentMatchers.any(Login.class));
-    }
-
-    @Test
-    public void testCreateLoginWithoutProvidedPassword() {
-        String testUsername = "testUsername";
-        String testPassword = "testPassword";
-        String testSalt = "testSaltValue";
-        Mockito.when(loginRepo.save(ArgumentMatchers.any(Login.class))).thenReturn(generateTestLogin());
-        Mockito.when(pwService.generateUnsaltedPassword()).thenReturn(testPassword);
-        Mockito.when(pwService.generateSalt()).thenReturn(testSalt);
-
-        Login response = loginService.createLogin(testUsername);
-        Assertions.assertNotNull(response);
-
-        Mockito.verify(pwService, Mockito.times(1)).generateUnsaltedPassword();
-        Mockito.verify(pwService, Mockito.times(1)).generateSalt();
-        Mockito.verify(pwService, Mockito.times(1)).generatePasswordFromHash(ArgumentMatchers.eq(testPassword),
-                ArgumentMatchers.eq(testSalt));
     }
 
     @Test
@@ -80,6 +65,34 @@ public class LoginServiceTest {
     @Test
     public void testCheckLoginNull() {
         Assertions.assertFalse(loginService.checkLogin(null));
+    }
+
+    @Test
+    public void updateLoginById() {
+        Login testLogin = generateTestLogin();
+        String testPassword = "testPassword";
+        String testEncodedPassword = Base64.getEncoder().encodeToString(testPassword.getBytes());
+        String testHashedPassword = "testHashedPassword";
+        String testSalt = "testSaltValue";
+
+        Mockito.when(loginRepo.findById(ArgumentMatchers.eq(testLogin.getId()))).thenReturn(Optional.of(testLogin));
+        Mockito.when(pwService.generateSalt()).thenReturn(testSalt);
+        Mockito.when(
+                pwService.generateHashFromPassword(ArgumentMatchers.eq(testPassword), ArgumentMatchers.eq(testSalt)))
+                .thenReturn(testHashedPassword);
+        Mockito.when(loginRepo.save(ArgumentMatchers.any(Login.class))).thenReturn(generateTestLogin());
+        Login updatedLogin = loginService.updateLoginById(testLogin.getId(), "testUsername", testEncodedPassword);
+        Assertions.assertNotNull(updatedLogin);
+        Mockito.verify(loginRepo, Mockito.times(1)).save(ArgumentMatchers.any(Login.class));
+    }
+
+    @Test
+    public void updateLoginByIdNotFound() {
+        Login testLogin = generateTestLogin();
+        Mockito.when(loginRepo.findById(ArgumentMatchers.eq(testLogin.getId()))).thenReturn(Optional.empty());
+        Login updatedLogin = loginService.updateLoginById(testLogin.getId(), "testUsername", "testPassword");
+        Assertions.assertNull(updatedLogin);
+        Mockito.verify(loginRepo, Mockito.times(0)).save(ArgumentMatchers.any(Login.class));
     }
 
     @Test
@@ -123,6 +136,23 @@ public class LoginServiceTest {
 
         LoginResponse response = loginService.retrieveUserInfo(new LoginDetail(testLogin.getUserName(), testPassword));
         Assertions.assertNull(response);
+    }
+
+    @Test
+    public void testValidateLoginDetail() {
+        LoginDetail loginDetail = new LoginDetail("testUsername", "testPassword");
+        Assertions.assertTrue(loginService.validateLoginDetail(loginDetail));
+    }
+
+    @Test
+    public void testValidateLoginDetailNull() {
+        Assertions.assertFalse(loginService.validateLoginDetail(null));
+    }
+
+    @Test
+    public void testValidateLoginDetailEmptyPassword() {
+        LoginDetail loginDetail = new LoginDetail("testUsername", "");
+        Assertions.assertFalse(loginService.validateLoginDetail(loginDetail));
     }
 
     private Login generateTestLogin() {

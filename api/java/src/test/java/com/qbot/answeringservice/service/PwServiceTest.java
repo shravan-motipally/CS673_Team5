@@ -18,15 +18,8 @@ public class PwServiceTest {
     @Test
     void generatePasswordFromHash() {
         String salt = pwService.generateSalt();
-        String hashed = pwService.generatePasswordFromHash("", salt);
+        String hashed = pwService.generateHashFromPassword("", salt);
         Assertions.assertNotNull(hashed);
-        System.out.println(format("pw is: %s", hashed));
     }
 
-    @Test
-    public void testGenerateUnsaltedPassword() {
-        String pw1 = pwService.generateUnsaltedPassword();
-        String pw2 = pwService.generateUnsaltedPassword();
-        Assertions.assertNotEquals(pw1, pw2);
-    }
 }

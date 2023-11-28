@@ -111,21 +111,28 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() {
-        Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class))).thenReturn(getAdminUsers().get(0));
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(UserRequest.class)))
+                .thenReturn(getUserResponses().get(0));
 
-        ResponseEntity<User> response = userController.updateUser(new User(UUID.randomUUID().toString(), null,
-                UUID.randomUUID().toString(), "test@email.com", "firstName", "lastName", null, null));
+        ResponseEntity<UserResponse> response = userController.updateUser(getUserRequest());
         Assertions.assertNotNull(response.getBody());
-        Mockito.verify(userService, Mockito.times(1)).updateUser(ArgumentMatchers.any(User.class));
+        Mockito.verify(userService, Mockito.times(1)).updateUser(ArgumentMatchers.any(UserRequest.class));
+    }
+
+    @Test
+    public void testUpdateUserBadRequest() {
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(UserRequest.class))).thenReturn(null);
+        ResponseEntity<UserResponse> response = userController.updateUser(getUserRequest());
+        Assertions.assertNull(response.getBody());
+        Assertions.assertTrue(response.getStatusCode().is4xxClientError());
     }
 
     @Test
     public void testUpdateUserThrowException() {
-        Mockito.when(userService.updateUser(ArgumentMatchers.any(User.class)))
+        Mockito.when(userService.updateUser(ArgumentMatchers.any(UserRequest.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<User> response = userController.updateUser(new User(UUID.randomUUID().toString(), null,
-                UUID.randomUUID().toString(), "test@email.com", "firstName", "lastName", null, null));
+        ResponseEntity<UserResponse> response = userController.updateUser(getUserRequest());
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -193,8 +200,7 @@ public class UserControllerTest {
         List<UserResponse> responses = new ArrayList<>();
         List<User> testUsers = getAdminUsers();
         for (User user : testUsers) {
-            Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
-            responses.add(UserResponse.convertFromEntity(user, testLogin));
+            responses.add(UserResponse.convertFromEntity(user, "testUser"));
         }
         return responses;
     }

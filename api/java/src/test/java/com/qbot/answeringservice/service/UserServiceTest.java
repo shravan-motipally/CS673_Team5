@@ -174,6 +174,68 @@ public class UserServiceTest {
     }
 
     @Test
+    public void testUpdateUser() {
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = request.getLoginDetail();
+        User returnedUser = getAdminUsers().get(0);
+        request.setId(returnedUser.getId());
+
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
+                .thenReturn(Optional.of(returnedUser));
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
+        Mockito.when(loginService.validateLoginDetail(ArgumentMatchers.eq(request.getLoginDetail()))).thenReturn(true);
+        Mockito.when(loginService.updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.eq(loginDetail.getUsername()), ArgumentMatchers.eq(loginDetail.getPassword())))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(returnedUser);
+
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNotNull(updatedUser);
+        Mockito.verify(loginService, Mockito.times(1)).updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.eq(loginDetail.getUsername()), ArgumentMatchers.eq(loginDetail.getPassword()));
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserWithoutPassword() {
+        UserRequest request = getUserRequest();
+        request.setLoginDetail(new LoginDetail("testUser", null));
+        User returnedUser = getAdminUsers().get(0);
+        request.setId(returnedUser.getId());
+
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
+                .thenReturn(Optional.of(returnedUser));
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
+        Mockito.when(loginService.validateLoginDetail(ArgumentMatchers.eq(request.getLoginDetail()))).thenReturn(false);
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(returnedUser);
+
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNotNull(updatedUser);
+        Mockito.verify(loginService, Mockito.times(0)).updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserInvalidUserId() {
+        UserRequest request = getUserRequest();
+        request.setId(null);
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNull(updatedUser);
+        Mockito.verify(userRepo, Mockito.times(0)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserInvalidRoles() {
+        UserRequest request = getUserRequest();
+        request.setId(UUID.randomUUID().toString());
+        request.setRoleNames(Collections.emptyList());
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNull(updatedUser);
+        Mockito.verify(userRepo, Mockito.times(0)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
     public void testBulkUpdateUsers() {
         Mockito.when(userRepo.existsById(ArgumentMatchers.anyString())).thenReturn(true);
         Mockito.when(userRepo.saveAll(ArgumentMatchers.anyList())).thenReturn(getAdminUsers());
@@ -256,8 +318,7 @@ public class UserServiceTest {
         List<UserResponse> responses = new ArrayList<>();
         List<User> testUsers = getAdminUsers();
         for (User user : testUsers) {
-            Login testLogin = new Login(UUID.randomUUID().toString(), "testUser", "testHashedPW");
-            responses.add(UserResponse.convertFromEntity(user, testLogin));
+            responses.add(UserResponse.convertFromEntity(user, "testUser"));
         }
         return responses;
     }
