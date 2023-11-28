@@ -46,6 +46,8 @@ export interface UserDoc {
   loginId: string,
   firstName: string,
   lastName: string,
+  username: string,
+  emailAddress: string,
   roleNames: string[],
   courseIds: string[],
   photoUrl: string,
@@ -53,15 +55,19 @@ export interface UserDoc {
 
 export interface UserRequest {
   id: string,
-  loginId: string,
   firstName: string,
   lastName: string,
+  loginDetail: LoginDetail,
+  emailAddress: string,
   roleNames: string[],
   courseIds: string[],
   photoUrl: string,
 }
 
-// export interface LoginRequest 
+export interface LoginDetail {
+  username: string,
+  password: string
+}
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -100,6 +106,8 @@ interface datum {
   login: string | number,
   firstName: string | number,
   lastName: string | number,
+  username: string | number,
+  emailAddress: string | number,
   roleNames: string | number,
   courseIds: string | number,
   photo: string | number,
@@ -115,6 +123,8 @@ function createData(
     login: user.loginId,
     firstName: user.firstName,
     lastName: user.lastName,
+    username: user.username,
+    emailAddress: user.emailAddress,
     roleNames: user.roleNames ? user.roleNames.join(',') : "",
     courseIds: user.courseIds ? user.courseIds.join(',') : "",
     photo: user.photoUrl
@@ -140,6 +150,18 @@ const headCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Last Name',
+  },
+  {
+    id: 'username',
+    numeric: false,
+    disablePadding: false,
+    label: 'Username',
+  },
+  {
+    id: 'emailAddress',
+    numeric: false,
+    disablePadding: false,
+    label: 'Email Address',
   },
   {
     id: 'roleNames',
@@ -816,6 +838,8 @@ export default function UsersTable() {
                           {row.firstName}
                         </StyledTableCell>
                         <StyledTableCell align="right">{row.lastName}</StyledTableCell>
+                        <StyledTableCell align="right">{row.username}</StyledTableCell>
+                        <StyledTableCell align="right">{row.emailAddress}</StyledTableCell>
                         <StyledTableCell align="right">{row.roleNames}</StyledTableCell>
                         <StyledTableCell align="right">{row.courseIds}</StyledTableCell>
                         <StyledTableCell align="right">{row.photo}</StyledTableCell>

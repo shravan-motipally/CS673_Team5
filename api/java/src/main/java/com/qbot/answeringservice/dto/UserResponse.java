@@ -21,7 +21,7 @@ public class UserResponse {
     private String id;
     private String photoUrl;
     private String username;
-    private String emailAddess;
+    private String emailAddress;
     private String firstName;
     private String lastName;
     private List<String> roleNames;
@@ -32,7 +32,7 @@ public class UserResponse {
         dto.setId(userEntity.getId());
         dto.setPhotoUrl(userEntity.getPhotoUrl());
         dto.setUsername(username);
-        dto.setEmailAddess(userEntity.getEmailAddress() != null ? userEntity.getEmailAddress() : "");
+        dto.setEmailAddress(userEntity.getEmailAddress() != null ? userEntity.getEmailAddress() : "");
         dto.setFirstName(userEntity.getFirstName());
         dto.setLastName(userEntity.getLastName());
         dto.setCourseIds(userEntity.getCourseIds() != null ? userEntity.getCourseIds() : Collections.emptyList());
