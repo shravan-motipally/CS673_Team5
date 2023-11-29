@@ -1,6 +1,6 @@
 import { Exchange } from "../screens/Edit";
 import { CourseDoc } from "../screens/tabs/ClassesTable";
-import { UserDoc } from "../screens/tabs/UsersTable";
+import { UserDoc, UserRequest } from "../screens/tabs/UsersTable";
 
 export const spreadSheetData = [
   {
@@ -123,23 +123,28 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
     throw Error("Invalid array given");
   }
   const numUsers = stringArr.length - 1;
-  const user: Array<UserDoc> = [];
-  stringArr.forEach((questionArray: string[], index) => {
-    if (index !== 0 && questionArray.length === 5) {
+  const minimumNumFields = 4
+  const user: Array<UserRequest> = [];
+  stringArr.forEach((userArray: string[], index) => {
+    if (index !== 0 && userArray.length >= minimumNumFields) {
       user.push({
-        firstName: questionArray[0],
-        lastName: questionArray[1],
-        roleNames: questionArray[2].split(','),
-        courseIds: questionArray[3].split(','),
-        photoUrl: questionArray[4],
-        id: "",
-        loginId: ""
+        id: userArray[0] ? userArray[0] : "",
+        firstName: userArray[1] ? userArray[1] : "",
+        lastName: userArray[2] ? userArray[2] : "",
+        emailAddress: userArray[3] ? userArray[3] : "",
+        loginDetail: {
+          username: userArray[4] ? userArray[4] : "",
+          password: userArray[5] ? Buffer.from(userArray[5], "ascii").toString("base64") : "",
+        },
+        roleNames: userArray[6] ? userArray[6].split(',') : [],
+        courseIds: userArray[7] ? userArray[7].split(',') : [],
+        photoUrl: userArray[8] ? userArray[8] : ""
       })
     }
   });
   return {
-    numCourses: numUsers,
-    courses: user
+    numUsers: numUsers,
+    users: user
   }
 }
 
