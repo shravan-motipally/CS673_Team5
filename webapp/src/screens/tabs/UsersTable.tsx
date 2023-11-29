@@ -113,16 +113,15 @@ interface datum {
   emailAddress: string | number,
   roleNames: string | number,
   courseIds: string | number,
-  photo: string | number,
+  photoUrl: string | number,
 
 }
 
 function createData(
-    id: string,
     user: UserDoc
 ): datum {
   return {
-    id: id,
+    id: user.id,
     login: user.loginId,
     firstName: user.firstName,
     lastName: user.lastName,
@@ -131,7 +130,7 @@ function createData(
     emailAddress: user.emailAddress,
     roleNames: user.roleNames ? user.roleNames.join(',') : "",
     courseIds: user.courseIds ? user.courseIds.join(',') : "",
-    photo: user.photoUrl
+    photoUrl: user.photoUrl
   }
 }
 
@@ -180,7 +179,7 @@ const headCells: readonly HeadCell[] = [
     label: 'Course IDs',
   },
   {
-    id: 'photo',
+    id: 'photoUrl',
     numeric: false,
     disablePadding: false,
     label: 'Photo URL',
@@ -539,7 +538,7 @@ const UserDialog = (props: UserDialogProps) => {
           <TextField
               autoFocus
               margin="dense"
-              id="photoId"
+              id="photoUrl"
               fullWidth
               variant="standard"
               value={photoUrl ?? ''}
@@ -557,8 +556,8 @@ const UserDialog = (props: UserDialogProps) => {
 }
 
 export default function UsersTable() {
-  const [classes, setClasses] = useState<UserDoc[]>([]);
-  const [getClassesError, setGetClassesError] = useState<boolean>(false);
+  const [users, setUsers] = useState<UserDoc[]>([]);
+  const [getClassesError, setGetUsersError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
@@ -611,7 +610,7 @@ export default function UsersTable() {
 
   const handleUpdation = useCallback(() => {
     if (selected.length === 1) {
-      const user = classes.find(user => user.id === selected[0]);
+      const user = users.find(user => user.id === selected[0]);
       setSelectedUser(user);
       setOpenNewUserDialog(true);
     }
@@ -645,9 +644,9 @@ export default function UsersTable() {
       if (loading) {
         const users: UserDoc[] = await getAllUsers();
         if (users.length === 0) {
-          setGetClassesError(true);
+          setGetUsersError(true);
         } else {
-          setClasses(users);
+          setUsers(users);
         }
         setLoading(false);
       }
@@ -656,12 +655,12 @@ export default function UsersTable() {
 
   const rows: datum[] = useMemo(() => {
     if (!loading) {
-      return classes.map((user) => {
-        return createData(user.id, user)
+      return users.map((user) => {
+        return createData(user)
       })
     }
     return [];
-  }, [classes, loading]);
+  }, [users, loading]);
 
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
     setPage(newPage);
@@ -670,7 +669,7 @@ export default function UsersTable() {
   const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  }, [classes]);
+  }, [users]);
 
   const isSelected = useCallback((id: string) => selected.indexOf(id) !== -1, [selected]);
 
@@ -741,13 +740,13 @@ export default function UsersTable() {
             // @ts-ignore
             const jsonData = transformUsersToJson(dataParse);
             (async () => {
-              const success = await bulkUploadUsers(jsonData);
+              const success = await bulkUploadUsers(jsonData.users);
               if (!success) {
                 setError(true);
                 setErrorMsg("Unable to save users at the moment, please try again later")
               }
               // @ts-ignore
-              setClasses(jsonData.courses);
+              setUsers(jsonData.users);
             })();
           }
         }
@@ -768,9 +767,9 @@ export default function UsersTable() {
   const downloadExcel = useCallback(() => {
     const data = usersSpreadSheetData;
     // @ts-ignore
-    data[0].content = classes;
+    data[0].content = users.map(user => { return createData(user) });
     xlsx(data, userExcelSettings);
-  }, [classes]);
+  }, [users]);
 
   return (
       <Box sx={{ width:"100% "}}>
@@ -891,7 +890,7 @@ export default function UsersTable() {
                         <StyledTableCell align="left">{row.username}</StyledTableCell>
                         <StyledTableCell align="left">{row.roleNames}</StyledTableCell>
                         <StyledTableCell align="left">{row.courseIds}</StyledTableCell>
-                        <StyledTableCell align="left">{row.photo}</StyledTableCell>
+                        <StyledTableCell align="left">{row.photoUrl}</StyledTableCell>
                       </TableRow>
                   );
                 })}

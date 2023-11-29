@@ -40,12 +40,12 @@ export const updateUser = async (user: Partial<UserRequest>) => {
     }
 }
 
-export const bulkUploadUsers = async (users: ExcelJsonUsers) => {
+export const bulkUploadUsers = async (users: Array<UserRequest>) => {
     try {
         const res = await axios({
             timeout: 300000,
             url: bulkUpdateUsersUrl(),
-            method: "POST",
+            method: "PUT",
             data: users,
             headers: {
                 'Content-Type': APPLICATION_JSON
