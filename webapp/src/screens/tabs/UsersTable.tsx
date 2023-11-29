@@ -15,7 +15,14 @@ import {
   alpha,
   Checkbox,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
   Stack,
   TablePagination,
   TableSortLabel,
@@ -290,12 +297,18 @@ interface UserDialogProps {
   user?: UserDoc;
 }
 
+const roles = ['Administrator', 'Educator'];
+
 const isNullOrUndefined = (str: string | undefined) => {
   return str === undefined || str === null || str === "";
 }
 
+const isEmptyArray = (arr: string[] | undefined) => {
+  return arr === undefined || arr === null || arr.length == 0;
+}
+
 const isWhitespace = (str: string | undefined) => {
-  return str != undefined && str != null && str.trim().length === 0;
+  return str != undefined && str != null && (str.length > 0 && str.trim().length === 0);
 }
 
 const UserDialog = (props: UserDialogProps) => {
@@ -305,7 +318,7 @@ const UserDialog = (props: UserDialogProps) => {
   const [emailAddress, setEmailAddress] = useState<string>();
   const [username, setUsername] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const [roleNames, setRoleNames] = useState<string>();
+  const [roleNames, setRoleNames] = useState<string[]>([]);
   const [courseIds, setCourseIds] = useState<string>();
   const [photoUrl, setPhotoUrl] = useState<string>();
 
@@ -334,7 +347,7 @@ const UserDialog = (props: UserDialogProps) => {
     } else if (isWhitespace(password)) {
       issueFound = true;
       setPasswordError(true);
-    } else if (isNullOrUndefined(roleNames)) {
+    } else if (isEmptyArray(roleNames)) {
       issueFound = true;
       setRoleNamesError(true);
     }
@@ -367,7 +380,7 @@ const UserDialog = (props: UserDialogProps) => {
             username: username ? username : "",
             password: password ? Buffer.from(password, "ascii").toString("base64") : ""
           },
-          roleNames: roleNames ? roleNames.split(",") : [],
+          roleNames: roleNames ? roleNames : [],
           courseIds: courseIds ? courseIds.split(",") : [],
           photoUrl: photoUrl ? photoUrl : "",
         }
@@ -412,9 +425,12 @@ const UserDialog = (props: UserDialogProps) => {
     setPassword(e.target.value);
   }, [password, passwordError]);
 
-  const handleRoleNamesChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRoleNamesChange = useCallback((e: SelectChangeEvent<typeof roleNames>) => {
+    const {
+      target: { value },
+    } = e;
     setRoleNamesError(false);
-    setRoleNames(e.target.value);
+    setRoleNames(typeof value === 'string' ? value.split(',') : value);
   }, [roleNames, roleNamesError]);
 
   const handleCourseIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -434,7 +450,7 @@ const UserDialog = (props: UserDialogProps) => {
       setEmailAddress(user.emailAddress);
       setUsername(user.username);
       setCourseIds(user.courseIds ? user.courseIds.join(',') : "");
-      setRoleNames(user.roleNames.join(','));
+      setRoleNames(user.roleNames ? user.roleNames : []);
       setPhotoUrl(user.photoUrl);
     } else if (user === null || user === undefined) {
       setFirstName("");
@@ -443,7 +459,7 @@ const UserDialog = (props: UserDialogProps) => {
       setUsername("");
       setPassword("");
       setCourseIds("");
-      setRoleNames("");
+      setRoleNames([]);
       setPhotoUrl("");
     }
   }, [user]);
@@ -515,17 +531,29 @@ const UserDialog = (props: UserDialogProps) => {
               error={passwordError}
               helperText={"Password"}
           />
-          <TextField
+          <FormControl
+            fullWidth
+          >
+            <InputLabel id="roleNamesLabel">Roles</InputLabel>
+            <Select
               autoFocus
-              margin="dense"
-              id="roleNames"
+              margin='dense'
+              id='roleNames'
+              multiple
               fullWidth
-              variant="standard"
-              value={roleNames ?? ''}
+              value={roleNames}
               onChange={handleRoleNamesChange}
-              error={roleNamesError}
-              helperText={"User Roles (comma-separated)"}
-          />
+              input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => selected.join(', ')}
+            >
+              {roles.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <Checkbox checked={roleNames.indexOf(name) > -1} />
+                  <ListItemText primary={name} />
+                </MenuItem>
+              ))}
+            </Select>  
+          </FormControl>
           <TextField
               autoFocus
               margin="dense"
