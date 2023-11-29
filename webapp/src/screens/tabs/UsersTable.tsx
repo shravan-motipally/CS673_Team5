@@ -441,6 +441,7 @@ const UserDialog = (props: UserDialogProps) => {
       setLastName("");
       setEmailAddress("");
       setUsername("");
+      setPassword("");
       setCourseIds("");
       setRoleNames("");
       setPhotoUrl("");
@@ -545,7 +546,7 @@ const UserDialog = (props: UserDialogProps) => {
               value={photoUrl ?? ''}
               onChange={handlePhotoUrlChange}
               error={photoUrlError}
-              helperText={"Profile Picture URL"}
+              helperText={"Profile Picture URL (ex: https://www.bu.edu/csmet/files/2023/11/myPicture.jpg)"}
           />
         </DialogContent>
         <DialogActions>
