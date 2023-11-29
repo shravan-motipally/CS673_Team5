@@ -1,7 +1,7 @@
 import { Buffer } from "buffer";
 import { Exchange } from "../screens/Edit";
 import { CourseDoc } from "../screens/tabs/ClassesTable";
-import { UserRequest } from "../screens/tabs/UsersTable";
+import { UserResponse, UserRequest } from "../screens/tabs/UsersTable";
 
 export const spreadSheetData = [
   {
@@ -118,7 +118,7 @@ export const transformCoursesToJson: (
 
 export interface ExcelJsonUsers {
   numUsers: number,
-  users: Array<UserRequest>
+  users: Array<UserResponse>
 }
 
 // @ts-ignore
