@@ -16,6 +16,7 @@ import {
   Checkbox,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   FormControl,
+  FormHelperText,
   IconButton,
   InputLabel,
   ListItemText,
@@ -561,7 +562,7 @@ const UserDialog = (props: UserDialogProps) => {
           />
           <FormControl
             fullWidth
-            margin='normal'
+            margin='dense'
           >
             <InputLabel id="roleNamesLabel">Roles</InputLabel>
             <Select
@@ -582,12 +583,13 @@ const UserDialog = (props: UserDialogProps) => {
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>User Roles</FormHelperText>
           </FormControl>
           <FormControl
             fullWidth
-            margin='normal'
+            margin='dense'
           >
-            <InputLabel id="courseIdsLabel">Course IDs</InputLabel>
+            <InputLabel id="courseIdsLabel">Courses</InputLabel>
             <Select
               autoFocus
               margin='dense'
@@ -601,11 +603,12 @@ const UserDialog = (props: UserDialogProps) => {
             >
               {courses.map((course) => (
                 <MenuItem key={course.courseId} value={course.courseId}>
-                  <Checkbox checked={roleNames.indexOf(course.courseId) > -1} />
+                  <Checkbox checked={courseIds.indexOf(course.courseId) > -1} />
                   <ListItemText primary={course.name} />
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>Course Identifiers</FormHelperText>
           </FormControl>
           <TextField
               autoFocus
