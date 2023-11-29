@@ -15,6 +15,7 @@ import {ExcelJsonCourses, ExcelJsonQuestions} from "../utils/ExcelUtils";
 import {CourseList} from "../components/onepirate/Home";
 import {CourseDoc} from "../screens/tabs/ClassesTable";
 import {DocumentList} from "../screens/tabs/DocumentsTable";
+import {ScreenState} from "../types/global.types";
 
 export const getAllQnA = async () => {
   try {
@@ -247,19 +248,11 @@ export const findExactAnswerToQuestion = (question: string, exchanges: Array<Exc
   return res
 }
 
-export const createContextForQuestion = async (exchanges: Array<Exchange>) => {
-  let context = "CS673 is a software engineering course at Boston University (BU).  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class. "
-  exchanges.forEach(exchange => {
-    // context += "If student asks '" + exchange.question + "' then Alex would reply: '" + exchange.answer + "'.  ";
-    context += exchange.answer + " ";
-  });
-  return context;
-}
+export const createLargeContextForQuestion = async (exchanges: Array<Exchange>, screenState: ScreenState) => {
 
-export const createLargeContextForQuestion = async (exchanges: Array<Exchange>) => {
-  let context = "CS673 is a software engineering course at Boston University (BU).  It is taught by Alex Elentukh.  Students have a lot of questions for Alex within the class. \n"
+  let context = screenState.currentClassObject?.description || "";
   exchanges.forEach(exchange => {
-    context += "If student asks '" + exchange.question + "' then Alex would reply: '" + exchange.answer + "'.  \n\n";
+    context += "If student asks '" + exchange.question + "' then the professor would reply: '" + exchange.answer + "'.  \n\n";
     // context += exchange.answer + " ";
   });
   return context;

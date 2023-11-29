@@ -59,7 +59,7 @@ export const prepBot = async (exchanges: Array<Exchange>, question: string, scre
     return answer;
   } else {
 
-    let context = await createLargeContextForQuestion(exchanges);
+    let context = await createLargeContextForQuestion(exchanges, screenState);
     context += "Now imagine I was a student and I am about to ask you a question.";
     const docOutput = await splitter.splitDocuments([
       new Document({pageContent: context}),
