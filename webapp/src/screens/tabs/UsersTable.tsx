@@ -561,6 +561,7 @@ const UserDialog = (props: UserDialogProps) => {
           />
           <FormControl
             fullWidth
+            margin='normal'
           >
             <InputLabel id="roleNamesLabel">Roles</InputLabel>
             <Select
@@ -580,10 +581,11 @@ const UserDialog = (props: UserDialogProps) => {
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
-            </Select>  
+            </Select>
           </FormControl>
           <FormControl
             fullWidth
+            margin='normal'
           >
             <InputLabel id="courseIdsLabel">Course IDs</InputLabel>
             <Select
