@@ -55,7 +55,7 @@ export const getAllCoursesForSelection = async (): Promise<CourseList> => {
         return res.data;
     } catch (err) {
         console.log(
-            "Backend is down or questions API returned an exception: " + err
+            "Backend is down or courses API returned an exception: " + err
         );
         return { courses: undefined };
     }
@@ -71,7 +71,7 @@ export const getAllCoursesForAdministration = async (): Promise<Array<CourseDoc>
 
         return res.data;
     } catch (err) {
-        console.log("Backend is down or questions API returned an exception: " + err)
+        console.log("Backend is down or courses API returned an exception: " + err)
         return [];
     }
 }

@@ -48,8 +48,10 @@ import {
 import xlsx from "json-as-xlsx";
 import DownloadIcon from '@mui/icons-material/Download';
 import { bulkUploadUsers, createNewUser, deleteUser, getAllUsers, updateUser } from '../../api/UserApi';
+import { getAllCoursesForSelection } from '../../api/CourseApi';
+import { Course, CourseList } from '../../components/onepirate/Home';
 
-export interface UserDoc {
+export interface UserResponse {
   id: string,
   loginId: string,
   firstName: string,
@@ -126,7 +128,7 @@ interface datum {
 
 function createData(
     id: string,
-    user: UserDoc
+  user: UserResponse
 ): datum {
   return {
     id: id,
@@ -294,10 +296,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 interface UserDialogProps {
   handleClose: () => void;
   openNewUserDialog: boolean;
-  user?: UserDoc;
+  user?: UserResponse;
 }
 
 const roles = ['Administrator', 'Educator'];
+const courses: Course[] = [];
 
 const isNullOrUndefined = (str: string | undefined) => {
   return str === undefined || str === null || str === "";
@@ -313,13 +316,16 @@ const isWhitespace = (str: string | undefined) => {
 
 const UserDialog = (props: UserDialogProps) => {
   const { handleClose, openNewUserDialog, user } = props;
+  const [loading, setLoading] = useState<boolean>(true);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [getCoursesError, setGetCoursesError] = useState<boolean>(false);
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastName] = useState<string>();
   const [emailAddress, setEmailAddress] = useState<string>();
   const [username, setUsername] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [roleNames, setRoleNames] = useState<string[]>([]);
-  const [courseIds, setCourseIds] = useState<string>();
+  const [courseIds, setCourseIds] = useState<string[]>([]);
   const [photoUrl, setPhotoUrl] = useState<string>();
 
   const [firstNameError, setFirstNameError] = useState<boolean>(false);
@@ -332,6 +338,20 @@ const UserDialog = (props: UserDialogProps) => {
   const [photoUrlError, setPhotoUrlError] = useState<boolean>(false);
 
   const [newUserCreationError, setNewUserCreationError] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      if (loading) {
+        const courseList: CourseList = await getAllCoursesForSelection();
+        if (courseList === undefined || courseList.courses === undefined || courseList.courses.length === 0) {
+          setGetCoursesError(true);
+        } else {
+          setCourses(courseList?.courses);
+        }
+        setLoading(false);
+      }
+    })();
+  }, [loading]);
 
   const validateUserFields = useCallback(() => {
     let issueFound = false;
@@ -381,7 +401,7 @@ const UserDialog = (props: UserDialogProps) => {
             password: password ? Buffer.from(password, "ascii").toString("base64") : ""
           },
           roleNames: roleNames ? roleNames : [],
-          courseIds: courseIds ? courseIds.split(",") : [],
+          courseIds: courseIds ? courseIds : [],
           photoUrl: photoUrl ? photoUrl : "",
         }
         try {
@@ -433,9 +453,12 @@ const UserDialog = (props: UserDialogProps) => {
     setRoleNames(typeof value === 'string' ? value.split(',') : value);
   }, [roleNames, roleNamesError]);
 
-  const handleCourseIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCourseIdChange = useCallback((e: SelectChangeEvent<typeof courseIds>) => {
+    const {
+      target: { value },
+    } = e;
     setCourseIdsError(false);
-    setCourseIds(e.target.value);
+    setCourseIds(typeof value === 'string' ? value.split(',') : value);
   }, [courseIds, courseIdsError]);
 
   const handlePhotoUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -449,7 +472,7 @@ const UserDialog = (props: UserDialogProps) => {
       setLastName(user.lastName);
       setEmailAddress(user.emailAddress);
       setUsername(user.username);
-      setCourseIds(user.courseIds ? user.courseIds.join(',') : "");
+      setCourseIds(user.courseIds ? user.courseIds : []);
       setRoleNames(user.roleNames ? user.roleNames : []);
       setPhotoUrl(user.photoUrl);
     } else if (user === null || user === undefined) {
@@ -458,7 +481,7 @@ const UserDialog = (props: UserDialogProps) => {
       setEmailAddress("");
       setUsername("");
       setPassword("");
-      setCourseIds("");
+      setCourseIds([]);
       setRoleNames([]);
       setPhotoUrl("");
     }
@@ -466,6 +489,11 @@ const UserDialog = (props: UserDialogProps) => {
 
   return (
       <Dialog open={openDialog} onClose={handleClose}>
+        {getCoursesError ?
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            There was an issue pulling courses — <strong>Refresh your page!</strong>
+          </Alert> : <div />}
         {newUserCreationError ?
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
@@ -554,17 +582,29 @@ const UserDialog = (props: UserDialogProps) => {
               ))}
             </Select>  
           </FormControl>
-          <TextField
+          <FormControl
+            fullWidth
+          >
+            <InputLabel id="courseIdsLabel">Course IDs</InputLabel>
+            <Select
               autoFocus
-              margin="dense"
-              id="courseIds"
+              margin='dense'
+              id='courseIds'
+              multiple
               fullWidth
-              variant="standard"
-              value={courseIds ?? ''}
+              value={courseIds}
               onChange={handleCourseIdChange}
-              error={courseIdsError}
-              helperText={"Course IDs (comma-separated)"}
-          />
+              input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => selected.join(', ')}
+            >
+              {courses.map((course) => (
+                <MenuItem key={course.courseId} value={course.courseId}>
+                  <Checkbox checked={roleNames.indexOf(course.courseId) > -1} />
+                  <ListItemText primary={course.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
               autoFocus
               margin="dense"
@@ -586,8 +626,8 @@ const UserDialog = (props: UserDialogProps) => {
 }
 
 export default function UsersTable() {
-  const [classes, setClasses] = useState<UserDoc[]>([]);
-  const [getClassesError, setGetClassesError] = useState<boolean>(false);
+  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [getUsersError, setGetUsersError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [page, setPage] = React.useState(0);
@@ -597,7 +637,7 @@ export default function UsersTable() {
 
   const [openNewUserDialog, setOpenNewUserDialog] = useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<UserDoc | undefined>();
+  const [selectedUser, setSelectedUser] = useState<UserResponse | undefined>();
   const [file, setFile] = useState<File>();
 
   const [error, setError] = useState<boolean>(false);
@@ -640,7 +680,7 @@ export default function UsersTable() {
 
   const handleUpdation = useCallback(() => {
     if (selected.length === 1) {
-      const user = classes.find(user => user.id === selected[0]);
+      const user = users.find(user => user.id === selected[0]);
       setSelectedUser(user);
       setOpenNewUserDialog(true);
     }
@@ -672,11 +712,11 @@ export default function UsersTable() {
   useEffect(() => {
     (async () => {
       if (loading) {
-        const users: UserDoc[] = await getAllUsers();
+        const users: UserResponse[] = await getAllUsers();
         if (users.length === 0) {
-          setGetClassesError(true);
+          setGetUsersError(true);
         } else {
-          setClasses(users);
+          setUsers(users);
         }
         setLoading(false);
       }
@@ -685,12 +725,12 @@ export default function UsersTable() {
 
   const rows: datum[] = useMemo(() => {
     if (!loading) {
-      return classes.map((user) => {
+      return users.map((user) => {
         return createData(user.id, user)
       })
     }
     return [];
-  }, [classes, loading]);
+  }, [users, loading]);
 
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
     setPage(newPage);
@@ -699,7 +739,7 @@ export default function UsersTable() {
   const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  }, [classes]);
+  }, [users]);
 
   const isSelected = useCallback((id: string) => selected.indexOf(id) !== -1, [selected]);
 
@@ -776,7 +816,7 @@ export default function UsersTable() {
                 setErrorMsg("Unable to save users at the moment, please try again later")
               }
               // @ts-ignore
-              setClasses(jsonData.courses);
+              setUsers(jsonData.users);
             })();
           }
         }
@@ -797,19 +837,19 @@ export default function UsersTable() {
   const downloadExcel = useCallback(() => {
     const data = usersSpreadSheetData;
     // @ts-ignore
-    data[0].content = classes;
+    data[0].content = users;
     xlsx(data, userExcelSettings);
-  }, [classes]);
+  }, [users]);
 
   return (
       <Box sx={{ width:"100% "}}>
 
         <Paper sx={{ width: '100%', mb: 2 }}>
           <TableContainer>
-            {getClassesError || deletionError ?
+          {getUsersError || deletionError ?
                 <Alert severity="error">
                   <AlertTitle>Error</AlertTitle>
-                  There was an issue {getClassesError ? "pulling users" : "deleting users"} — <strong>Refresh your page!</strong>
+              There was an issue {getUsersError ? "pulling users" : "deleting users"} — <strong>Refresh your page!</strong>
                 </Alert> : <div/>}
             {error ?
                 <Alert severity="error">
