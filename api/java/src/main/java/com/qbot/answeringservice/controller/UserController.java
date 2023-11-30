@@ -94,10 +94,10 @@ public class UserController {
     }
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
-    @PutMapping(path = "/bulkupdate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> bulkUpdateUsers(@RequestBody List<User> users) {
+    @PostMapping(path = "/bulk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UserResponse>> bulkProcessUsers(@RequestBody List<UserRequest> users) {
         try {
-            List<User> updateResults = userService.bulkUpdateUsers(users);
+            List<UserResponse> updateResults = userService.bulkProcessUsers(users);
             if (updateResults == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             } else if (updateResults.isEmpty()) {
