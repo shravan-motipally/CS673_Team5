@@ -118,7 +118,7 @@ export const transformCoursesToJson: (
 
 export interface ExcelJsonUsers {
   numUsers: number,
-  users: Array<UserResponse>
+  users: Array<UserRequest>
 }
 
 // @ts-ignore
