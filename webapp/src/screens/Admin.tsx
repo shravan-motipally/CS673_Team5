@@ -10,7 +10,7 @@ import Divider from "@mui/material/Divider";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import ClassesTable from "./tabs/ClassesTable";
-import EducatorsTable from "./tabs/EducatorsTable";
+import UsersTable from "./tabs/UsersTable";
 import {AlertTitle} from "@mui/lab";
 
 const Admin = () => {
@@ -53,9 +53,9 @@ const Admin = () => {
             <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
               <Tabs value={tabValue} onChange={handleTabChange} centered>
                 <Tab label="Manage Classes" />
-                <Tab label="Manage Educators" />
+                <Tab label="Manage Users" />
               </Tabs>
-              { tabValue === 0 ? <ClassesTable /> : <EducatorsTable />}
+              { tabValue === 0 ? <ClassesTable /> : <UsersTable />}
             </Box>
           </Container>
         </Box>

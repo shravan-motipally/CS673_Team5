@@ -1,7 +1,5 @@
 package com.qbot.answeringservice.service;
 
-import static java.lang.String.format;
-
 import java.util.Base64;
 import java.util.UUID;
 
@@ -33,22 +31,56 @@ public class LoginService {
         this.pwService = pwService;
     }
 
-    public Login createLogin(@NonNull final String userName, @NonNull final String password) {
+    /**
+     * 
+     * @param userName             String username value
+     * @param encodedPasswordValue Base64-encoded password value to be encrypted
+     * @return
+     */
+    public Login createLogin(@NonNull final String userName, @NonNull final String encodedPasswordValue) {
+        String decodedPasswordValue = new String(Base64.getDecoder().decode(encodedPasswordValue));
         return loginRepository.save(new Login(UUID.randomUUID().toString(), userName,
-                pwService.generatePasswordFromHash(password, pwService.generateSalt())));
+                pwService.generateHashFromPassword(decodedPasswordValue, pwService.generateSalt())));
     }
 
-    public Login createLogin(@NonNull final String userName) {
-        return createLogin(userName, pwService.generateUnsaltedPassword());
+    public Login getLoginById(String loginId) {
+        return loginRepository.findById(loginId).orElse(null);
     }
 
-    public boolean checkLogin(LoginDetail detail) {
-        if (detail != null) {
+    public boolean checkLogin(@NonNull LoginDetail detail) {
+        if (validateLoginDetail(detail)) {
             Login login = loginRepository.findLoginByUserName(detail.getUsername());
-            return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())),
-                    login.getSaltedHash());
+            if (login != null) {
+                return pwService.validatePassword(new String(Base64.getDecoder().decode(detail.getPassword())),
+                        login.getSaltedHash());
+            }
         }
         return false;
+    }
+
+    public Login updateLoginById(@NonNull final String loginId, @NonNull final String username,
+            @NonNull final String encodedPasswordValue) {
+        Login existingLogin = this.getLoginById(loginId);
+        if (existingLogin != null) {
+            boolean changesDetected = false;
+            if (!username.isBlank() && !username.equals(existingLogin.getUserName())) {
+                existingLogin.setUserName(username);
+                changesDetected = true;
+            }
+
+            if (!encodedPasswordValue.isBlank()) {
+                String decodedPasswordValue = new String(Base64.getDecoder().decode(encodedPasswordValue));
+                String hashedPasswordValue = pwService.generateHashFromPassword(decodedPasswordValue,
+                        pwService.generateSalt());
+                existingLogin.setSaltedHash(hashedPasswordValue);
+                changesDetected = true;
+            }
+
+            return changesDetected ? loginRepository.save(existingLogin) : existingLogin;
+        } else {
+            logger.info("No login found with ID: {}", loginId);
+            return null;
+        }
     }
 
     public LoginResponse retrieveUserInfo(LoginDetail detail) throws UnathorizedUserException {
@@ -60,8 +92,38 @@ public class LoginService {
             User user = userRepository.findUserByLoginId(login.getId());
             return LoginResponse.fromUser(user);
         } catch (Exception e) {
-            logger.info(format("User not found with details userName: %s", detail.getUsername()));
+            logger.info("User not found with username: {}", e.getMessage());
             return null;
         }
+    }
+
+    public void deleteById(String loginId) {
+        if (loginId != null) {
+            loginRepository.deleteById(loginId);
+        }
+    }
+
+    /**
+     * Validation method for checking login credentials. Username AND Password value
+     * must be present
+     * 
+     * @param loginDetail
+     * @return boolean validation outcome
+     */
+    public boolean validateLoginDetail(final LoginDetail loginDetail) {
+        return loginDetail != null && !(loginDetail.getUsername() == null || loginDetail.getUsername().isBlank())
+                && !(loginDetail.getPassword() == null || loginDetail.getPassword().isBlank());
+    }
+
+    /**
+     * Validation method for updating user login credentials. Username OR Password
+     * value must be present
+     * 
+     * @param loginDetail
+     * @return boolean validation outcome
+     */
+    public boolean validateLoginDetailForUpdate(final LoginDetail loginDetail) {
+        return loginDetail != null && (!(loginDetail.getUsername() == null || loginDetail.getUsername().isBlank())
+                || !(loginDetail.getPassword() == null || loginDetail.getPassword().isBlank()));
     }
 }

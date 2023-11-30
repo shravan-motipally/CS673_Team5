@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Role {
-    ACCOUNT_ADMINISTRATOR(1, "Account Administrator", "Manages classes and assigns educators to classes"),
+    ADMINISTRATOR(1, "Administrator", "Manages classes and assigns educators to classes"),
     EDUCATOR(2, "Educator", "Educates");
 
     private int id;
@@ -20,11 +20,22 @@ public enum Role {
     public static String getRoleNameById(Integer id) {
         switch (id) {
         case 1:
-            return ACCOUNT_ADMINISTRATOR.name;
+            return ADMINISTRATOR.name;
         case 2:
             return EDUCATOR.name;
         default:
             return "Unknown";
+        }
+    }
+
+    public static Integer getRoleIdByName(String name) {
+        switch (name) {
+        case "Administrator":
+            return ADMINISTRATOR.id;
+        case "Educator":
+            return EDUCATOR.id;
+        default:
+            return null;
         }
     }
 

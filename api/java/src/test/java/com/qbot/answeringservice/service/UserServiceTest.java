@@ -57,12 +57,12 @@ public class UserServiceTest {
         Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(testUser);
 
         UserRequest request = getUserRequest();
-        LoginDetail loginDetail = new LoginDetail(null, "testPassw0rd");
+        LoginDetail loginDetail = new LoginDetail("", "testPassw0rd");
         request.setLoginDetail(loginDetail);
         UserResponse createdUser = userService.createUser(request);
         Assertions.assertNotNull(createdUser);
-        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString());
+        Mockito.verify(loginService, Mockito.times(1)).createLogin(ArgumentMatchers.eq(request.getEmailAddress()),
+                ArgumentMatchers.eq(loginDetail.getPassword()));
         Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
     }
 
@@ -123,7 +123,9 @@ public class UserServiceTest {
     @Test
     public void testFindAll() {
         Mockito.when(userRepo.findAll()).thenReturn(getAdminUsers());
-        List<User> foundUsers = userService.findAllUsers();
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString()))
+                .thenReturn(new Login(null, "testUser", "testPW"));
+        List<UserResponse> foundUsers = userService.findAllUsers();
 
         Assertions.assertFalse(foundUsers.isEmpty());
     }
@@ -169,6 +171,70 @@ public class UserServiceTest {
         List<User> foundUsers = userService.findByRoleId(roleIdValue);
 
         Assertions.assertTrue(foundUsers.isEmpty());
+    }
+
+    @Test
+    public void testUpdateUser() {
+        UserRequest request = getUserRequest();
+        LoginDetail loginDetail = request.getLoginDetail();
+        User returnedUser = getAdminUsers().get(0);
+        request.setId(returnedUser.getId());
+
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
+                .thenReturn(Optional.of(returnedUser));
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
+        Mockito.when(loginService.validateLoginDetailForUpdate(ArgumentMatchers.eq(request.getLoginDetail())))
+                .thenReturn(true);
+        Mockito.when(loginService.updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.eq(loginDetail.getUsername()), ArgumentMatchers.eq(loginDetail.getPassword())))
+                .thenReturn(getTestLogin());
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(returnedUser);
+
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNotNull(updatedUser);
+        Mockito.verify(loginService, Mockito.times(1)).updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.eq(loginDetail.getUsername()), ArgumentMatchers.eq(loginDetail.getPassword()));
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserWithoutPassword() {
+        UserRequest request = getUserRequest();
+        request.setLoginDetail(new LoginDetail("testUser", null));
+        User returnedUser = getAdminUsers().get(0);
+        request.setId(returnedUser.getId());
+
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(returnedUser.getId())))
+                .thenReturn(Optional.of(returnedUser));
+        Mockito.when(loginService.getLoginById(ArgumentMatchers.anyString())).thenReturn(getTestLogin());
+        Mockito.when(loginService.validateLoginDetailForUpdate(ArgumentMatchers.eq(request.getLoginDetail())))
+                .thenReturn(false);
+        Mockito.when(userRepo.save(ArgumentMatchers.any(User.class))).thenReturn(returnedUser);
+
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNotNull(updatedUser);
+        Mockito.verify(loginService, Mockito.times(0)).updateLoginById(ArgumentMatchers.eq(returnedUser.getLoginId()),
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        Mockito.verify(userRepo, Mockito.times(1)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserInvalidUserId() {
+        UserRequest request = getUserRequest();
+        request.setId(null);
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNull(updatedUser);
+        Mockito.verify(userRepo, Mockito.times(0)).save(ArgumentMatchers.any(User.class));
+    }
+
+    @Test
+    public void testUpdateUserInvalidRoles() {
+        UserRequest request = getUserRequest();
+        request.setId(UUID.randomUUID().toString());
+        request.setRoleNames(Collections.emptyList());
+        UserResponse updatedUser = userService.updateUser(request);
+        Assertions.assertNull(updatedUser);
+        Mockito.verify(userRepo, Mockito.times(0)).save(ArgumentMatchers.any(User.class));
     }
 
     @Test
@@ -220,20 +286,26 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUser() {
-        userService.deleteUser(UUID.randomUUID().toString());
-        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.anyString());
+        User testUser = getAdminUsers().get(0);
+        Mockito.when(userRepo.findById(ArgumentMatchers.eq(testUser.getId()))).thenReturn(Optional.of(testUser));
+        userService.deleteUser(testUser.getId());
+        Mockito.verify(userRepo, Mockito.times(1)).deleteById(ArgumentMatchers.eq(testUser.getId()));
+        Mockito.verify(loginService, Mockito.times(1)).deleteById(ArgumentMatchers.eq(testUser.getLoginId()));
     }
 
     @Test
     public void testDeleteUserNullInput() {
         userService.deleteUser(null);
         Mockito.verify(userRepo, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
+        Mockito.verify(loginService, Mockito.times(0)).deleteById(ArgumentMatchers.anyString());
     }
 
     private UserRequest getUserRequest() {
+        List<String> roleNames = new ArrayList<>();
+        roleNames.add("Educator");
         LoginDetail loginDetail = new LoginDetail("test@email.com", "testPassw0rd");
-        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User", null,
-                null);
+        return new UserRequest(UUID.randomUUID().toString(), null, loginDetail, "test@email.com", "Test", "User",
+                roleNames, null);
     }
 
     private List<User> getAdminUsers() {

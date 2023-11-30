@@ -17,11 +17,7 @@ import {
   useState,
 } from "react";
 import {
-  bulkUploadCourses,
-  createNewCourse,
-  deleteCourse,
   deleteDocument,
-  getAllCoursesForAdministration,
   getAllDocumentsForCourse,
 } from "../../api/ExchangeApi";
 import {

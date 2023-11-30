@@ -9,13 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  bulkUploadCourses,
-  createNewCourse,
-  deleteCourse,
-  getAllCoursesForAdministration,
-  updateExchanges,
-} from "../../api/ExchangeApi";
+import { bulkUploadCourses, createNewCourse, deleteCourse, getAllCoursesForAdministration,} from "../../api/CourseApi";
 import {
   Alert,
   alpha,
@@ -47,7 +41,6 @@ import {
   courseExcelSettings,
   coursesSpreadSheetData,
   transformCoursesToJson,
-  transformToJson,
 } from "../../utils/ExcelUtils";
 import xlsx from "json-as-xlsx";
 import DownloadIcon from "@mui/icons-material/Download";

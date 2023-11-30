@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.qbot.answeringservice.model.Login;
+import com.mongodb.lang.NonNull;
 import com.qbot.answeringservice.model.Role;
 import com.qbot.answeringservice.model.User;
 
@@ -20,20 +20,22 @@ import lombok.Setter;
 public class UserResponse {
     private String id;
     private String photoUrl;
-    private String userName;
+    private String username;
+    private String emailAddress;
     private String firstName;
     private String lastName;
     private List<String> roleNames;
     private List<String> courseIds;
 
-    public static UserResponse convertFromEntity(User userEntity, Login loginEntity) {
+    public static UserResponse convertFromEntity(@NonNull User userEntity, String username) {
         UserResponse dto = new UserResponse();
         dto.setId(userEntity.getId());
         dto.setPhotoUrl(userEntity.getPhotoUrl());
-        dto.setUserName(loginEntity.getUserName());
+        dto.setUsername(username);
+        dto.setEmailAddress(userEntity.getEmailAddress() != null ? userEntity.getEmailAddress() : "");
         dto.setFirstName(userEntity.getFirstName());
         dto.setLastName(userEntity.getLastName());
-        dto.setCourseIds(userEntity.getCourseIds());
+        dto.setCourseIds(userEntity.getCourseIds() != null ? userEntity.getCourseIds() : Collections.emptyList());
 
         List<String> roleNames = userEntity.getRoleIds() != null
                 ? userEntity.getRoleIds().stream().map(Role::getRoleNameById).collect(Collectors.toList())

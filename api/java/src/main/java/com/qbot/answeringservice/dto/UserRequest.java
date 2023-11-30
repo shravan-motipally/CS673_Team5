@@ -16,6 +16,6 @@ public class UserRequest {
     private String emailAddress;
     private String firstName;
     private String lastName;
-    private List<Integer> roleIds;
+    private List<String> roleNames;
     private List<String> courseIds;
 }

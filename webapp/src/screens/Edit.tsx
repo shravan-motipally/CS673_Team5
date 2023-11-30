@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo, useCallback, ChangeEvent, useContext } from 'react';
-import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -11,9 +11,9 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import xlsx from "json-as-xlsx"
-import { spreadSheetData, settings, transformToJson } from "../utils/ExcelUtils";
+import { spreadSheetData, settings, transformExchangesToJson } from "../utils/ExcelUtils";
 import * as excel from "xlsx";
-import { getAllQnA, updateExchanges } from "../api/ExchangeApi";
+import { updateExchanges } from "../api/ExchangeApi";
 import { darkTheme, lightTheme } from "../utils/Themes";
 import { ScreenContext } from "../App";
 import Divider from "@mui/material/Divider";
@@ -96,7 +96,7 @@ const Edit = () => {
             const dataParse = excel.utils.sheet_to_json(ws, { header: 1 });
             if (screenState.currentClassObject !== null && screenState.currentClassObject.courseId) {
               // @ts-ignore
-              const jsonData = transformToJson(dataParse, screenState.currentClassObject?.courseId);
+              const jsonData = transformExchangesToJson(dataParse, screenState.currentClassObject?.courseId);
               (async () => {
                 const res = await updateExchanges(jsonData);
                 if (res.status !== 200) {

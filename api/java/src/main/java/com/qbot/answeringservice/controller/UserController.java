@@ -46,7 +46,7 @@ public class UserController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         try {
             return ResponseEntity.ok(userService.findAllUsers());
         } catch (Exception e) {
@@ -79,9 +79,14 @@ public class UserController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest user) {
         try {
-            return ResponseEntity.ok(userService.updateUser(user));
+            UserResponse response = userService.updateUser(user);
+            if (response == null) {
+                return ResponseEntity.badRequest().build();
+            } else {
+                return ResponseEntity.ok(response);
+            }
         } catch (Exception e) {
             logger.error("Server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
