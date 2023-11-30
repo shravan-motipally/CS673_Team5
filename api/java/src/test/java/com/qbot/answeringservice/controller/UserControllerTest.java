@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.qbot.answeringservice.dto.BulkUserRequest;
 import com.qbot.answeringservice.dto.LoginDetail;
 import com.qbot.answeringservice.dto.UserRequest;
 import com.qbot.answeringservice.dto.UserResponse;
@@ -143,7 +144,8 @@ public class UserControllerTest {
         List<UserResponse> userResponseList = new ArrayList<>();
         userResponseList.add(new UserResponse());
         Mockito.when(userService.bulkProcessUsers(ArgumentMatchers.anyList())).thenReturn(userResponseList);
-        ResponseEntity<List<UserResponse>> response = userController.bulkProcessUsers(userRequestList);
+        ResponseEntity<List<UserResponse>> response = userController
+                .bulkProcessUsers(new BulkUserRequest(userRequestList.size(), userRequestList));
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
         Mockito.verify(userService, Mockito.times(1)).bulkProcessUsers(ArgumentMatchers.anyList());
     }
@@ -153,7 +155,8 @@ public class UserControllerTest {
         List<UserRequest> userRequestList = new ArrayList<>();
         userRequestList.add(getUserRequest());
         Mockito.when(userService.bulkProcessUsers(ArgumentMatchers.anyList())).thenReturn(Collections.emptyList());
-        ResponseEntity<List<UserResponse>> response = userController.bulkProcessUsers(userRequestList);
+        ResponseEntity<List<UserResponse>> response = userController
+                .bulkProcessUsers(new BulkUserRequest(userRequestList.size(), userRequestList));
         Assertions.assertTrue(response.getStatusCode().is4xxClientError());
         Mockito.verify(userService, Mockito.times(1)).bulkProcessUsers(ArgumentMatchers.anyList());
     }
@@ -163,7 +166,8 @@ public class UserControllerTest {
         List<UserRequest> userRequestList = new ArrayList<>();
         userRequestList.add(getUserRequest());
         Mockito.when(userService.bulkProcessUsers(ArgumentMatchers.anyList())).thenReturn(null);
-        ResponseEntity<List<UserResponse>> response = userController.bulkProcessUsers(userRequestList);
+        ResponseEntity<List<UserResponse>> response = userController
+                .bulkProcessUsers(new BulkUserRequest(userRequestList.size(), userRequestList));
         Assertions.assertTrue(response.getStatusCode().is5xxServerError());
         Mockito.verify(userService, Mockito.times(1)).bulkProcessUsers(ArgumentMatchers.anyList());
     }
@@ -174,7 +178,8 @@ public class UserControllerTest {
         userRequestList.add(getUserRequest());
         Mockito.when(userService.bulkProcessUsers(ArgumentMatchers.anyList()))
                 .thenThrow(new IllegalArgumentException());
-        ResponseEntity<List<UserResponse>> response = userController.bulkProcessUsers(userRequestList);
+        ResponseEntity<List<UserResponse>> response = userController
+                .bulkProcessUsers(new BulkUserRequest(userRequestList.size(), userRequestList));
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         Mockito.verify(userService, Mockito.times(1)).bulkProcessUsers(ArgumentMatchers.anyList());

@@ -814,7 +814,7 @@ export default function UsersTable() {
             // @ts-ignore
             const jsonData = transformUsersToJson(dataParse);
             (async () => {
-              const success = await bulkUploadUsers(jsonData.users);
+              const success = await bulkUploadUsers(jsonData);
               if (!success) {
                 setError(true);
                 setErrorMsg("Unable to save users at the moment, please try again later")

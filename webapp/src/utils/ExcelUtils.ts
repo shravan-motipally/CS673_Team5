@@ -127,7 +127,7 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
     console.error("Invalid array given");
     throw Error("Invalid array given");
   }
-  const numUsers = stringArr.length - 1;
+  let numUsers: number = 0;
   const minimumNumFields = 4
   const user: Array<UserRequest> = [];
   stringArr.forEach((userArray: string[], index) => {
@@ -144,7 +144,8 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
         roleNames: userArray[6] ? userArray[6].split(',') : [],
         courseIds: userArray[7] ? userArray[7].split(',') : [],
         photoUrl: userArray[8] ? userArray[8] : ""
-      })
+      });
+      numUsers++;
     }
   });
   return {
