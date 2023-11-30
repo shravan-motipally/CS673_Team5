@@ -46,8 +46,7 @@ function Index() {
   useEffect(() => {
     (async () => {
       if (loading) {
-        const { courses } = await getAllCoursesForSelection();
-        const docSvcStatus = await getGenerationBackendHealth();
+        const [{ courses}, docSvcStatus] = await Promise.all([getAllCoursesForSelection(), getGenerationBackendHealth()]);
         setDocHealth(docSvcStatus);
 
         if (courses === undefined || courses.length === 0) {
