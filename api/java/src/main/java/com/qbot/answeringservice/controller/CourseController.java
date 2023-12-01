@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mongodb.lang.Nullable;
-import com.qbot.answeringservice.dto.BulkUploadCourseRequest;
-import com.qbot.answeringservice.dto.CourseList;
+import com.qbot.answeringservice.dto.BulkCourseRequest;
+import com.qbot.answeringservice.dto.CourseResponseCollection;
 import com.qbot.answeringservice.model.Course;
 import com.qbot.answeringservice.service.CourseService;
 
@@ -47,9 +47,10 @@ public class CourseController {
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CourseList> getCourses(@RequestParam("courseIds") @Nullable String[] courseIds) {
+    public ResponseEntity<CourseResponseCollection> getCourses(
+            @RequestParam("courseIds") @Nullable String[] courseIds) {
         try {
-            CourseList returnedCourses;
+            CourseResponseCollection returnedCourses;
             returnedCourses = (courseIds != null) ? courseService.getSpecificCourses(courseIds)
                     : courseService.getAllCourses();
             return ResponseEntity.ok(returnedCourses);
@@ -83,16 +84,21 @@ public class CourseController {
     }
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
-    @PostMapping(path = "/all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateAllCourses(@RequestBody BulkUploadCourseRequest courseList) {
+    @PostMapping(path = "/bulk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CourseResponseCollection> bulkProcessCourses(@RequestBody BulkCourseRequest coursesRequest) {
         try {
             // TODO: introduce auth
             // if (verified)
             // {
-            if (courseList != null && courseService.overwriteAllCourses(courseList)) {
-                return ResponseEntity.ok().build();
-            } else {
+            if (coursesRequest == null || coursesRequest.getCourses() == null
+                    || coursesRequest.getCourses().isEmpty()) {
                 return ResponseEntity.badRequest().build();
+            }
+            CourseResponseCollection response = courseService.bulkProcessCourses(coursesRequest);
+            if (response != null) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
             // }
             // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

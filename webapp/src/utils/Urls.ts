@@ -30,7 +30,7 @@ export const createUpdateUserUrl = () => ANSWERING_SVC_URL + "/users";
 export const deleteCourseUrl = (courseId: string) => ANSWERING_SVC_URL + "/courses/" + courseId;
 export const deleteDocumentUrl = (documentId: string) => ANSWERING_SVC_URL + "/documents/" + documentId;
 export const deleteUserUrl = (educatorId: string) => ANSWERING_SVC_URL + "/users/" + educatorId;
-export const bulkUploadCoursesUrl = () => ANSWERING_SVC_URL + "/courses/all"
+export const bulkUploadCoursesUrl = () => ANSWERING_SVC_URL + "/courses/bulk"
 export const bulkUploadUsersUrl = () => ANSWERING_SVC_URL + "/users/bulk"
 export const loginUrl = () => ANSWERING_SVC_URL + "/login";
 export const healthUrl = () => ANSWERING_SVC_URL + "/actuator/health";

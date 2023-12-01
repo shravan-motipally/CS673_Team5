@@ -6,11 +6,11 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class BulkUploadCourseRequest {
+public class BulkCourseRequest {
     private final int numCourses;
     private final List<Course> courses;
 
-    public BulkUploadCourseRequest(int numCourses, List<Course> courses) {
+    public BulkCourseRequest(int numCourses, List<Course> courses) {
         this.numCourses = numCourses;
         this.courses = courses;
     }
