@@ -34,6 +34,7 @@ export interface Course {
 
 export interface CourseList {
   courses: Array<Course> | undefined;
+  errors: Array<string> | undefined;
 }
 
 function Index() {
@@ -46,7 +47,7 @@ function Index() {
   useEffect(() => {
     (async () => {
       if (loading) {
-        const [{ courses}, docSvcStatus] = await Promise.all([getAllCoursesForSelection(), getGenerationBackendHealth()]);
+        const [{ courses }, docSvcStatus] = await Promise.all([getAllCoursesForSelection(), getGenerationBackendHealth()]);
         setDocHealth(docSvcStatus);
 
         if (courses === undefined || courses.length === 0) {

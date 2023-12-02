@@ -54,10 +54,11 @@ export const getAllCoursesForSelection = async (): Promise<CourseList> => {
 
         return res.data;
     } catch (err) {
+        let errString = "Backend is down or courses API returned an exception: " + err;
         console.log(
-            "Backend is down or courses API returned an exception: " + err
+            errString
         );
-        return { courses: undefined };
+        return { courses: undefined, errors: [errString] };
     }
 };
 

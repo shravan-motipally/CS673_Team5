@@ -38,10 +38,6 @@ public class UserService {
     }
 
     public UserResponse createUser(UserRequest userRequest) {
-        if (userRequest.getId() == null) {
-            userRequest.setId(UUID.randomUUID().toString());
-        }
-
         String validationResults = validateUserRequest(userRequest, false);
         if (validationResults == null || validationResults.length() == 0) {
             LoginDetail userLoginDetail = userRequest.getLoginDetail();
@@ -50,6 +46,7 @@ public class UserService {
                     : userRequest.getEmailAddress();
             Login login = loginService.createLogin(usernameValue, userLoginDetail.getPassword());
             if (login != null) {
+                userRequest.setId(UUID.randomUUID().toString());
                 User userEntity = User.fromUserRequest(userRequest, login.getId());
                 User createdUser = userRepo.save(userEntity);
                 return UserResponse.convertFromEntity(createdUser, login.getUserName());
@@ -105,7 +102,7 @@ public class UserService {
                 }
                 // update user entity
                 User updatedUser = userRepo.save(User.fromUserRequest(userRequest, loginId));
-                return UserResponse.convertFromEntity(updatedUser, username);
+                return updatedUser != null ? UserResponse.convertFromEntity(updatedUser, username) : null;
             } else {
                 logger.error("Login record not found when updating user {}", existingUserEntity.getId());
                 return null;
@@ -116,34 +113,18 @@ public class UserService {
         }
     }
 
-    public List<User> bulkUpdateUsers(List<User> users) {
-        List<User> validatedUsers = new ArrayList<>();
-        for (User user : users) {
-            if (userRepo.existsById(user.getId()) && validateUser(user)) {
-                validatedUsers.add(user);
+    public List<UserResponse> bulkProcessUsers(List<UserRequest> users) {
+        List<UserResponse> processedUsers = new ArrayList<>();
+        for (UserRequest user : users) {
+            boolean isUpdate = (user.getId() != null && userRepo.existsById(user.getId())) ? true : false;
+            logger.info("{} user...", isUpdate ? "Updating existing " : "Creating new ");
+            UserResponse responseObject = isUpdate ? updateUser(user) : createUser(user);
+            if (responseObject != null) {
+                processedUsers.add(responseObject);
             }
         }
 
-        if (!validatedUsers.isEmpty()) {
-            return userRepo.saveAll(validatedUsers);
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    private boolean validateUser(User user) {
-        if (user.getLoginId() == null || user.getLoginId().isEmpty()) {
-            return false;
-        } else if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
-            return false;
-        } else if (user.getLastName() == null || user.getLastName().isEmpty()) {
-            return false;
-        } else if (user.getEmailAddress() == null || user.getEmailAddress().isEmpty()) {
-            return false;
-        } else if (user.getRoleIds() == null || user.getRoleIds().isEmpty()) {
-            return false;
-        }
-        return true;
+        return processedUsers;
     }
 
     public void deleteUser(String userId) {
@@ -159,9 +140,9 @@ public class UserService {
 
         if (isUpdate) {
             if (userRequest.getId() == null || userRequest.getId().isEmpty()) {
-                builder.append("User ID is missing");
-            } else if (findByUserId(userRequest.getId()) == null) {
-                builder.append("Provided User ID not found");
+                builder.append("User ID is missing\n");
+            } else if (!userRepo.existsById(userRequest.getId())) {
+                builder.append("Provided User ID not found\n");
             }
         }
         if (userRequest.getFirstName() == null || userRequest.getFirstName().isEmpty()) {
@@ -175,7 +156,7 @@ public class UserService {
         }
 
         if (this.emailValidator == null) {
-            builder.append("Email validation service is missing");
+            builder.append("Email validation service cannot be instantiated, please try again later\n");
             logger.error("Email validation service cannot be instantiated");
         } else if (userRequest.getEmailAddress() == null
                 || !this.emailValidator.isValid(userRequest.getEmailAddress())) {

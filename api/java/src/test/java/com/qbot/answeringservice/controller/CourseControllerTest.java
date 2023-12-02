@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qbot.answeringservice.dto.CourseDto;
-import com.qbot.answeringservice.dto.CourseList;
+import com.qbot.answeringservice.dto.CourseResponseCollection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,11 +31,11 @@ public class CourseControllerTest {
     public void testGetAllCourses() {
         Mockito.when(courseService.getAllCourses()).thenReturn(getTestCourseDtos());
 
-        ResponseEntity<CourseList> response = courseController.getCourses(null);
+        ResponseEntity<CourseResponseCollection> response = courseController.getCourses(null);
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
 
-        CourseList returnedCourses = response.getBody();
+        CourseResponseCollection returnedCourses = response.getBody();
         Assertions.assertNotNull(returnedCourses);
         Assertions.assertFalse(returnedCourses.getCourses().isEmpty());
     }
@@ -44,11 +44,11 @@ public class CourseControllerTest {
     public void testGetCoursesByIds() {
         Mockito.when(courseService.getSpecificCourses(ArgumentMatchers.any())).thenReturn(getTestCourseDtos());
 
-        ResponseEntity<CourseList> response = courseController.getCourses(new String[] { "1" });
+        ResponseEntity<CourseResponseCollection> response = courseController.getCourses(new String[] { "1" });
         Assertions.assertNotNull(response);
         Assertions.assertTrue(response.getStatusCode().is2xxSuccessful());
 
-        CourseList returnedCourses = response.getBody();
+        CourseResponseCollection returnedCourses = response.getBody();
         Assertions.assertNotNull(returnedCourses);
         Assertions.assertFalse(returnedCourses.getCourses().isEmpty());
     }
@@ -57,16 +57,17 @@ public class CourseControllerTest {
     public void testGetAllCoursesThrowException() {
         Mockito.when(courseService.getAllCourses()).thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<CourseList> response = courseController.getCourses(null);
+        ResponseEntity<CourseResponseCollection> response = courseController.getCourses(null);
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     public void testGetCoursesByIdThrowException() {
-        Mockito.when(courseService.getSpecificCourses(ArgumentMatchers.any())).thenThrow(new IllegalArgumentException());
+        Mockito.when(courseService.getSpecificCourses(ArgumentMatchers.any()))
+                .thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<CourseList> response = courseController.getCourses(new String[] {});
+        ResponseEntity<CourseResponseCollection> response = courseController.getCourses(new String[] {});
         Assertions.assertFalse(response.getStatusCode().is2xxSuccessful());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -113,7 +114,8 @@ public class CourseControllerTest {
         return testCourses;
     }
 
-    private CourseList getTestCourseDtos() {
-        return new CourseList(getTestCourses().stream().map(CourseDto::from).collect(Collectors.toList()));
+    private CourseResponseCollection getTestCourseDtos() {
+        return new CourseResponseCollection(getTestCourses().stream().map(CourseDto::from).collect(Collectors.toList()),
+                null);
     }
 }

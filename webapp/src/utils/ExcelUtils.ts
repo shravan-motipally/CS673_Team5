@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Exchange } from "../screens/Edit";
 import { CourseDoc } from "../screens/tabs/ClassesTable";
 import { UserResponse, UserRequest } from "../screens/tabs/UsersTable";
@@ -35,9 +36,13 @@ export const usersSpreadSheetData = [
   {
     sheet: "Users List",
     columns: [
+      { label: "ID", value: "id" },
       { label: "First Name", value: "firstName" },
       { label: "Last Name", value: "lastName" },
-      { label: "Role IDs", value: "roleIds" },
+      { label: "Email Address", value: "emailAddress" },
+      { label: "Username", value: "username" },
+      { label: "Password", value: "" },
+      { label: "Role IDs", value: "roleNames" },
       { label: "Course IDs", value: "courseIds" },
       { label: "Photo Link", value: "photoUrl" },
     ],
@@ -113,7 +118,7 @@ export const transformCoursesToJson: (
 
 export interface ExcelJsonUsers {
   numUsers: number,
-  users: Array<UserResponse>
+  users: Array<UserRequest>
 }
 
 // @ts-ignore
@@ -122,7 +127,7 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
     console.error("Invalid array given");
     throw Error("Invalid array given");
   }
-  const numUsers = stringArr.length - 1;
+  let numUsers: number = 0;
   const minimumNumFields = 4
   const user: Array<UserRequest> = [];
   stringArr.forEach((userArray: string[], index) => {
@@ -139,7 +144,8 @@ export const transformUsersToJson: (stringArr: string[][]) => ExcelJsonUsers = (
         roleNames: userArray[6] ? userArray[6].split(',') : [],
         courseIds: userArray[7] ? userArray[7].split(',') : [],
         photoUrl: userArray[8] ? userArray[8] : ""
-      })
+      });
+      numUsers++;
     }
   });
   return {

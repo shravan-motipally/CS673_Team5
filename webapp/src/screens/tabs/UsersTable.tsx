@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Toolbar from "@mui/material/Toolbar";
-import {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   alpha,
@@ -29,7 +29,7 @@ import {
   TableSortLabel,
   Tooltip
 } from '@mui/material';
-import {AlertTitle} from "@mui/lab";
+import { AlertTitle } from "@mui/lab";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
@@ -123,16 +123,15 @@ interface datum {
   emailAddress: string | number,
   roleNames: string | number,
   courseIds: string | number,
-  photo: string | number,
+  photoUrl: string | number,
 
 }
 
 function createData(
-    id: string,
   user: UserResponse
 ): datum {
   return {
-    id: id,
+    id: user.id,
     login: user.loginId,
     firstName: user.firstName,
     lastName: user.lastName,
@@ -141,7 +140,7 @@ function createData(
     emailAddress: user.emailAddress,
     roleNames: user.roleNames ? user.roleNames.join(',') : "",
     courseIds: user.courseIds ? user.courseIds.join(',') : "",
-    photo: user.photoUrl
+    photoUrl: user.photoUrl
   }
 }
 
@@ -190,7 +189,7 @@ const headCells: readonly HeadCell[] = [
     label: 'Course IDs',
   },
   {
-    id: 'photo',
+    id: 'photoUrl',
     numeric: false,
     disablePadding: false,
     label: 'Photo URL',
@@ -210,15 +209,15 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof datum>(
-    order: Order,
-    orderBy: Key,
+  order: Order,
+  orderBy: Key,
 ): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
+  a: { [key in Key]: number | string },
+  b: { [key in Key]: number | string },
 ) => number {
   return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
 // Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
@@ -248,49 +247,49 @@ interface EnhancedTableProps {
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-      props;
+    props;
   const createSortHandler =
-      (property: keyof datum) => (event: React.MouseEvent<unknown>) => {
-        onRequestSort(event, property);
-      };
+    (property: keyof datum) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox">
-            <Checkbox
-                color="primary"
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={rowCount > 0 && numSelected === rowCount}
-                onChange={onSelectAllClick}
-                inputProps={{
-                  'aria-label': 'select all desserts',
-                }}
-            />
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
           </TableCell>
-          {headCells.map((headCell) => (
-              <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'normal'}
-                  sortDirection={orderBy === headCell.id ? order : false}
-              >
-                <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                >
-                  {headCell.label}
-                  {orderBy === headCell.id ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                  ) : null}
-                </TableSortLabel>
-              </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
+        ))}
+      </TableRow>
+    </TableHead>
   );
 }
 
@@ -385,7 +384,7 @@ const UserDialog = (props: UserDialogProps) => {
     setRoleNamesError(false);
     setCourseIdsError(false);
     setPhotoUrlError(false);
-    
+
   }, [photoUrlError, usernameError, firstNameError, lastNameError, roleNamesError, courseIdsError]);
 
   const handleAddingUser = useCallback(() => {
@@ -489,144 +488,144 @@ const UserDialog = (props: UserDialogProps) => {
   }, [user]);
 
   return (
-      <Dialog open={openDialog} onClose={handleClose}>
-        {getCoursesError ?
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            There was an issue pulling courses — <strong>Refresh your page!</strong>
-          </Alert> : <div />}
-        {newUserCreationError ?
-            <Alert severity="error">
-              <AlertTitle>Error</AlertTitle>
-              There was an issue creating the user — <strong>Cancel</strong> for now please!
-            </Alert> : <div/>}
-        <DialogTitle>{user !== undefined ? "Update" : "Add New"} User</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please fill out the following fields to {user !== undefined ? "update the" : "create a new"} user.
-          </DialogContentText>
-          <TextField
-              autoFocus
-              margin="dense"
-              id="firstName"
-              fullWidth
-              variant="standard"
-              value={firstName ?? ''}
-              onChange={handleFirstNameChange}
-              error={firstNameError}
-              helperText={"First name"}
-          />
-          <TextField
-              autoFocus
-              margin="dense"
-              id="lastName"
-              fullWidth
-              variant="standard"
-              value={lastName ?? ''}
-              onChange={handleLastNameChange}
-              error={lastNameError}
-              helperText={"Last Name"}
-          />
-          <TextField
-              autoFocus
-              margin="dense"
-              id="emailAddress"
-              fullWidth
-              variant="standard"
-              value={emailAddress ?? ''}
-              onChange={handleEmailAddressChange}
-              error={emailAddressError}
-              helperText={"Email Address"}
-          />
-          <TextField
-              autoFocus
-              margin="dense"
-              id="username"
-              fullWidth
-              variant="standard"
-              value={username ?? ''}
-              onChange={handleUsernameChange}
-              error={usernameError}
-              helperText={"Username (if different from Email Address)"}
-          />
-          <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              fullWidth
-              variant="standard"
-              value={password ?? ''}
-              onChange={handlePasswordChange}
-              error={passwordError}
-              helperText={"Password"}
-          />
-          <FormControl
-            fullWidth
+    <Dialog open={openDialog} onClose={handleClose}>
+      {getCoursesError ?
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          There was an issue pulling courses — <strong>Refresh your page!</strong>
+        </Alert> : <div />}
+      {newUserCreationError ?
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          There was an issue creating the user — <strong>Cancel</strong> for now please!
+        </Alert> : <div />}
+      <DialogTitle>{user !== undefined ? "Update" : "Add New"} User</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Please fill out the following fields to {user !== undefined ? "update the" : "create a new"} user.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="firstName"
+          fullWidth
+          variant="standard"
+          value={firstName ?? ''}
+          onChange={handleFirstNameChange}
+          error={firstNameError}
+          helperText={"First name"}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="lastName"
+          fullWidth
+          variant="standard"
+          value={lastName ?? ''}
+          onChange={handleLastNameChange}
+          error={lastNameError}
+          helperText={"Last Name"}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="emailAddress"
+          fullWidth
+          variant="standard"
+          value={emailAddress ?? ''}
+          onChange={handleEmailAddressChange}
+          error={emailAddressError}
+          helperText={"Email Address"}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="username"
+          fullWidth
+          variant="standard"
+          value={username ?? ''}
+          onChange={handleUsernameChange}
+          error={usernameError}
+          helperText={"Username (if different from Email Address)"}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="password"
+          fullWidth
+          variant="standard"
+          value={password ?? ''}
+          onChange={handlePasswordChange}
+          error={passwordError}
+          helperText={"Password"}
+        />
+        <FormControl
+          fullWidth
+          margin='dense'
+        >
+          <InputLabel id="roleNamesLabel">Roles</InputLabel>
+          <Select
+            autoFocus
             margin='dense'
-          >
-            <InputLabel id="roleNamesLabel">Roles</InputLabel>
-            <Select
-              autoFocus
-              margin='dense'
-              id='roleNames'
-              multiple
-              fullWidth
-              value={roleNames}
-              onChange={handleRoleNamesChange}
-              input={<OutlinedInput label="Tag" />}
-              renderValue={(selected) => selected.join(', ')}
-            >
-              {roles.map((name) => (
-                <MenuItem key={name} value={name}>
-                  <Checkbox checked={roleNames.indexOf(name) > -1} />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>User Roles</FormHelperText>
-          </FormControl>
-          <FormControl
+            id='roleNames'
+            multiple
             fullWidth
-            margin='dense'
+            value={roleNames}
+            onChange={handleRoleNamesChange}
+            input={<OutlinedInput label="Tag" />}
+            renderValue={(selected) => selected.join(', ')}
           >
-            <InputLabel id="courseIdsLabel">Courses</InputLabel>
-            <Select
-              autoFocus
-              margin='dense'
-              id='courseIds'
-              multiple
-              fullWidth
-              value={courseIds}
-              onChange={handleCourseIdChange}
-              input={<OutlinedInput label="Tag" />}
-              renderValue={(selected) => selected.join(', ')}
-            >
-              {courses.map((course) => (
-                <MenuItem key={course.courseId} value={course.courseId}>
-                  <Checkbox checked={courseIds.indexOf(course.courseId) > -1} />
-                  <ListItemText primary={course.name} />
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>Course Identifiers</FormHelperText>
-          </FormControl>
-          <TextField
-              autoFocus
-              margin="dense"
-              id="photoId"
-              fullWidth
-              variant="standard"
-              value={photoUrl ?? ''}
-              onChange={handlePhotoUrlChange}
-              error={photoUrlError}
-              helperText={"Profile Picture URL (ex: https://www.bu.edu/csmet/files/2023/11/myPicture.jpg)"}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAddingUser}>{user !== undefined ? "Update" : "Add"}</Button>
-        </DialogActions>
-      </Dialog>
+            {roles.map((name) => (
+              <MenuItem key={name} value={name}>
+                <Checkbox checked={roleNames.indexOf(name) > -1} />
+                <ListItemText primary={name} />
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>User Roles</FormHelperText>
+        </FormControl>
+        <FormControl
+          fullWidth
+          margin='dense'
+        >
+          <InputLabel id="courseIdsLabel">Courses</InputLabel>
+          <Select
+            autoFocus
+            margin='dense'
+            id='courseIds'
+            multiple
+            fullWidth
+            value={courseIds}
+            onChange={handleCourseIdChange}
+            input={<OutlinedInput label="Tag" />}
+            renderValue={(selected) => selected.join(', ')}
+          >
+            {courses.map((course) => (
+              <MenuItem key={course.courseId} value={course.courseId}>
+                <Checkbox checked={courseIds.indexOf(course.courseId) > -1} />
+                <ListItemText primary={course.name} />
+              </MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>Course Identifiers</FormHelperText>
+        </FormControl>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="photoUrl"
+          fullWidth
+          variant="standard"
+          value={photoUrl ?? ''}
+          onChange={handlePhotoUrlChange}
+          error={photoUrlError}
+          helperText={"Profile Picture URL (ex: https://www.bu.edu/csmet/files/2023/11/myPicture.jpg)"}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleAddingUser}>{user !== undefined ? "Update" : "Add"}</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
@@ -649,8 +648,8 @@ export default function UsersTable() {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   const handleRequestSort = (
-      event: React.MouseEvent<unknown>,
-      property: keyof datum,
+    event: React.MouseEvent<unknown>,
+    property: keyof datum,
   ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -703,8 +702,8 @@ export default function UsersTable() {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
       );
     }
     setSelected(newSelected);
@@ -731,7 +730,7 @@ export default function UsersTable() {
   const rows: datum[] = useMemo(() => {
     if (!loading) {
       return users.map((user) => {
-        return createData(user.id, user)
+        return createData(user)
       })
     }
     return [];
@@ -754,12 +753,12 @@ export default function UsersTable() {
   }, [page, rowsPerPage]);
 
   const visibleRows = React.useMemo(
-      () =>
-          stableSort<datum>(rows, getComparator(order, orderBy)).slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage,
-          ),
-      [order, orderBy, page, rowsPerPage, rows],
+    () =>
+      stableSort<datum>(rows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      ),
+    [order, orderBy, page, rowsPerPage, rows],
   );
 
   const numSelected = useMemo(() => {
@@ -807,7 +806,7 @@ export default function UsersTable() {
             throw Error("file reading error");
           } else {
             const data = e.target.result;
-            const readData = excel.read(data, { type: 'binary'});
+            const readData = excel.read(data, { type: 'binary' });
             const wsname = readData.SheetNames[0];
             const ws = readData.Sheets[wsname];
 
@@ -821,7 +820,7 @@ export default function UsersTable() {
                 setErrorMsg("Unable to save users at the moment, please try again later")
               }
               // @ts-ignore
-              setUsers(jsonData.users);
+              setLoading(true);
             })();
           }
         }
@@ -842,156 +841,156 @@ export default function UsersTable() {
   const downloadExcel = useCallback(() => {
     const data = usersSpreadSheetData;
     // @ts-ignore
-    data[0].content = users;
+    data[0].content = users.map(user => { return createData(user) });
     xlsx(data, userExcelSettings);
   }, [users]);
 
   return (
-      <Box sx={{ width:"100% "}}>
+    <Box sx={{ width: "100% " }}>
 
-        <Paper sx={{ width: '100%', mb: 2 }}>
-          <TableContainer>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <TableContainer>
           {getUsersError || deletionError ?
-                <Alert severity="error">
-                  <AlertTitle>Error</AlertTitle>
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
               There was an issue {getUsersError ? "pulling users" : "deleting users"} — <strong>Refresh your page!</strong>
-                </Alert> : <div/>}
-            {error ?
-                <Alert severity="error">
-                  <AlertTitle>Error</AlertTitle>
-                  There was an issue uploading your users — <strong>{errorMsg}</strong>
-                </Alert> : <div/>
-            }
-            <Toolbar
-                sx={{
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                  ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                  }),
-                }}
-            >
-              {numSelected > 0 ? (
-                  <Typography
-                      sx={{ flex: '1 1 100%' }}
-                      color="inherit"
-                      variant="subtitle1"
-                      component="div"
-                  >
-                    {numSelected} selected
-                  </Typography>
-              ) : (
-                  <Typography
-                      sx={{ flex: '1 1 100%' }}
-                      variant="h6"
-                      id="tableTitle"
-                      component="div"
-                  >
-                    Users
-                  </Typography>
-              )}
-              {numSelected > 0 ? (
-                  <>
-                    {numSelected === 1 ?
-                        <Tooltip title="Update">
-                          <IconButton onClick={handleUpdation}>
-                            <BuildIcon />
-                          </IconButton>
-                        </Tooltip>: <div/>}
-                    <Tooltip title="Delete">
-                      <IconButton onClick={handleDeletion}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </>
-              ) : (
-                  <>
-                    <Stack direction="row" spacing={2}>
-                      <Button size="small" onClick={handleNewUser} startIcon={<AddIcon />}>User</Button>
-                      <Button size="small" component="label" onClick={handleBulkUpload} startIcon={<UploadFileIcon />}>
-                        <input type="file" hidden onChange={onFileChange}/>Upload
-                      </Button>
-                      <Button size="small" onClick={downloadExcel} startIcon={<DownloadIcon />}>Download</Button>
-                    </Stack>
-                  </>
-              )}
-            </Toolbar>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-              <EnhancedTableHead
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={rows.length}
-              />
-              <TableBody>
-                {visibleRows.map((row: datum, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+            </Alert> : <div />}
+          {error ?
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              There was an issue uploading your users — <strong>{errorMsg}</strong>
+            </Alert> : <div />
+          }
+          <Toolbar
+            sx={{
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+              ...(numSelected > 0 && {
+                bgcolor: (theme) =>
+                  alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+              }),
+            }}
+          >
+            {numSelected > 0 ? (
+              <Typography
+                sx={{ flex: '1 1 100%' }}
+                color="inherit"
+                variant="subtitle1"
+                component="div"
+              >
+                {numSelected} selected
+              </Typography>
+            ) : (
+              <Typography
+                sx={{ flex: '1 1 100%' }}
+                variant="h6"
+                id="tableTitle"
+                component="div"
+              >
+                Users
+              </Typography>
+            )}
+            {numSelected > 0 ? (
+              <>
+                {numSelected === 1 ?
+                  <Tooltip title="Update">
+                    <IconButton onClick={handleUpdation}>
+                      <BuildIcon />
+                    </IconButton>
+                  </Tooltip> : <div />}
+                <Tooltip title="Delete">
+                  <IconButton onClick={handleDeletion}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <Stack direction="row" spacing={2}>
+                  <Button size="small" onClick={handleNewUser} startIcon={<AddIcon />}>User</Button>
+                  <Button size="small" component="label" onClick={handleBulkUpload} startIcon={<UploadFileIcon />}>
+                    <input type="file" hidden onChange={onFileChange} />Upload
+                  </Button>
+                  <Button size="small" onClick={downloadExcel} startIcon={<DownloadIcon />}>Download</Button>
+                </Stack>
+              </>
+            )}
+          </Toolbar>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {visibleRows.map((row: datum, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                      <TableRow
-                          hover
-                          onClick={() => handleCellSelection(row.id)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.id}
-                          selected={isItemSelected}
-                          sx={{ cursor: 'pointer' }}
-                      >
-                        <StyledTableCell padding="checkbox">
-                          <Checkbox
-                              color="primary"
-                              checked={isItemSelected}
-                              inputProps={{
-                                'aria-labelledby': labelId,
-                              }}
-                          />
-                        </StyledTableCell>
-                        <StyledTableCell
-                            component="th"
-                            id={labelId}
-                            scope="row"
-                            padding="normal"
-                            align="left"
-                        >
-                          {row.firstName}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">{row.lastName}</StyledTableCell>
-                        <StyledTableCell align="left">{row.emailAddress}</StyledTableCell>
-                        <StyledTableCell align="left">{row.username}</StyledTableCell>
-                        <StyledTableCell align="left">{row.roleNames}</StyledTableCell>
-                        <StyledTableCell align="left">{row.courseIds}</StyledTableCell>
-                        <StyledTableCell align="left">{row.photo}</StyledTableCell>
-                      </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                    <StyledTableRow
-                        style={{
-                          height: 53 * emptyRows,
+                return (
+                  <TableRow
+                    hover
+                    onClick={() => handleCellSelection(row.id)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={isItemSelected}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    <StyledTableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId,
                         }}
+                      />
+                    </StyledTableCell>
+                    <StyledTableCell
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="normal"
+                      align="left"
                     >
-                      <StyledTableCell colSpan={6} />
-                    </StyledTableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <StyledTablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-        <UserDialog openNewUserDialog={openNewUserDialog} handleClose={handleClose} user={selectedUser}/>
+                      {row.firstName}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">{row.lastName}</StyledTableCell>
+                    <StyledTableCell align="left">{row.emailAddress}</StyledTableCell>
+                    <StyledTableCell align="left">{row.username}</StyledTableCell>
+                    <StyledTableCell align="left">{row.roleNames}</StyledTableCell>
+                    <StyledTableCell align="left">{row.courseIds}</StyledTableCell>
+                    <StyledTableCell align="left">{row.photoUrl}</StyledTableCell>
+                  </TableRow>
+                );
+              })}
+              {emptyRows > 0 && (
+                <StyledTableRow
+                  style={{
+                    height: 53 * emptyRows,
+                  }}
+                >
+                  <StyledTableCell colSpan={6} />
+                </StyledTableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <StyledTablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+      <UserDialog openNewUserDialog={openNewUserDialog} handleClose={handleClose} user={selectedUser} />
 
-      </Box>
+    </Box>
   );
 }

@@ -1,11 +1,12 @@
 package com.qbot.answeringservice.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.qbot.answeringservice.dto.BulkUploadCourseRequest;
+import com.qbot.answeringservice.dto.BulkCourseRequest;
 import com.qbot.answeringservice.dto.CourseDto;
-import com.qbot.answeringservice.dto.CourseList;
+import com.qbot.answeringservice.dto.CourseResponseCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,10 @@ public class CourseService {
 
     public void createCourse(Course course) {
         try {
-            courseRepo.save(course);
+            String validationResults = validateCourse(course);
+            if (validationResults == null || validationResults.length() == 0) {
+                courseRepo.save(course);
+            }
         } catch (Exception exception) {
             logger.error("Error creating course. Details: " + exception.getMessage());
         }
@@ -35,9 +39,10 @@ public class CourseService {
         return courseRepo.findAll();
     }
 
-    public CourseList getAllCourses() {
+    public CourseResponseCollection getAllCourses() {
         logger.info("Retrieving course list");
-        return new CourseList(findAllCourses().stream().map(CourseDto::from).collect(Collectors.toList()));
+        return new CourseResponseCollection(findAllCourses().stream().map(CourseDto::from).collect(Collectors.toList()),
+                null);
     }
 
     public List<Course> findByCourseIds(String[] courseIds) {
@@ -48,8 +53,9 @@ public class CourseService {
         return courseRepo.existsById(courseId);
     }
 
-    public CourseList getSpecificCourses(String[] courseIds) {
-        return new CourseList(findByCourseIds(courseIds).stream().map(CourseDto::from).collect(Collectors.toList()));
+    public CourseResponseCollection getSpecificCourses(String[] courseIds) {
+        return new CourseResponseCollection(
+                findByCourseIds(courseIds).stream().map(CourseDto::from).collect(Collectors.toList()), null);
     }
 
     public Course updateCourse(Course course) {
@@ -62,17 +68,60 @@ public class CourseService {
         }
     }
 
-    public boolean overwriteAllCourses(BulkUploadCourseRequest courseList) {
-        if (courseList.getCourses().size() == 0) {
-            return true;
-        }
+    public CourseResponseCollection bulkProcessCourses(BulkCourseRequest courseRequest) {
+        List<Course> processedCourses = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         try {
-            courseRepo.deleteAll();
-            courseRepo.saveAll(courseList.getCourses());
+            for (Course course : courseRequest.getCourses()) {
+                String validationResults = validateCourse(course);
+                if (validationResults == null || validationResults.length() == 0) {
+                    Course processedCourse = courseRepo.save(course);
+                    if (processedCourse != null) {
+                        processedCourses.add(processedCourse);
+                    }
+                } else {
+                    errors.add(validationResults);
+                }
+            }
         } catch (Exception e) {
-            logger.error("Error storing courseList: {}", e.getMessage());
-            return false;
+            String errorString = String.format("Error storing courseList: %s", e.getMessage());
+            logger.error(errorString);
+            errors.add(errorString);
         }
-        return true;
+        return new CourseResponseCollection(convertToCourseResponses(processedCourses), errors);
+    }
+
+    private String validateCourse(Course course) {
+        StringBuilder builder = new StringBuilder();
+        if (course.getId() != null) {
+            String courseId = course.getId();
+            if (!courseId.isBlank() && !courseRepo.existsById(courseId)) {
+                builder.append("Provided Course ID not found\n");
+            }
+        }
+        if (course.getSchoolId() == null || course.getSchoolId().isBlank()) {
+            builder.append("School ID is invalid/missing\n");
+        }
+        if (course.getDepartmentId() == null || course.getDepartmentId().isBlank()) {
+            builder.append("Department ID is invalid/missing\n");
+        }
+        if (course.getCatalogId() == null || course.getCatalogId().isBlank()) {
+            builder.append("Catalog ID is invalid/missing\n");
+        }
+        if (course.getName() == null || course.getName().isBlank()) {
+            builder.append("Name is invalid/missing\n");
+        }
+        if (course.getDescription() == null || course.getDescription().isBlank()) {
+            builder.append("Description is invalid/missing\n");
+        }
+        if (course.getSemester() == null || course.getSemester().isBlank()) {
+            builder.append("Semester is invalid/missing\n");
+        }
+
+        return builder.toString();
+    }
+
+    private List<CourseDto> convertToCourseResponses(List<Course> courses) {
+        return courses.stream().map(CourseDto::from).collect(Collectors.toList());
     }
 }

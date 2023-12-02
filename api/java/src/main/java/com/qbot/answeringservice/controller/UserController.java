@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qbot.answeringservice.dto.BulkUserRequest;
 import com.qbot.answeringservice.dto.UserRequest;
 import com.qbot.answeringservice.dto.UserResponse;
 import com.qbot.answeringservice.model.User;
@@ -94,10 +95,13 @@ public class UserController {
     }
 
     @CrossOrigin(origins = { "http://localhost:3000", "https://qbot-slak.onrender.com" })
-    @PutMapping(path = "/bulkupdate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> bulkUpdateUsers(@RequestBody List<User> users) {
+    @PostMapping(path = "/bulk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UserResponse>> bulkProcessUsers(@RequestBody BulkUserRequest usersRequest) {
         try {
-            List<User> updateResults = userService.bulkUpdateUsers(users);
+            if (usersRequest == null || usersRequest.getUsers() == null || usersRequest.getUsers().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            List<UserResponse> updateResults = userService.bulkProcessUsers(usersRequest.getUsers());
             if (updateResults == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             } else if (updateResults.isEmpty()) {

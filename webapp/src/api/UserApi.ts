@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ExcelJsonUsers } from "../utils/ExcelUtils";
 import { APPLICATION_JSON } from "../utils/StringConstants";
-import { createUpdateUserUrl, bulkUpdateUsersUrl, deleteUserUrl, getAllUsersUrl } from "../utils/Urls";
+import { createUpdateUserUrl, bulkUploadUsersUrl, deleteUserUrl, getAllUsersUrl } from "../utils/Urls";
 import { UserResponse, UserRequest } from "../screens/tabs/UsersTable";
 
 export const createNewUser = async (user: Partial<UserRequest>) => {
@@ -44,7 +44,7 @@ export const bulkUploadUsers = async (users: ExcelJsonUsers) => {
     try {
         const res = await axios({
             timeout: 300000,
-            url: bulkUpdateUsersUrl(),
+            url: bulkUploadUsersUrl(),
             method: "POST",
             data: users,
             headers: {
