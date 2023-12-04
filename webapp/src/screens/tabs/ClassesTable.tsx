@@ -757,7 +757,7 @@ export default function ClassesTable() {
                   "Unable to save courses at the moment, please try again later"
                 );
               }
-              setClasses(jsonData.courses);
+              setLoading(false);
             })();
           }
         };
