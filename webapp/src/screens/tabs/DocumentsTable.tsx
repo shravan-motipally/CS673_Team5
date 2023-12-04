@@ -297,10 +297,10 @@ export default function DocumentTable() {
           const success = await deleteDocument(selected[index]);
           if (!success) {
             setDeletionError(true);
+            break;
           } else {
             setLoading(true);
             handleCellSelection(selected[index]);
-            break;
           }
         }
       }
@@ -500,7 +500,7 @@ export default function DocumentTable() {
                   color="text.secondary"
                   maxWidth="md"
                 >
-                  Drag 'n' drop some files here, or click to select files
+                  Drag 'n' drop one file at a time here, or click to select one file to upload
                 </Typography>
                 <Typography
                   variant="body1"
@@ -508,7 +508,7 @@ export default function DocumentTable() {
                   color="text.secondary"
                   maxWidth="md"
                 >
-                  {"(Only small (<10kB) *.pdf's will be accepted)"}
+                  {"(Only small (<10MB) *.pdf's will be accepted)"}
                 </Typography>
                 <input {...getInputProps()} />
               </Container>
