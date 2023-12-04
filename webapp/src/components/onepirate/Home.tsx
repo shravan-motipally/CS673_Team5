@@ -169,7 +169,6 @@ function Index() {
           </FormControl>
         </Box>
       </ThemeProvider>
-      <ProductCategories />
       <ProductHowItWorks />
     </React.Fragment>
   );

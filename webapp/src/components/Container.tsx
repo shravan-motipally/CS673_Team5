@@ -183,6 +183,10 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     handleDrawerToggle();
   }, [screenState, open]);
 
+  const generativeModeLabel = useMemo(() => {
+    return screenState.generativeMode ? "Disable Generative Mode" : "Enable Generative Mode";
+  }, [screenState]);
+
   return (
     <ThemeProvider theme={screenState.darkMode ? darkTheme : lightTheme} >
       <Box sx={{ display: 'flex' }}>
@@ -323,7 +327,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : 'auto',
+                      mr: 'auto',
                       justifyContent: 'center',
                     }}
                   >
@@ -356,7 +360,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : 'auto',
+                      mr: 'auto',
                       justifyContent: 'center',
                     }}
                   >
@@ -368,7 +372,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
             ))}
           </List>
           {isMobileView ? <List sx={{ paddingTop: 0, paddingBottom: 0 }}>
-            {['Enable Generative Mode', 'Dark/Light Mode'].map((text, index) => (
+            {[generativeModeLabel, 'Dark/Light Mode'].map((text, index) => (
               <ListItem
                 key={"ContainerKey-" + text}
                 disablePadding sx={{ display: 'block' }}
@@ -383,7 +387,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr:  open ? 3 : 'auto',
+                      mr:  'auto',
                       justifyContent: 'center',
                     }}
                   >
@@ -409,7 +413,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: 'auto',
                     justifyContent: 'center',
                   }}
                 >
@@ -437,7 +441,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        mr: open ? 3 : 'auto',
+                        mr: 'auto',
                         justifyContent: 'center',
                       }}
                     >
@@ -468,7 +472,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        mr: open ? 3 : 'auto',
+                        mr: 'auto',
                         justifyContent: 'center',
                       }}
                     >
