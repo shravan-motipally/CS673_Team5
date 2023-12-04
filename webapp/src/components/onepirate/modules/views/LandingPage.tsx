@@ -22,9 +22,11 @@ const LandingPage = (  ) => {
         src={backgroundImage}
         alt="increase priority"
       />
-      <Typography style={{ marginBottom: "200px", fontFamily: [
+      <Typography sx={{ marginBottom: "200px", fontFamily: [
         'Nunito',
-        ].join(',') }} color="inherit" align="center" variant="h2" marked="center">
+        ].join(','),
+        fontSize: { xs: "24px", sm: "28px", md: "48px" }
+      }} color="inherit" align="center" variant="h2" marked="center">
         Welcome to QBot
       </Typography>
 
@@ -37,7 +39,10 @@ const LandingPage = (  ) => {
         Your Class, Your Questions, Instant Answers
       </Typography>
       <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
-        Explore QBot – Your Personal Academic Assistant
+        Explore Your Personal Academic Assistant.
+      </Typography>
+      <Typography variant="body2" color="inherit">
+        Select your class in the dropdown below.
       </Typography>
     </ProductHeroLayout>
   );

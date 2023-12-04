@@ -38,19 +38,6 @@ function AppAppBar({ loading }: { loading: boolean }) {
           }} variant="h6" noWrap component="div" sx={{ cursor: 'pointer', marginLeft: "10px", flexGrow: 1, color: "#FFFFFF" }}>
             QBot
           </Typography>
-          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            {!loading ? <Link
-              color="inherit"
-              variant="button"
-              underline="none"
-              sx={rightLink}
-              onClick={() => {
-                setScreenState({...screenState, screen: 'login'})
-              }}
-            >
-              {'Sign In'}
-            </Link> : <div/>}
-          </Box>
         </Toolbar>
       </AppBar>
       <Toolbar />

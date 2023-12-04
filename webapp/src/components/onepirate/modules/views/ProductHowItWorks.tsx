@@ -68,7 +68,7 @@ function ProductHowItWorks() {
                   sx={image}
                 />
                 <Typography variant="h5" align="center">
-                  Choose your class.
+                  Choose your class above in the dropdown.
                 </Typography>
               </Box>
             </Grid>
