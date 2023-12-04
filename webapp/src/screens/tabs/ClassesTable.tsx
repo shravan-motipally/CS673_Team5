@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { bulkUploadCourses, createNewCourse, deleteCourse, getAllCoursesForAdministration,} from "../../api/CourseApi";
+import { bulkUploadCourses, createNewCourse, deleteCourse, getAllCoursesForAdministration, } from "../../api/CourseApi";
 import {
   Alert,
   alpha,
@@ -700,7 +700,7 @@ export default function ClassesTable() {
     setOpenNewCourseDialog(true);
   }, []);
 
-  const handleBulkUpload = useCallback(() => {}, [file]);
+  const handleBulkUpload = useCallback(() => { }, [file]);
 
   const onFileChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -757,7 +757,7 @@ export default function ClassesTable() {
                   "Unable to save courses at the moment, please try again later"
                 );
               }
-              setClasses(jsonData.courses);
+              setLoading(true);
             })();
           }
         };

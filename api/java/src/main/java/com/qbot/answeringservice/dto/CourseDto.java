@@ -22,12 +22,10 @@ public class CourseDto {
     }
 
     public static CourseDto from(Course course) {
-        return new CourseDto(
-                course.getId(),
-                format("[%s] %s%s %s - %s", course.getSemester(), course.getSchoolId(), course.getDepartmentId(), course.getCatalogId(), course.getName()),
-                format("%s%s %s", course.getSchoolId(), course.getDepartmentId(), course.getCatalogId()),
-                course.getDepartmentId(),
-                course.getDescription()
-        );
+        return new CourseDto(course.getId(),
+                format("[%s] %s %s%s - %s", course.getSemester(), course.getSchoolId(), course.getDepartmentId(),
+                        course.getCatalogId(), course.getName()),
+                format("%s %s%s", course.getSchoolId(), course.getDepartmentId(), course.getCatalogId()),
+                course.getDepartmentId(), course.getDescription());
     }
 }
