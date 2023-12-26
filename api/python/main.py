@@ -16,8 +16,13 @@ from slowapi.errors import RateLimitExceeded
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from starlette.requests import Request
-import time
-
+from ragas.langchain.evalchain import RagasEvaluatorChain
+from ragas.metrics import (
+    faithfulness,
+    answer_relevancy,
+    # context_precision,
+    context_recall,
+)
 origins = ["http://localhost:3000", "https://qbot-slak.onrender.com"]
 
 limiter = Limiter(key_func=get_remote_address)
@@ -41,6 +46,7 @@ class Chat(BaseModel):
     course_desc: str
     analyze_sentiment: bool
     token: Optional[str] = None
+    actual_answer: Optional[str] = None
 
 
 @app.get("/")
@@ -105,6 +111,10 @@ def startup_event():
 
     app.question_generator = LLMChain(llm=app.llm, prompt=condensed_prompt, verbose=True)
     app.doc_chain = load_qa_chain(llm=app.llm, prompt=qa_prompt, verbose=True)
+    app.faithfulness_chain = RagasEvaluatorChain(metric=faithfulness)
+    app.answer_rel_chain = RagasEvaluatorChain(metric=answer_relevancy)
+    # app.context_rel_chain = RagasEvaluatorChain(metric=context_precision)
+    app.context_recall_chain = RagasEvaluatorChain(metric=context_recall)
 
 
 def find_chat_history(session_id: str):
@@ -181,6 +191,21 @@ def query(chat_message: Chat):
         response = app.conversation_retrieval_chain(
             {"question": chat_message.message,
              "chat_history": []})  # chat_history if chat_history is not None else []})
+        response["query"] = chat_message.message
+        response["result"] = response["answer"]
+
+        if chat_message.actual_answer is not None:
+            response["ground_truths"] = [chat_message.actual_answer]
+            context_recall_eval_result = app.context_recall_chain(response)
+            response["context_recall_eval_result"] = context_recall_eval_result["context_recall_score"]
+
+        faithfulness_eval_result = app.faithfulness_chain(response)
+        answer_rel_eval_result = app.answer_rel_chain(response)
+        # context_rel_eval_result = app.context_rel_chain(response)
+
+        response["faithfulness_eval_result"] = faithfulness_eval_result["faithfulness_score"]
+        response["answer_rel_eval_result"] = answer_rel_eval_result["answer_relevancy_score"]
+        # response["context_rel_eval_result"] = context_rel_eval_result
         return response
     else:
         return {"question": chat_message.message,
